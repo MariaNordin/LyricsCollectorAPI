@@ -1,4 +1,5 @@
 ﻿using LyricsCollector.Context;
+using LyricsCollector.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -43,10 +44,16 @@ namespace LyricsCollector.Controllers
 
         // GET: api/Lyrics
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetAllLyricsInCollection(int id)
+        public async Task<ActionResult<Lyrics>> GetLyrics(int id)
         {
-            var lyrics = _context.CollectionLyrics.Where(l => l.CollectionLyrics))
-            return Ok();
+            var lyrics = await _context.Lyrics.FindAsync(id);
+
+            if (lyrics == null)
+            {
+                return NotFound();
+            }
+
+            return lyrics;
         }
 
         //// GET: LyricsController/Details/5
