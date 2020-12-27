@@ -15,24 +15,30 @@ namespace LyricsCollector.Controllers
     [Route("[controller]")]
     public class LyricsController : ControllerBase
     {
-        private readonly LyricsCollectorDbContext _context;
+        private readonly IHttpClientFactory _clientFactory;
 
-        public LyricsController(LyricsCollectorDbContext context)
+        public LyricsController(IHttpClientFactory clientFactory)
         {
-            _context = context;
+            _clientFactory = clientFactory;
         }
+        //private readonly LyricsCollectorDbContext _context;
+
+        //public LyricsController(LyricsCollectorDbContext context)
+        //{
+        //    _context = context;
+        //}
 
         // GET: from open api Lyrics.ovh
         [HttpGet("{artist}/{title}")]
         public async Task<IActionResult> Get(string artist, string title)
         {
-            var baseAddress = "https://private-anon-db878c4a30-lyricsovh.apiary-proxy.com/v1/";
+            var request = "https://api.lyrics.ovh/v1/" + artist + "/" + title;
 
             string stringResponse;
 
-            using (var client = new HttpClient())
+            using (var client = _clientFactory.CreateClient())
             {
-                using (var response = await client.GetAsync($"{baseAddress}{artist}/{title}"))
+                using (var response = await client.GetAsync(request))
                 {
                     var responseContent = response.Content;
                     stringResponse = await responseContent.ReadAsStringAsync();
@@ -40,21 +46,21 @@ namespace LyricsCollector.Controllers
                 }
             }
             return Ok(stringResponse);
-        }
+        } 
 
-        // GET: api/Lyrics
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Lyrics>> GetLyrics(int id)
-        {
-            var lyrics = await _context.Lyrics.FindAsync(id);
+        //// GET: api/Lyrics
+        //[HttpGet("{id}")]
+        //public async Task<ActionResult<Lyrics>> GetLyrics(int id)
+        //{
+        //    var lyrics = await _context.Lyrics.FindAsync(id);
 
-            if (lyrics == null)
-            {
-                return NotFound();
-            }
+        //    if (lyrics == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            return lyrics;
-        }
+        //    return lyrics;
+        //}
 
         //// GET: LyricsController/Details/5
         //public ActionResult Details(int id)
