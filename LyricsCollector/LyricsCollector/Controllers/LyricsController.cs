@@ -15,38 +15,12 @@ namespace LyricsCollector.Controllers
     [Route("[controller]")]
     public class LyricsController : ControllerBase
     {
-        private readonly IHttpClientFactory _clientFactory;
-
-        public LyricsController(IHttpClientFactory clientFactory)
-        {
-            _clientFactory = clientFactory;
-        }
         //private readonly LyricsCollectorDbContext _context;
 
         //public LyricsController(LyricsCollectorDbContext context)
         //{
         //    _context = context;
         //}
-
-        // GET: from open api Lyrics.ovh
-        [HttpGet("{artist}/{title}")]
-        public async Task<IActionResult> Get(string artist, string title)
-        {
-            var request = "https://api.lyrics.ovh/v1/" + artist + "/" + title;
-
-            string stringResponse;
-
-            using (var client = _clientFactory.CreateClient())
-            {
-                using (var response = await client.GetAsync(request))
-                {
-                    var responseContent = response.Content;
-                    stringResponse = await responseContent.ReadAsStringAsync();
-                    //var test = JsonConvert.
-                }
-            }
-            return Ok(stringResponse);
-        } 
 
         //// GET: api/Lyrics
         //[HttpGet("{id}")]

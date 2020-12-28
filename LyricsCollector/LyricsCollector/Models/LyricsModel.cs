@@ -1,5 +1,5 @@
 ﻿
-namespace LyricsCollector.LyricsAPI
+namespace LyricsCollector.Models
 {
     public class LyricsModel
     {
