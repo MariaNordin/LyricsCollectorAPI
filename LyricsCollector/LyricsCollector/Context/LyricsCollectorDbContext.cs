@@ -7,7 +7,7 @@ namespace LyricsCollector.Context
     {
         // List all entities for Entity Framework to "know" them
         public DbSet<Lyrics> Lyrics { get; set; }
-        public DbSet<CollectionLyrics> CollectionLyrics { get; set; }
+        public DbSet<Collection> Collections { get; set; }
 
         public LyricsCollectorDbContext(DbContextOptions<LyricsCollectorDbContext> options) : base(options)
         {

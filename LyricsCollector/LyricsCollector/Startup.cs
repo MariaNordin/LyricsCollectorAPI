@@ -1,16 +1,12 @@
+using LyricsCollector.Context;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace LyricsCollector
 {
@@ -26,11 +22,20 @@ namespace LyricsCollector
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddControllers().AddNewtonsoftJson(options =>
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
-            services.AddControllers();
+            services.AddDbContext<LyricsCollectorDbContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"]));
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "LyricsCollector", Version = "v1" });
+            });
+            services.AddHttpClient();
+            services.AddHttpClient("lyrics", c =>
+            {
+                c.BaseAddress = new Uri(Configuration.GetValue<string>("LyricsAPI"));
+                //c.DefaultRequestHeaders
             });
         }
 

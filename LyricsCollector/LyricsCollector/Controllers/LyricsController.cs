@@ -1,4 +1,5 @@
 ﻿using LyricsCollector.Context;
+using LyricsCollector.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -14,40 +15,26 @@ namespace LyricsCollector.Controllers
     [Route("[controller]")]
     public class LyricsController : ControllerBase
     {
-        private readonly LyricsCollectorDbContext _context;
+        //private readonly LyricsCollectorDbContext _context;
 
-        public LyricsController(LyricsCollectorDbContext context)
-        {
-            _context = context;
-        }
+        //public LyricsController(LyricsCollectorDbContext context)
+        //{
+        //    _context = context;
+        //}
 
-        // GET: from open api Lyrics.ovh
-        [HttpGet("{artist}/{title}")]
-        public async Task<IActionResult> Get(string artist, string title)
-        {
-            var baseAddress = "https://private-anon-db878c4a30-lyricsovh.apiary-proxy.com/v1/";
+        //// GET: api/Lyrics
+        //[HttpGet("{id}")]
+        //public async Task<ActionResult<Lyrics>> GetLyrics(int id)
+        //{
+        //    var lyrics = await _context.Lyrics.FindAsync(id);
 
-            string stringResponse;
+        //    if (lyrics == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            using (var client = new HttpClient())
-            {
-                using (var response = await client.GetAsync($"{baseAddress}{artist}/{title}"))
-                {
-                    var responseContent = response.Content;
-                    stringResponse = await responseContent.ReadAsStringAsync();
-                    //var test = JsonConvert.
-                }
-            }
-            return Ok(stringResponse);
-        }
-
-        // GET: api/Lyrics
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetAllLyricsInCollection(int id)
-        {
-            var lyrics = _context.CollectionLyrics.Where(l => l.CollectionLyrics))
-            return Ok();
-        }
+        //    return lyrics;
+        //}
 
         //// GET: LyricsController/Details/5
         //public ActionResult Details(int id)
