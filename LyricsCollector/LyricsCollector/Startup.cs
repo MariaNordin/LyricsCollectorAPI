@@ -33,6 +33,11 @@ namespace LyricsCollector
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "LyricsCollector", Version = "v1" });
             });
             services.AddHttpClient();
+            services.AddHttpClient("lyrics", c =>
+            {
+                c.BaseAddress = new Uri(Configuration.GetValue<string>("LyricsAPI"));
+                //c.DefaultRequestHeaders
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
