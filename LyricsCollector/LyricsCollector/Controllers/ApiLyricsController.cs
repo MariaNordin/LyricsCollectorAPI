@@ -21,7 +21,7 @@ namespace LyricsCollector.Controllers
 
         // GET: from open api Lyrics.ovh
         [HttpGet("{artist}/{title}")]
-        public async Task<IActionResult> Get(string artist, string title)
+        public async Task<IActionResult> GetLyrics(string artist, string title)
         {
             string message;
 
@@ -34,11 +34,11 @@ namespace LyricsCollector.Controllers
             }
             catch (Exception ex)
             {
-                message = $"There was an error getting the lyrics: {ex.Message}";
+                message = $"There was an error getting the lyrics: {ex.Message}"; //Don't need this? Always get back an empty string if no lyrics found
             }
 
 
-            if (string.IsNullOrWhiteSpace(message) == false)
+            if (string.IsNullOrWhiteSpace(message) == false) //And don-t need following either, eccept for else - print data
             {
                 //Show error message
                 return BadRequest(message); 

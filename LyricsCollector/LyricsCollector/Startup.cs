@@ -37,6 +37,10 @@ namespace LyricsCollector
                 c.BaseAddress = new Uri(Configuration.GetValue<string>("LyricsAPI"));
                 //c.DefaultRequestHeaders
             });
+            services.AddHttpClient("spotify", c =>
+            {
+                c.BaseAddress = new Uri(Configuration.GetValue<string>("SpotifyAPI"));
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
