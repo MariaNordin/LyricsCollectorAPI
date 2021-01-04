@@ -1,4 +1,5 @@
 using LyricsCollector.Context;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -26,6 +27,19 @@ namespace LyricsCollector
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
             services.AddDbContext<LyricsCollectorDbContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"]));
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("spotify", policy =>
+                {
+                    policy.AuthenticationSchemes.Add("spotify");
+                    policy.RequireAuthenticatedUser();
+                });
+            });
+            services.AddAuthentication(options =>
+            {
+                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            });
 
             services.AddSwaggerGen(c =>
             {
@@ -57,6 +71,7 @@ namespace LyricsCollector
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

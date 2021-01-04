@@ -7,10 +7,11 @@ using System.Threading.Tasks;
 
 namespace LyricsCollector.Controllers
 {
-    public class SpotifyOAuthController : Controller
+    [ApiController]
+    [Route("[controller]")]
+    public class SpotifyOAuthController : ControllerBase
     {
         private readonly IHttpClientFactory _clientFactory;
-        //private LyricsModel _lyrics;
 
         public SpotifyOAuthController(IHttpClientFactory clientFactory)
         {
@@ -18,15 +19,15 @@ namespace LyricsCollector.Controllers
         }
 
         //GET: from spotify api
-
         [HttpGet]
         public async Task<IActionResult> GetUsersAuthorization()
         {
             string stringResponse;
 
-            var baseUrl = new Uri("https://accounts.spotify.com/authorize" +
+            var baseUrl = new Uri("https://accounts.spotify.com/authorize?" +
                 "client_id=7e335aa2c7ed476abf4de347ae1c1ddc&response_type=code&" +
-                "redirect_uri=https%3A%2F%2Flocalhost%3A44307%2Fswagger%2Findex.html&scope=user-read-private%20user-read-email");
+                "redirect_uri=http%3A%2F%2Flocalhost%3A3000%2F&scope=user-read-private%20user-read-email");
+
 
             using (var client = _clientFactory.CreateClient())
             {
@@ -38,15 +39,18 @@ namespace LyricsCollector.Controllers
             }
 
             return Ok(stringResponse);
-            //try
-            //{
-            //    _lyrics = await client.GetFromJsonAsync<LyricsModel>($"{artist}/{title}");
-            //    message = null;
-            //}
-            //catch (Exception ex)
-            //{
-            //    message = $"There was an error getting the lyrics: {ex.Message}";
-            //}
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetSpotifyAccess()
+        {
+            var baseUrl = "https://accounts.spotify.com/api/token";
+            return Ok();
+        }
+
+        public IActionResult Authenticate(string user, string pwd)
+        {
+
         }
     }
 }
