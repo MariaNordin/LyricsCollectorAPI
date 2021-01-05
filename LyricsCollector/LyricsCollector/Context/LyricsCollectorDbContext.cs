@@ -1,13 +1,16 @@
 ﻿using LyricsCollector.Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace LyricsCollector.Context
 {
-    public class LyricsCollectorDbContext : DbContext
+    public class LyricsCollectorDbContext : IdentityDbContext
     {
         // List all entities for Entity Framework to "know" them
         public DbSet<Lyrics> Lyrics { get; set; }
         public DbSet<Collection> Collections { get; set; }
+        public override DbSet<IdentityUser> Users { get; set; }
 
         public LyricsCollectorDbContext(DbContextOptions<LyricsCollectorDbContext> options) : base(options)
         {

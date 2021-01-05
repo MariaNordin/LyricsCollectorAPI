@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using LyricsCollector.SpotifyClasses;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,8 @@ namespace LyricsCollector.Controllers
         {
             _clientFactory = clientFactory;
         }
+
+        SpotifyToken token = new SpotifyToken();
 
         //GET: from spotify api
         [HttpGet]
@@ -48,9 +51,9 @@ namespace LyricsCollector.Controllers
             return Ok();
         }
 
-        public IActionResult Authenticate(string user, string pwd)
-        {
+        //public IActionResult Authenticate(string user, string pwd)
+        //{
 
-        }
+        //}
     }
 }
