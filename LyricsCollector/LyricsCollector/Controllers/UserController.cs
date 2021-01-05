@@ -1,73 +1,49 @@
 ﻿using LyricsCollector.Context;
-using Microsoft.AspNetCore.Identity;
+using LyricsCollector.Models;
+using LyricsCollector.Services.Contracts;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+
 
 namespace LyricsCollector.Controllers
 {
+    [Route("api/[controller]")]
+    [ApiController]
     public class UserController : ControllerBase
     {
-        //private readonly UserManager<IdentityUser> _userManager;
-        //private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly IUserService _userService;
 
-        //public UserController(
-        //    UserManager<IdentityUser> userManager,
-        //    SignInManager<IdentityUser> signInManager)
+        public UserController(IUserService userService)
+        {
+            _userService = userService; 
+        }
+
+        [HttpPost("Authenticate")]
+        public IActionResult Login(UserPostModel payload)
+        {
+            var result = _userService.Authenticate(payload);
+
+            if (result == null) return BadRequest(new { Message = "Username or password was incorrect." });
+
+            return Ok(result);
+        }
+
+        //[HttpGet]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        //public IActionResult GetUsers()
         //{
-        //    _userManager = userManager;
-        //    _signInManager = signInManager;
+        //    var users = _userService.G
+        //    return Ok();
         //}
 
         [HttpPost]
-        public async Task<IActionResult> Login(string username, string password)
+        public IActionResult Register(UserPostModel payload)
         {
-            var user = await _userManager.FindByNameAsync(username);
-
-            if (user != null)
+            var result = _userService.RegisterUser(payload);
+            return Ok(new 
             {
-                // sign in
-                var signInResult = await _signInManager.PasswordSignInAsync(user, password, false, false);
-
-                if (signInResult.Succeeded)
-                {
-                    // do something
-                }
-            }
-            //return Ok();
+                Status = "Registered",
+                result
+            });
         }
-
-        [HttpPost]
-        public async Task<IActionResult> Register(string username, string password)
-        {
-            var user = new IdentityUser
-            {
-                UserName = username,
-                Email = "",
-                PasswordHash = "custom hash"
-            };
-
-            var result = await _userManager.CreateAsync(user, password);
-
-            if (result.Succeeded)
-            {
-                var signInResult = await _signInManager.PasswordSignInAsync(user, password, false, false);
-
-                if (signInResult.Succeeded)
-                {
-                    // do something
-                }
-            }
-            //return 
-        }
-
-        public async Task<IActionResult> LogOut()
-        {
-            await _signInManager.SignOutAsync();
-            //return
-        }
-
     }
 }

@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 
 namespace LyricsCollector.Controllers
 {
+    [Route("api/[controller]")]
+    [ApiController]
     public class ApiLyricsController : ControllerBase
     {
         private readonly IHttpClientFactory _clientFactory;
@@ -32,7 +34,7 @@ namespace LyricsCollector.Controllers
             }
             catch (Exception ex)
             {
-                message = $"There was an error getting the lyrics: {ex.Message}"; //Don't need this? Always get back an empty string if no lyrics found
+                message = $"There was an error getting the lyrics: {ex.Message}"; //Don't need this? Always gets back an empty string if no lyrics found
             }
 
 

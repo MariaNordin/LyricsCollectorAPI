@@ -1,18 +1,16 @@
 using LyricsCollector.Context;
-using LyricsCollector.SpotifyClasses;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authorization;
+using LyricsCollector.Middleware;
+using LyricsCollector.Services;
+using LyricsCollector.Services.Contracts;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using System;
-using System.Collections.Generic;
 
 namespace LyricsCollector
 {
@@ -31,60 +29,20 @@ namespace LyricsCollector
             services.AddControllers().AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
+            services.AddTransient<IUserService, UserService>();
+            services.AddTransient<ISpotifyService, SpotifyService>();
+
             services.AddDbContext<LyricsCollectorDbContext>(options =>
             {
                 options.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"]);
             });
 
-            services.AddIdentity<IdentityUser, IdentityRole>(config =>
+            services.AddAuthentication(options =>
             {
-                config.Password.RequiredLength = 4;
-                config.Password.RequireDigit = false;
-                config.Password.RequireNonAlphanumeric = false;
-                config.Password.RequireUppercase = false;
-            })
-                .AddEntityFrameworkStores<LyricsCollectorDbContext>()
-                .AddDefaultTokenProviders();
-
-            services.AddAuthentication()
-                .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", options => { });
-
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy("BasicAuthentication", new AuthorizationPolicyBuilder("BasicAuthentication").RequireAuthenticatedUser().Build());
-            });
-
-
-            //services.AddScoped<SpotifyAuthenticationExtensions>
-            //services.AddAuthorization(options =>
-            //{
-            //    options.AddPolicy("spotify", policy =>
-            //    {
-            //        policy.AuthenticationSchemes.Add("Spotify");
-            //        policy.RequireAuthenticatedUser();
-            //    });
-            //});
-            //services.AddAuthentication(options =>
-            //{
-            //    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-            //})
-            //    .AddCookie(options =>
-            //    {
-            //        options.ExpireTimeSpan = TimeSpan.FromMinutes(50);
-            //    })
-            //    .AddSpotify(options =>
-            //    {
-            //        options.ClientId = Configuration["SpotifyClientId"];
-            //        options.ClientSecret = Configuration["SpotifyClientSecret"];
-            //        options.CallbackPath = "";
-            //        options.SaveTokens = true;
-
-            //        var scopes = new List<string> {
-
-            //            UserReadEmail, UserReadPrivate, PlaylistReadPrivate, PlaylistReadCollaborative
-            //        };
-            //        options.Scope.Add(string.Join(",", scopes));
-            //    });
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer();
 
             services.AddSwaggerGen(c =>
             {
@@ -119,6 +77,8 @@ namespace LyricsCollector
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseMiddleware<JwtMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {

@@ -10,8 +10,7 @@ namespace LyricsCollector.Context
         // List all entities for Entity Framework to "know" them
         public DbSet<Lyrics> Lyrics { get; set; }
         public DbSet<Collection> Collections { get; set; }
-        public override DbSet<IdentityUser> Users { get; set; }
-
+        public new DbSet<User> Users { get; set; }
         public LyricsCollectorDbContext(DbContextOptions<LyricsCollectorDbContext> options) : base(options)
         {
         }
