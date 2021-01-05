@@ -10,16 +10,16 @@ namespace LyricsCollector.Controllers
 {
     public class UserController : ControllerBase
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        //private readonly UserManager<IdentityUser> _userManager;
+        //private readonly SignInManager<IdentityUser> _signInManager;
 
-        public UserController(
-            UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signInManager)
-        {
-            _userManager = userManager;
-            _signInManager = signInManager;
-        }
+        //public UserController(
+        //    UserManager<IdentityUser> userManager,
+        //    SignInManager<IdentityUser> signInManager)
+        //{
+        //    _userManager = userManager;
+        //    _signInManager = signInManager;
+        //}
 
         [HttpPost]
         public async Task<IActionResult> Login(string username, string password)
