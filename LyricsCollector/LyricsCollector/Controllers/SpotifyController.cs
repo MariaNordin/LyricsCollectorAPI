@@ -34,44 +34,44 @@ namespace LyricsCollector.Controllers
 
         //GET: from spotify api
         //[HttpGet]
-        //public async Task<IActionResult> GetUsersAuthorization()
+        //public async task<iactionresult> getusersauthorization()
         //{
-        //    string stringResponse;
+        //    string stringresponse;
 
 
-        //    var baseUrl = new Uri("" +
+        //    var baseurl = new uri("" +
         //        "client_id=7e335aa2c7ed476abf4de347ae1c1ddc&response_type=code&" +
-        //        "redirect_uri=http%3A%2F%2Flocalhost%3A3000%2F&scope=user-read-private%20user-read-email");
+        //        "redirect_uri=http%3a%2f%2flocalhost%3a3000%2f&scope=user-read-private%20user-read-email");
 
 
-        //    var ClientId = "7e335aa2c7ed476abf4de347ae1c1ddc2";
-        //    var ClientSecret = "1e32bdd892ad40acac7966727e3a101e";
+        //    var clientid = "7e335aa2c7ed476abf4de347ae1c1ddc2";
+        //    var clientsecret = "1e32bdd892ad40acac7966727e3a101e";
 
-        //    var token = Convert.ToBase64String(Encoding.UTF8.GetBytes(string.Format("{0}:{1}", ClientId, ClientSecret)));
+        //    var token = convert.tobase64string(encoding.utf8.getbytes(string.format("{0}:{1}", clientid, clientsecret)));
 
-        //    var client1 = new RestClient("");
-        //    client1.Timeout = -1;
-        //    var request = new RestRequest(Method.POST);
-        //    request.AddHeader("Authorization", $"Basic {token}");
-        //    request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
-        //    request.AddParameter("grant_type", "authorization_code");
-        //    request.AddParameter("code", "MQCbtKe...44KN");
-        //    request.AddParameter("redirect_uri", "");
-        //    IRestResponse response = client1.Execute(request);
-        //    Console.WriteLine(response.Content);
+        //    var client1 = new restclient("");
+        //    client1.timeout = -1;
+        //    var request = new restrequest(method.post);
+        //    request.addheader("authorization", $"basic {token}");
+        //    request.addheader("content-type", "application/x-www-form-urlencoded");
+        //    request.addparameter("grant_type", "authorization_code");
+        //    request.addparameter("code", "mqcbtke...44kn");
+        //    request.addparameter("redirect_uri", "");
+        //    irestresponse response = client1.execute(request);
+        //    console.writeline(response.content);
 
-        //    using (var client = _clientFactory.CreateClient())
+        //    using (var client = _clientfactory.createclient())
         //    {
-        //        client..Headers.Add("Authorization", "Basic " + token);
+        //        client..headers.add("authorization", "basic " + token);
 
-        //        using (var response = await client.GetAsync(baseUrl))
+        //        using (var response = await client.getasync(baseurl))
         //        {
-        //            var responseContent = response.Content;
-        //            stringResponse = await responseContent.ReadAsStringAsync();
+        //            var responsecontent = response.content;
+        //            stringresponse = await responsecontent.readasstringasync();
         //        }
         //    }
 
-        //    return Ok(stringResponse);
+        //    return ok(stringresponse);
         //}
     }
 }
