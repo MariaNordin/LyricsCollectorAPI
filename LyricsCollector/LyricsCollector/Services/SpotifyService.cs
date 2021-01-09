@@ -33,7 +33,7 @@ namespace LyricsCollector.Services
 
             WebRequest request = WebRequest.Create(url);
             request.Method = "POST";
-            request.Headers.Add("Authorization", "Basic {N2UzMzVhYTJjN2VkNDc2YWJmNGRlMzQ3YWUxYzFkZGMy:MWUzMmJkZDg5MmFkNDBhY2FjNzk2NjcyN2UzYTEwMWU=}"); 
+            request.Headers.Add("Authorization", "Basic {}"); 
             request.ContentType = "application/x-www-form-urlencoded";
             request.ContentLength = byteArray.Length;
 

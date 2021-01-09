@@ -44,9 +44,6 @@ namespace LyricsCollector.Controllers
         //        "redirect_uri=http%3a%2f%2flocalhost%3a3000%2f&scope=user-read-private%20user-read-email");
 
 
-        //    var clientid = "7e335aa2c7ed476abf4de347ae1c1ddc2";
-        //    var clientsecret = "1e32bdd892ad40acac7966727e3a101e";
-
         //    var token = convert.tobase64string(encoding.utf8.getbytes(string.format("{0}:{1}", clientid, clientsecret)));
 
         //    var client1 = new restclient("");

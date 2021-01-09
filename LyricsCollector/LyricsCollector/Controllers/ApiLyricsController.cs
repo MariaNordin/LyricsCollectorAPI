@@ -19,7 +19,7 @@ namespace LyricsCollector.Controllers
             _clientFactory = clientFactory;
         }
 
-        // GET: from open api Lyrics.ovh
+        // GET: api/ApiLyrics/artist/title (from open api Lyrics.ovh)
         [HttpGet("{artist}/{title}")]
         public async Task<IActionResult> GetLyrics(string artist, string title)
         {
@@ -69,6 +69,13 @@ namespace LyricsCollector.Controllers
             //    }
             //}
             //return Ok(stringResponse);
+        }
+
+        //GET test
+        [HttpGet("{name}")]
+        public string GetBody(string name)
+        {
+            return name; 
         }
     }
 }
