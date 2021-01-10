@@ -30,7 +30,7 @@ namespace LyricsCollector
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
             services.AddTransient<IUserService, UserService>();
-            services.AddTransient<ISpotifyService, SpotifyService>();
+            services.AddSingleton<ISpotifyService, SpotifyService>();
 
             services.AddDbContext<LyricsCollectorDbContext>(options =>
             {

@@ -15,12 +15,14 @@ namespace LyricsCollector.Services
 {
     public class SpotifyService : ISpotifyService
     {
-        //private readonly IHttpClientFactory _clientFactory;
-
-        //public SpotifyService(IHttpClientFactory clientFactory)
-        //{
-        //    _clientFactory = clientFactory;
-        //}
+        private readonly IHttpClientFactory _clientFactory;
+        private readonly string _clientId;
+        private readonly string _clientSecret;
+        public SpotifyService(IHttpClientFactory clientFactory, string ClientId, string ClientSecret)
+        {
+            _clientFactory = clientFactory;
+            
+        }
 
         public async Task<SpotifyToken> GetAccessToken()
         {
