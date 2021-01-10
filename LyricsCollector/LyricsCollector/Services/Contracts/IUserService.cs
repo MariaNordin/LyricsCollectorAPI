@@ -1,6 +1,5 @@
 ﻿using LyricsCollector.Entities;
 using LyricsCollector.Models;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace LyricsCollector.Services.Contracts
 {

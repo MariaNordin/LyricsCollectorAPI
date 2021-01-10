@@ -1,108 +1,58 @@
-﻿using LyricsCollector.Context;
-using LyricsCollector.Entities;
-using Microsoft.AspNetCore.Http;
+﻿using LyricsCollector.Models;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
 
 namespace LyricsCollector.Controllers
 {
+    [Route("api/[controller]")]
     [ApiController]
-    [Route("[controller]")]
     public class LyricsController : ControllerBase
     {
-        //private readonly LyricsCollectorDbContext _context;
+        private readonly IHttpClientFactory _clientFactory;
+        private LyricsResponseModel _lyrics;
 
-        //public LyricsController(LyricsCollectorDbContext context)
-        //{
-        //    _context = context;
-        //}
+        public LyricsController(IHttpClientFactory clientFactory)
+        {
+            _clientFactory = clientFactory;
+        }
 
-        //// GET: api/Lyrics
-        //[HttpGet("{id}")]
-        //public async Task<ActionResult<Lyrics>> GetLyrics(int id)
-        //{
-        //    var lyrics = await _context.Lyrics.FindAsync(id);
+        // GET: api/ApiLyrics/artist/title (from Lyrics.ovh)
+        [HttpGet("{artist}/{title}")]
+        public async Task<IActionResult> GetLyrics(string artist, string title)
+        {
+            string message;
 
-        //    if (lyrics == null)
-        //    {
-        //        return NotFound();
-        //    }
+            var client = _clientFactory.CreateClient("lyrics");
 
-        //    return lyrics;
-        //}
+            try
+            {
+                _lyrics = await client.GetFromJsonAsync<LyricsResponseModel>($"{artist}/{title}");
+                message = null;
+            }
+            catch (Exception ex)
+            {
+                message = $"There was an error getting the lyrics: {ex.Message}"; //Don't need this? Always gets back an empty string if no lyrics found
+            }
 
-        //// GET: LyricsController/Details/5
-        //public ActionResult Details(int id)
-        //{
-        //    return View();
-        //}
 
-        //// GET: LyricsController/Create
-        //public ActionResult Create()
-        //{
-        //    return View();
-        //}
-
-        //// POST: LyricsController/Create
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult Create(IFormCollection collection)
-        //{
-        //    try
-        //    {
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    catch
-        //    {
-        //        return View();
-        //    }
-        //}
-
-        //// GET: LyricsController/Edit/5
-        //public ActionResult Edit(int id)
-        //{
-        //    return View();
-        //}
-
-        //// POST: LyricsController/Edit/5
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult Edit(int id, IFormCollection collection)
-        //{
-        //    try
-        //    {
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    catch
-        //    {
-        //        return View();
-        //    }
-        //}
-
-        //// GET: LyricsController/Delete/5
-        //public ActionResult Delete(int id)
-        //{
-        //    return View();
-        //}
-
-        //// POST: LyricsController/Delete/5
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult Delete(int id, IFormCollection collection)
-        //{
-        //    try
-        //    {
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    catch
-        //    {
-        //        return View();
-        //    }
-        //}
+            if (string.IsNullOrWhiteSpace(message) == false) //And don-t need following either, eccept for else - print data
+            {
+                //Show error message
+                return BadRequest(message); 
+            }
+            else if (_lyrics is null)
+            {
+                //Show "Loading"
+                return Ok(new { message = "Loading" });
+            }
+            else
+            {
+                //Print data
+                return Ok(_lyrics);
+            }
+        }
     }
 }

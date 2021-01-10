@@ -1,8 +1,6 @@
 using LyricsCollector.Context;
-using LyricsCollector.Middleware;
 using LyricsCollector.Services;
 using LyricsCollector.Services.Contracts;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -29,20 +27,25 @@ namespace LyricsCollector
             services.AddControllers().AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
-            services.AddTransient<IUserService, UserService>();
-            services.AddSingleton<ISpotifyService, SpotifyService>();
+            services.AddCors(o => o.AddPolicy("CORSPolicy", builder =>
+                builder.AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+            ));
+
+            //services.AddSingleton<ISpotifyService, SpotifyService>();
 
             services.AddDbContext<LyricsCollectorDbContext>(options =>
             {
                 options.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"]);
             });
 
-            services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer();
+            //services.AddAuthentication(options =>
+            //{
+            //    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            //    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            //    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            //}).AddJwtBearer();
 
             services.AddSwaggerGen(c =>
             {
@@ -75,10 +78,11 @@ namespace LyricsCollector
 
             app.UseRouting();
 
-            app.UseAuthentication();
+            app.UseCors("CORSPolicy");
+            
             app.UseAuthorization();
 
-            app.UseMiddleware<JwtMiddleware>();
+            //app.UseMiddleware<JwtMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {
