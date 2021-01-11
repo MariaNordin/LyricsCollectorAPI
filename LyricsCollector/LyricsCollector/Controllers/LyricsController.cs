@@ -37,7 +37,7 @@ namespace LyricsCollector.Controllers
             }
             else if (lyrics.Lyrics == "")
             {
-                return BadRequest(new { message = "No lyrics found" });
+                return Ok(new { message = "No lyrics found" });
             }
             else
             {

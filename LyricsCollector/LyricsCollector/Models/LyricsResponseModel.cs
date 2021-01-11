@@ -8,9 +8,9 @@ namespace LyricsCollector.Models
         public string Lyrics { get; set; }
 
         [JsonPropertyName("artist")]
-        public string Artist { get; set; }
+        public string Artist { get; set; } = "";
 
         [JsonPropertyName("title")]
-        public string Title { get; set; }
+        public string Title { get; set; } = "";
     }
 }
