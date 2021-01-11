@@ -1,5 +1,6 @@
 using LyricsCollector.Context;
 using LyricsCollector.Services;
+using LyricsCollector.Services.ConcreteServices;
 using LyricsCollector.Services.Contracts;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
@@ -64,6 +65,8 @@ namespace LyricsCollector
                 c.BaseAddress = new Uri(Configuration.GetValue<string>("SpotifyAPI"));
                 //c.DefaultRequestHeaders ??
             });
+
+            services.AddTransient<ILyricsService, LyricsService>();
 
             services.AddHttpContextAccessor();
             services.AddSingleton(SpotifyClientConfig.CreateDefault());

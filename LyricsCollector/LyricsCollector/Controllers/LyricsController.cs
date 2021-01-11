@@ -14,53 +14,35 @@ namespace LyricsCollector.Controllers
     [ApiController]
     public class LyricsController : ControllerBase
     {
-        private readonly IHttpClientFactory _clientFactory;
         private readonly ILyricsService _lyricsService;
-        private LyricsResponseModel _lyrics;
+        private LyricsResponseModel lyrics;
 
-        public LyricsController(IHttpClientFactory clientFactory, ILyricsService lyricsService)
+        public LyricsController(ILyricsService lyricsService)
         {
-            _clientFactory = clientFactory;
             _lyricsService = lyricsService;
         }
 
         // GET: api/ApiLyrics/artist/title (from Lyrics.ovh)
-        [HttpPost("{artist}/{title}")]
+        
+        //POST: 
+        [HttpPost()]
         public async Task<IActionResult> GetLyrics([FromBody] LyricsResponseModel lyricsRM)
         {
-            string message;
+            lyrics = await _lyricsService.Search(lyricsRM.Artist, lyricsRM.Title);
 
-            var client = _clientFactory.CreateClient("lyrics");
-
-            try
-            {
-                _lyrics = await client.GetFromJsonAsync<LyricsResponseModel>($"{lyricsRM.Artist}/{lyricsRM.Title}");
-                message = null;
-            }
-            catch (Exception ex)
-            {
-                message = $"There was an error getting the lyrics: {ex.Message}"; //Don't need this? Always gets back an empty string if no lyrics found
-            }
-
-
-            if (string.IsNullOrWhiteSpace(message) == false) //And don-t need following either, eccept for else - print data
-            {
-                //Show error message
-                return BadRequest(message); 
-            }
-            else if (_lyrics is null)
+            if (lyrics is null)
             {
                 //Show "Loading"
                 return Ok(new { message = "Loading" });
             }
-            else if (_lyrics.Lyrics == "")
+            else if (lyrics.Lyrics == "")
             {
-                return BadRequest( new { message = "No lyrics found" });
+                return BadRequest(new { message = "No lyrics found" });
             }
             else
             {
                 //Print data
-                return Ok(_lyrics);
+                return Ok(lyrics);
             }
         }
     }
