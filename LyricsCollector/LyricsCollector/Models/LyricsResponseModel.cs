@@ -6,5 +6,11 @@ namespace LyricsCollector.Models
     {
         [JsonPropertyName("lyrics")]
         public string Lyrics { get; set; }
+
+        [JsonPropertyName("artist")]
+        public string Artist { get; set; }
+
+        [JsonPropertyName("title")]
+        public string Title { get; set; }
     }
 }

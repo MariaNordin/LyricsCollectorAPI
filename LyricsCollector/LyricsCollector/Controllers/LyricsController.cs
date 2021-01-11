@@ -1,4 +1,6 @@
 ﻿using LyricsCollector.Models;
+using LyricsCollector.Services.Contracts;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Net.Http;
@@ -8,20 +10,23 @@ using System.Threading.Tasks;
 namespace LyricsCollector.Controllers
 {
     [Route("api/[controller]")]
+    [EnableCors("CORSPolicy")]
     [ApiController]
     public class LyricsController : ControllerBase
     {
         private readonly IHttpClientFactory _clientFactory;
+        private readonly ILyricsService _lyricsService;
         private LyricsResponseModel _lyrics;
 
-        public LyricsController(IHttpClientFactory clientFactory)
+        public LyricsController(IHttpClientFactory clientFactory, ILyricsService lyricsService)
         {
             _clientFactory = clientFactory;
+            _lyricsService = lyricsService;
         }
 
         // GET: api/ApiLyrics/artist/title (from Lyrics.ovh)
-        [HttpGet("{artist}/{title}")]
-        public async Task<IActionResult> GetLyrics(string artist, string title)
+        [HttpPost("{artist}/{title}")]
+        public async Task<IActionResult> GetLyrics([FromBody] LyricsResponseModel lyricsRM)
         {
             string message;
 
@@ -29,7 +34,7 @@ namespace LyricsCollector.Controllers
 
             try
             {
-                _lyrics = await client.GetFromJsonAsync<LyricsResponseModel>($"{artist}/{title}");
+                _lyrics = await client.GetFromJsonAsync<LyricsResponseModel>($"{lyricsRM.Artist}/{lyricsRM.Title}");
                 message = null;
             }
             catch (Exception ex)
@@ -47,6 +52,10 @@ namespace LyricsCollector.Controllers
             {
                 //Show "Loading"
                 return Ok(new { message = "Loading" });
+            }
+            else if (_lyrics.Lyrics == "")
+            {
+                return BadRequest( new { message = "No lyrics found" });
             }
             else
             {

@@ -1,6 +1,7 @@
 using LyricsCollector.Context;
 using LyricsCollector.Services;
 using LyricsCollector.Services.Contracts;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -8,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using SpotifyAPI.Web;
 using System;
 
 namespace LyricsCollector
@@ -62,6 +64,35 @@ namespace LyricsCollector
                 c.BaseAddress = new Uri(Configuration.GetValue<string>("SpotifyAPI"));
                 //c.DefaultRequestHeaders ??
             });
+
+            services.AddHttpContextAccessor();
+            services.AddSingleton(SpotifyClientConfig.CreateDefault());
+            //services.AddScoped<SpotifyClientBuilder>();
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("Spotify", policy =>
+                {
+                    policy.AuthenticationSchemes.Add("Spotify");
+                    policy.RequireAuthenticatedUser();
+                });
+            });
+            services
+                .AddAuthentication(options =>
+                {
+                    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                })
+                .AddCookie(options =>
+                {
+                    options.ExpireTimeSpan = TimeSpan.FromMinutes(50);
+                })
+                .AddSpotify(options =>
+                {
+                    options.ClientId = Configuration.GetValue<string>("SpotifyClientId");
+                    options.ClientSecret = Configuration.GetValue<string>("SpotifyClientSecret");
+                    options.CallbackPath = "/Auth/callback";
+                    options.SaveTokens = true;
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -79,7 +110,8 @@ namespace LyricsCollector
             app.UseRouting();
 
             app.UseCors("CORSPolicy");
-            
+
+            app.UseAuthentication();
             app.UseAuthorization();
 
             //app.UseMiddleware<JwtMiddleware>();

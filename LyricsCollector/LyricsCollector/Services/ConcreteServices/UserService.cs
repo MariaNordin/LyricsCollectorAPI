@@ -11,7 +11,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace LyricsCollector.Services
+namespace LyricsCollector.Services.ConcreteServices
 {
     public class UserService : IUserService
     {
