@@ -2,6 +2,7 @@
 using LyricsCollector.Services.Contracts;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -27,12 +28,26 @@ namespace LyricsCollector.Services.ConcreteServices
             try
             {
                 lyrics = await client.GetFromJsonAsync<LyricsResponseModel>($"{artist}/{title}");
+
+                if (lyrics.Lyrics != "")
+                {
+                    lyrics.Artist = ToTitleCase(artist);
+                    lyrics.Title = ToTitleCase(title);
+                }
                 return lyrics;
             }
             catch (Exception)
             {
                 return null;
             }
+        }
+
+        private static string ToTitleCase(string text)
+        {
+            //string[] subs = text.Split(' ');
+
+            TextInfo ti = CultureInfo.CurrentCulture.TextInfo;
+            return ti.ToTitleCase(text);
         }
     }
 }
