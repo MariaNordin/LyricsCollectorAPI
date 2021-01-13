@@ -10,6 +10,13 @@ namespace LyricsCollector.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
+        // GET: Hämta alla users
+        // GET: Hämta en specifik user
+        // POST: Skapa ny user
+        // PUT: Ändra uppgifter
+        // DELETE: Ta bort user
+
+        //--------------------------------------------
         //private readonly IUserService _userService;
 
         //public UserController(IUserService userService)

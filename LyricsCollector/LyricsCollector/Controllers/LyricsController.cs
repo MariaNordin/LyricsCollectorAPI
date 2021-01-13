@@ -12,6 +12,9 @@ namespace LyricsCollector.Controllers
     [ApiController]
     public class LyricsController : ControllerBase
     {
+        // POST: Lägga till låt i lista
+        // DELETE: Ta bort låt ur lista
+
         private readonly ILyricsService _lyricsService;
         private readonly IMemoryCache _memoryCache;
         private LyricsResponseModel lyrics;
