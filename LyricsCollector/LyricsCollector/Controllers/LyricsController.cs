@@ -2,9 +2,7 @@
 using LyricsCollector.Services.Contracts;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Net.Http;
-using System.Net.Http.Json;
+using Microsoft.Extensions.Caching.Memory;
 using System.Threading.Tasks;
 
 namespace LyricsCollector.Controllers
@@ -15,19 +13,24 @@ namespace LyricsCollector.Controllers
     public class LyricsController : ControllerBase
     {
         private readonly ILyricsService _lyricsService;
+        private readonly IMemoryCache _memoryCache;
         private LyricsResponseModel lyrics;
 
-        public LyricsController(ILyricsService lyricsService)
+        public LyricsController(ILyricsService lyricsService, IMemoryCache memoryCache)
         {
             _lyricsService = lyricsService;
+            _memoryCache = memoryCache;
         }
-
-        // GET: api/ApiLyrics/artist/title (from Lyrics.ovh)
         
         //POST: 
         [HttpPost()]
         public async Task<IActionResult> GetLyrics([FromBody] LyricsResponseModel lyricsRM)
         {
+            var cacheKey = $"Get_Lyrics_From_Search-{lyricsRM}";
+
+            if (_memoryCache.TryGetValue(cacheKey, out string cachedValue))
+                return Ok(cachedValue);
+
             lyrics = await _lyricsService.Search(lyricsRM.Artist, lyricsRM.Title);
 
             if (lyrics is null)
@@ -41,7 +44,7 @@ namespace LyricsCollector.Controllers
             }
             else
             {
-                //Print data
+                _memoryCache.Set(cacheKey, lyrics);
                 return Ok(lyrics);
             }
         }

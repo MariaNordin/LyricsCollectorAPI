@@ -1,5 +1,4 @@
 using LyricsCollector.Context;
-using LyricsCollector.Services;
 using LyricsCollector.Services.ConcreteServices;
 using LyricsCollector.Services.Contracts;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -29,6 +28,8 @@ namespace LyricsCollector
         {
             services.AddControllers().AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
+            services.AddMemoryCache();
 
             services.AddCors(o => o.AddPolicy("CORSPolicy", builder =>
                 builder.AllowAnyOrigin()

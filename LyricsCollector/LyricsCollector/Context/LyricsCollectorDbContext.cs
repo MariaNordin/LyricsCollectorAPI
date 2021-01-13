@@ -1,5 +1,4 @@
 ﻿using LyricsCollector.Entities;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,6 +10,7 @@ namespace LyricsCollector.Context
         public DbSet<Lyrics> Lyrics { get; set; }
         public DbSet<Collection> Collections { get; set; }
         public new DbSet<User> Users { get; set; }
+
         public LyricsCollectorDbContext(DbContextOptions<LyricsCollectorDbContext> options) : base(options)
         {
         }
@@ -23,6 +23,11 @@ namespace LyricsCollector.Context
                 .HasOne<Collection>(l => l.Collection)
                 .WithMany(c => c.Lyrics)
                 .HasForeignKey(l => l.LyricsOfCollectionId);
+
+            modelBuilder.Entity<Collection>()
+                .HasOne<User>(c => c.User)
+                .WithMany(u => u.Collections)
+                .HasForeignKey(c => c.CollectionOfUserId);
         }
     }
 }
