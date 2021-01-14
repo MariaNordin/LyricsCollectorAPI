@@ -24,9 +24,9 @@ namespace LyricsCollector.Controllers
             _lyricsService = lyricsService;
             _memoryCache = memoryCache;
         }
-        
+
         //POST: 
-        [HttpPost()]
+        [HttpPost]
         public async Task<IActionResult> GetLyrics([FromBody] LyricsResponseModel lyricsRM)
         {
             var cacheKey = $"Get_Lyrics_From_Search-{lyricsRM}";
@@ -51,5 +51,12 @@ namespace LyricsCollector.Controllers
                 return Ok(lyrics);
             }
         }
+        //[HttpPost("Save")]
+        //public async Task<IActionResult> SaveLyrics([FromBody] LyricsResponseModel lyricsRM, UserResponseModel userRM)
+        //{
+        //    var existingCollection = _context.Collections.Where(u => u.Id == userRM.CollectionId).FirstOrDefault();
+
+        //    return Ok();
+        //}
     }
 }

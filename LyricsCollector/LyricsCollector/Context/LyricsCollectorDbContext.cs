@@ -9,6 +9,7 @@ namespace LyricsCollector.Context
         public DbSet<Lyrics> Lyrics { get; set; }
         public DbSet<Collection> Collections { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<CollectionLyrics> CollectionLyrics { get; set; }
 
         public LyricsCollectorDbContext(DbContextOptions<LyricsCollectorDbContext> options) : base(options)
         {
@@ -16,17 +17,12 @@ namespace LyricsCollector.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Set relationships using Fluent API
-
-            modelBuilder.Entity<Lyrics>()
-                .HasOne<Collection>(l => l.Collection)
-                .WithMany(c => c.Lyrics)
-                .HasForeignKey(l => l.LyricsOfCollectionId);
-
             modelBuilder.Entity<Collection>()
-                .HasOne<User>(c => c.User)
+                .HasOne(c => c.User)
                 .WithMany(u => u.Collections)
                 .HasForeignKey(c => c.CollectionOfUserId);
+
+            modelBuilder.Entity<CollectionLyrics>().HasKey(cl => new { cl.LyricsId, cl.CollectionId });
         }
     }
 }
