@@ -20,8 +20,8 @@ namespace LyricsCollector.Services.ConcreteServices
         private readonly IMemoryCache _memoryCache;
         private readonly LyricsCollectorDbContext _context;
 
-        LyricsResponseModel lyrics;
-        
+        LyricsResponseModel lyrics = new LyricsResponseModel();
+
         public LyricsService(IHttpClientFactory clientFactory, LyricsCollectorDbContext context, IMemoryCache memoryCache)
         {
             _clientFactory = clientFactory;
@@ -29,71 +29,61 @@ namespace LyricsCollector.Services.ConcreteServices
             _context = context;
         }
 
-        public IEnumerable<Lyrics> GetAllLyrics()
+        public IEnumerable<Lyrics> GetDbLyrics()
         {
 
-            if (_memoryCache.TryGetValue("Lyrics", out List<Lyrics> listOfLyrics))
+            if (!_memoryCache.TryGetValue("DbLyrics", out List<Lyrics> listOfLyrics))
             {
-                _memoryCache.Set("Lyrics", _context.Lyrics.ToList());
+                _memoryCache.Set("DbLyrics", _context.Lyrics.ToList());
             }
 
-            listOfLyrics = _memoryCache.Get("Lyrics") as List<Lyrics>;
+            listOfLyrics = _memoryCache.Get("DbLyrics") as List<Lyrics>;
 
             return listOfLyrics;
         }
 
         public async Task<LyricsResponseModel> Search(string artist, string title)
         {
-            var client = _clientFactory.CreateClient("lyrics");
-
-            try
+            if (_memoryCache.TryGetValue("Lyrics", out LyricsResponseModel lyricsResponse))
+                return (lyricsResponse);
+            else
             {
-                lyrics = await client.GetFromJsonAsync<LyricsResponseModel>($"{artist}/{title}");
+                lyrics.Artist = ToTitleCase(artist);
+                lyrics.Title = ToTitleCase(title);
 
-                if (lyrics.Lyrics != "")
+                var existingLyrics = CheckIfLyricsInDb(lyrics.Artist, lyrics.Title);
+
+                if (existingLyrics != null)
                 {
-                    lyrics.Artist = ToTitleCase(artist);
-                    lyrics.Title = ToTitleCase(title);
-                    await SaveLyrics(lyrics);
+                    lyrics.Lyrics = existingLyrics.SongLyrics;
+
+                    _memoryCache.Set("Lyrics", lyrics);
+                    return lyrics;
                 }
-                return lyrics;
+                else
+                {
+                    var client = _clientFactory.CreateClient("lyrics");
+
+                    try
+                    {
+                        lyrics = await client.GetFromJsonAsync<LyricsResponseModel>($"{artist}/{title}");
+
+                        if (lyrics.Lyrics != "")
+                        {
+                            lyrics.Artist = ToTitleCase(artist);
+                            lyrics.Title = ToTitleCase(title);
+                            await SaveLyrics(lyrics);
+                        }
+                        _memoryCache.Set("Lyrics", lyrics);
+                        return lyrics;
+                    }
+                    catch (Exception)
+                    {
+                        return null;
+                    }
+                }
             }
-            catch (Exception)
-            {
-                return null;
-            }
-
-            //var existingLyrics = CheckIfLyricsInDb(artist, title);
-
-            //if (existingLyrics != null)
-            //{
-            //    lyrics.Artist = existingLyrics.Artist;
-            //    lyrics.Title = existingLyrics.Title;
-            //    lyrics.Lyrics = existingLyrics.SongLyrics;
-
-            //    return lyrics;
-            //}
-            //else
-            //{
-            //    var client = _clientFactory.CreateClient("lyrics");
-
-            //    try
-            //    {
-            //        lyrics = await client.GetFromJsonAsync<LyricsResponseModel>($"{artist}/{title}");
-
-            //        if (lyrics.Lyrics != "")
-            //        {
-            //            lyrics.Artist = ToTitleCase(artist);
-            //            lyrics.Title = ToTitleCase(title);
-            //            SaveLyricsAsync(lyrics);
-            //        }
-            //        return lyrics;
-            //    }
-            //    catch (Exception)
-            //    {
-            //        return null;
-            //    }
-            //}
+            
         }
 
         private async Task SaveLyrics(LyricsResponseModel lyricsRM)
@@ -118,7 +108,7 @@ namespace LyricsCollector.Services.ConcreteServices
 
         private Lyrics CheckIfLyricsInDb(string artist, string title)
         {
-            var lyricsInDb = GetAllLyrics();
+            var lyricsInDb = GetDbLyrics();
             var existingLyrics = lyricsInDb.Where(l => l.Artist == artist && l.Title == title).FirstOrDefault();
 
             if (existingLyrics != null)
