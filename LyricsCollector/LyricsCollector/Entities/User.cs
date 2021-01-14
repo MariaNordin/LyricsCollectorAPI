@@ -10,7 +10,7 @@ namespace LyricsCollector.Entities
         public string Hash { get; set; }
         public string Email { get; set; }
         public string Name { get; set; }
-        public ICollection<Collection> Collections { get; set; }
+        public IList<Collection> Collections { get; set; }
 
     }
 }

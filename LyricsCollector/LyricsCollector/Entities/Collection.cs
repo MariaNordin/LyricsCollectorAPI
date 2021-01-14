@@ -8,6 +8,6 @@ namespace LyricsCollector.Entities
         public string Name { get; set; }
         public int CollectionOfUserId { get; set; }
         public User User { get; set; }
-        public ICollection<Lyrics> Lyrics { get; set; }
+        public IList<CollectionLyrics> Lyrics { get; set; }
     }
 }

@@ -1,8 +1,10 @@
-﻿using LyricsCollector.Models;
+﻿using LyricsCollector.Entities;
+using LyricsCollector.Models;
 using LyricsCollector.Services.Contracts;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace LyricsCollector.Controllers
@@ -12,27 +14,27 @@ namespace LyricsCollector.Controllers
     [ApiController]
     public class LyricsController : ControllerBase
     {
+        // GET: Hitta låt => först kolla cache/db => söka mot ovh api 
+        // POST: Lägga till låt i db (samma endpoint som nedan, går till olika metoder i service?
         // POST: Lägga till låt i lista
         // DELETE: Ta bort låt ur lista
+        // GET: Alla låtar som finns i Db (ADMIN)
 
         private readonly ILyricsService _lyricsService;
-        private readonly IMemoryCache _memoryCache;
         private LyricsResponseModel lyrics;
 
-        public LyricsController(ILyricsService lyricsService, IMemoryCache memoryCache)
+        public LyricsController(ILyricsService lyricsService)
         {
             _lyricsService = lyricsService;
-            _memoryCache = memoryCache;
         }
 
+
+
         //POST: 
-        [HttpPost]
+        [HttpPost] // Borde väl vara get?
         public async Task<IActionResult> GetLyrics([FromBody] LyricsResponseModel lyricsRM)
         {
-            var cacheKey = $"Get_Lyrics_From_Search-{lyricsRM}";
-
-            if (_memoryCache.TryGetValue(cacheKey, out string cachedValue))
-                return Ok(cachedValue);
+            //var cacheKey = $"Get_Lyrics_From_Search-{lyricsRM}";
 
             lyrics = await _lyricsService.Search(lyricsRM.Artist, lyricsRM.Title);
 
@@ -47,14 +49,18 @@ namespace LyricsCollector.Controllers
             }
             else
             {
-                _memoryCache.Set(cacheKey, lyrics);
+                //_memoryCache.Set(cacheKey, lyrics);
+               
                 return Ok(lyrics);
             }
         }
+
         //[HttpPost("Save")]
-        //public async Task<IActionResult> SaveLyrics([FromBody] LyricsResponseModel lyricsRM, UserResponseModel userRM)
+        //public async Task<IActionResult> SaveToCollectionAsync([FromBody] LyricsResponseModel lyricsRM, int userId, int collectionId)
         //{
-        //    var existingCollection = _context.Collections.Where(u => u.Id == userRM.CollectionId).FirstOrDefault();
+        //    _lyricsService.
+        //    // Save in collection:
+        //    // check if lyrics in db : lägg tll annars
 
         //    return Ok();
         //}
