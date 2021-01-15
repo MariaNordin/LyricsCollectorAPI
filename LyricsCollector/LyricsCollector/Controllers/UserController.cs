@@ -12,17 +12,28 @@ namespace LyricsCollector.Controllers
     {
         // GET: Hämta alla users
         // GET: Hämta en specifik user
-        // POST: Skapa ny user
+        // POST: "Register" (ny user)
         // PUT: Ändra uppgifter
         // DELETE: Ta bort user
 
         //--------------------------------------------
-        //private readonly IUserService _userService;
+        private readonly IUserService _userService;
 
-        //public UserController(IUserService userService)
-        //{
-        //    _userService = userService; 
-        //}
+        public UserController(IUserService userService)
+        {
+            _userService = userService;
+        }
+
+        [HttpPost]
+        public IActionResult Register(UserPostModel payload)
+        {
+            var result = _userService.RegisterUser(payload);
+            return Ok(new
+            {
+                Status = "Registered",
+                result
+            });
+        }
 
         //[HttpPost("Authenticate")]
         //public IActionResult Login(UserPostModel payload)
@@ -42,15 +53,5 @@ namespace LyricsCollector.Controllers
         ////    return Ok();
         ////}
 
-        //[HttpPost]
-        //public IActionResult Register(UserPostModel payload)
-        //{
-        //    var result = _userService.RegisterUser(payload);
-        //    return Ok(new 
-        //    {
-        //        Status = "Registered",
-        //        result
-        //    });
-        //}
     }
 }
