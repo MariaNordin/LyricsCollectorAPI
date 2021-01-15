@@ -67,6 +67,7 @@ namespace LyricsCollector
             });
 
             services.AddTransient<ILyricsService, LyricsService>();
+            services.AddTransient<IUserService, UserService>();
 
             services.AddHttpContextAccessor();
             //services.AddSingleton(SpotifyClientConfig.CreateDefault());

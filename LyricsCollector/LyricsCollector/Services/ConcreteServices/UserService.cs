@@ -3,6 +3,7 @@ using LyricsCollector.Entities;
 using LyricsCollector.Models;
 using LyricsCollector.Services.Contracts;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
@@ -10,6 +11,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace LyricsCollector.Services.ConcreteServices
 {
@@ -22,7 +24,37 @@ namespace LyricsCollector.Services.ConcreteServices
             _context = context;
         }
 
-        public AuthenticateResponse Authenticate(UserPostModel user)
+        public User RegisterUser(UserPostModel userPM)
+        {
+            //User user = 
+            var saltByteArray = new byte[128 / 8];
+
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(saltByteArray);
+            }
+
+            var base64StringOfSalt = Convert.ToBase64String(saltByteArray);
+
+            var hashedPw = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+                password: userPM.Password,
+                salt: saltByteArray,
+                prf: KeyDerivationPrf.HMACSHA1,
+                iterationCount: 100000,
+                numBytesRequested: 256 / 8
+                ));
+
+            return new User
+            {
+                UserName = userPM.UserName,
+                Salt = base64StringOfSalt,
+                Hash = hashedPw,
+                Email = userPM.Email,
+                Name = userPM.Name
+            };
+        }
+
+        public AuthenticateResponseModel Authenticate(UserPostModel user)
         {
             var existingUser = _context.Users.Where(u => u.UserName == user.UserName).FirstOrDefault();
 
@@ -30,7 +62,7 @@ namespace LyricsCollector.Services.ConcreteServices
 
             var token = GenerateJwtToken(existingUser);
 
-            return new AuthenticateResponse(existingUser, token);
+            return new AuthenticateResponseModel(existingUser, token);
         }
 
         private static string GenerateJwtToken(User existingUser)
@@ -40,7 +72,7 @@ namespace LyricsCollector.Services.ConcreteServices
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new[] 
+                Subject = new ClaimsIdentity(new[]
                 { new Claim("Username", existingUser.UserName), new Claim("Group", "Admin")}),
                 Expires = DateTime.Now.AddDays(7),
                 Issuer = "https://localhost:5001",
@@ -54,27 +86,6 @@ namespace LyricsCollector.Services.ConcreteServices
             return result;
         }
 
-        public User RegisterUser(UserPostModel userPM)
-        {
-            var saltByteArray = new byte[128/8];
 
-            using(var rng = RandomNumberGenerator.Create())
-            {
-                rng.GetBytes(saltByteArray);
-            }
-
-            var base64StringOfSalt = Convert.ToBase64String(saltByteArray);
-            //var base64StringOfSaltHashcode = Convert.ToBase64String(saltByteArray).GetHashCode();
-
-            var hashedPw = Convert.ToBase64String(KeyDerivation.Pbkdf2(
-                password: userPM.Password,
-                salt: saltByteArray,
-                prf: KeyDerivationPrf.HMACSHA1,
-                iterationCount: 100000,
-                numBytesRequested: 256/8
-                ));
-
-            return new User { UserName = userPM.UserName, Salt = base64StringOfSalt, Hash = hashedPw, Email = userPM.Email, Name = userPM.Name};
-        }
     }
 }

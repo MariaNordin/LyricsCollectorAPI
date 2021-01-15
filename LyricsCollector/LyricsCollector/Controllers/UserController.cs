@@ -1,8 +1,11 @@
 ﻿using LyricsCollector.Context;
 using LyricsCollector.Models;
 using LyricsCollector.Services.Contracts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Threading.Tasks;
 
 namespace LyricsCollector.Controllers
 {
@@ -18,40 +21,52 @@ namespace LyricsCollector.Controllers
 
         //--------------------------------------------
         private readonly IUserService _userService;
+        private readonly LyricsCollectorDbContext _context;
 
-        public UserController(IUserService userService)
+        public UserController(IUserService userService, LyricsCollectorDbContext context)
         {
             _userService = userService;
+            _context = context;
         }
 
         [HttpPost]
-        public IActionResult Register(UserPostModel payload)
+        public async Task<IActionResult> Register(UserPostModel payload)
         {
-            var result = _userService.RegisterUser(payload);
+            var user = _userService.RegisterUser(payload);
+            _context.Users.Add(user);
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
             return Ok(new
             {
-                Status = "Registered",
-                result
+                Status = "Registered"
             });
         }
 
-        //[HttpPost("Authenticate")]
-        //public IActionResult Login(UserPostModel payload)
+        [Authorize]
+        [HttpPost("Authenticate")]
+        public IActionResult Login(UserPostModel payload)
+        {
+            var result = _userService.Authenticate(payload);
+
+            if (result == null) return BadRequest(new { Message = "Username or password was incorrect." });
+
+            return Ok(result);
+        }
+
+        //[HttpGet]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        //public IActionResult GetUsers()
         //{
-        //    var result = _userService.Authenticate(payload);
-
-        //    if (result == null) return BadRequest(new { Message = "Username or password was incorrect." });
-
-        //    return Ok(result);
+        //    var users = _userService.G
+        //    return Ok();
         //}
-
-        ////[HttpGet]
-        ////[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        ////public IActionResult GetUsers()
-        ////{
-        ////    var users = _userService.G
-        ////    return Ok();
-        ////}
 
     }
 }

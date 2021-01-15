@@ -29,19 +29,6 @@ namespace LyricsCollector.Services.ConcreteServices
             _context = context;
         }
 
-        public IEnumerable<Lyrics> GetDbLyrics()
-        {
-
-            if (!_memoryCache.TryGetValue("DbLyrics", out List<Lyrics> listOfLyrics))
-            {
-                _memoryCache.Set("DbLyrics", _context.Lyrics.ToList());
-            }
-
-            listOfLyrics = _memoryCache.Get("DbLyrics") as List<Lyrics>;
-
-            return listOfLyrics;
-        }
-
         public async Task<LyricsResponseModel> Search(string artist, string title)
         {
             var dbLyrics = CheckIfLyricsInDb(artist, title);
@@ -61,7 +48,7 @@ namespace LyricsCollector.Services.ConcreteServices
                     {
                         lyrics.Artist = ToTitleCase(artist);
                         lyrics.Title = ToTitleCase(title);
-                        await SaveLyrics(lyrics);
+                        await SaveLyricsToDb(lyrics);
                     }
                     _memoryCache.Set("DbLyrics", _context.Lyrics.ToList());
                     return lyrics;
@@ -70,12 +57,23 @@ namespace LyricsCollector.Services.ConcreteServices
                 {
                     return null;
                 }
-
             }
-
         }
 
-        private async Task SaveLyrics(LyricsResponseModel lyricsRM)
+        public IEnumerable<Lyrics> GetDbLyrics()
+        {
+
+            if (!_memoryCache.TryGetValue("DbLyrics", out List<Lyrics> listOfLyrics))
+            {
+                _memoryCache.Set("DbLyrics", _context.Lyrics.ToList());
+            }
+
+            listOfLyrics = _memoryCache.Get("DbLyrics") as List<Lyrics>;
+
+            return listOfLyrics;
+        }
+
+        private async Task SaveLyricsToDb(LyricsResponseModel lyricsRM)
         {
             var lyrics = new Lyrics
             {
@@ -114,7 +112,25 @@ namespace LyricsCollector.Services.ConcreteServices
             return null;
         }
 
-        //public Task<string> SaveToListAsync(Lyrics lyrics, int userId, int collectionId)
+        public async Task<bool> SaveCollectionLyricsAsync(LyricsResponseModel lyrics, int userId, int collectionId) {
+
+            var collectionLyrics = new CollectionLyrics();
+
+            _context.CollectionLyrics.Add(collectionLyrics);
+
+            try
+            {
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+                //logg
+            }
+
+            //return new ( status: "Lyrics saved");
+        }
         //{
         //    var existingCollection = _context.Collections.Where(c => c.CollectionOfUserId == userId).FirstOrDefault();
 

@@ -2,12 +2,12 @@
 
 namespace LyricsCollector.Models
 {
-    public class AuthenticateResponse
+    public class AuthenticateResponseModel
     {
         public User User { get; set; }
         public string Token { get; set; }
 
-        public AuthenticateResponse(User user, string token)
+        public AuthenticateResponseModel(User user, string token)
         {
             User = user;
             Token = token;

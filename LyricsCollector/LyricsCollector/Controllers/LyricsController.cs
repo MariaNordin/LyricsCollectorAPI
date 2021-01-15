@@ -1,6 +1,7 @@
 ﻿using LyricsCollector.Entities;
 using LyricsCollector.Models;
 using LyricsCollector.Services.Contracts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
@@ -14,8 +15,7 @@ namespace LyricsCollector.Controllers
     [ApiController]
     public class LyricsController : ControllerBase
     {
-        // GET: Hitta låt => först kolla cache/db => söka mot ovh api 
-        // POST: Lägga till låt i db (samma endpoint som nedan, går till olika metoder i service?
+        // Authorize:
         // POST: Lägga till låt i lista
         // DELETE: Ta bort låt ur lista
         // GET: Alla låtar som finns i Db (ADMIN)
@@ -27,8 +27,6 @@ namespace LyricsCollector.Controllers
         {
             _lyricsService = lyricsService;
         }
-
-
 
         //POST: 
         [HttpPost] // Borde väl vara get? japp och inte responseModel utan ta in string?
@@ -55,14 +53,23 @@ namespace LyricsCollector.Controllers
             }
         }
 
-        //[HttpPost("Save")]
-        //public async Task<IActionResult> SaveToCollectionAsync([FromBody] LyricsResponseModel lyricsRM, int userId, int collectionId)
-        //{
-        //    _lyricsService.
-        //    // Save in collection:
-        //    // check if lyrics in db : lägg tll annars
+        [Authorize]
+        [HttpPost("Save")]
+        public async Task<IActionResult> SaveToCollectionAsync([FromBody] LyricsResponseModel lyricsRM, int userId, int collectionId)
+        {
+            var result = await _lyricsService.SaveCollectionLyricsAsync(lyricsRM, userId, collectionId);
+            // Save in collection:
+            // check if lyrics in db : lägg tll annars
 
-        //    return Ok();
-        //}
+            if (result)
+            {
+                return Ok(new
+                {
+                    Status = "Saved lyrics to list"
+                });
+            }
+            return BadRequest(new { Status = "Saving lyrics to list failed." });
+
+        }
     }
 }
