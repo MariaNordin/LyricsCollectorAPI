@@ -29,6 +29,7 @@ namespace LyricsCollector.Controllers
         }
 
         //POST: 
+        [Authorize]
         [HttpPost] // Borde väl vara get? japp och inte responseModel utan ta in string?
         public async Task<IActionResult> GetLyrics([FromBody] LyricsResponseModel lyricsRM)
         {

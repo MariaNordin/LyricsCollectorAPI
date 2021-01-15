@@ -49,7 +49,6 @@ namespace LyricsCollector.Controllers
             });
         }
 
-        [Authorize]
         [HttpPost("Authenticate")]
         public IActionResult Login(UserPostModel payload)
         {

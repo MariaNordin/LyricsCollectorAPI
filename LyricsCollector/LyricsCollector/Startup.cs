@@ -1,7 +1,9 @@
 using LyricsCollector.Context;
+using LyricsCollector.Middleware;
 using LyricsCollector.Services.ConcreteServices;
 using LyricsCollector.Services.Contracts;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -44,12 +46,12 @@ namespace LyricsCollector
                 options.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"]);
             });
 
-            //services.AddAuthentication(options =>
-            //{
-            //    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            //    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            //    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-            //}).AddJwtBearer();
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer();
 
             services.AddSwaggerGen(c =>
             {
@@ -118,7 +120,7 @@ namespace LyricsCollector
             app.UseAuthentication();
             app.UseAuthorization();
 
-            //app.UseMiddleware<JwtMiddleware>();
+            app.UseMiddleware<JwtMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {

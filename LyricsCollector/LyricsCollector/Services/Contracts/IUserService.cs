@@ -6,6 +6,6 @@ namespace LyricsCollector.Services.Contracts
     public interface IUserService
     {
         public User RegisterUser(UserPostModel user);
-        AuthenticateResponseModel Authenticate(UserPostModel user);
+        UserResponseModel Authenticate(UserPostModel user);
     }
 }

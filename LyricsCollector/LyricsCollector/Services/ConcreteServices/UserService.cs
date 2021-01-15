@@ -47,6 +47,7 @@ namespace LyricsCollector.Services.ConcreteServices
             return new User
             {
                 UserName = userPM.UserName,
+                Password = userPM.Password,
                 Salt = base64StringOfSalt,
                 Hash = hashedPw,
                 Email = userPM.Email,
@@ -54,7 +55,7 @@ namespace LyricsCollector.Services.ConcreteServices
             };
         }
 
-        public AuthenticateResponseModel Authenticate(UserPostModel user)
+        public UserResponseModel Authenticate(UserPostModel user)
         {
             var existingUser = _context.Users.Where(u => u.UserName == user.UserName).FirstOrDefault();
 
@@ -62,21 +63,22 @@ namespace LyricsCollector.Services.ConcreteServices
 
             var token = GenerateJwtToken(existingUser);
 
-            return new AuthenticateResponseModel(existingUser, token);
+            return new UserResponseModel { Name = existingUser.Name, Email = existingUser.Email, Collections = existingUser.Collections };
         }
 
         private static string GenerateJwtToken(User existingUser)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes("asjdkflö"); //borde ligga i någon config
+            var key = Encoding.ASCII.GetBytes("D7If38frfdFHVmRPoY68hlQl53xdMT3T"); //borde ligga i någon config
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new[]
-                { new Claim("Username", existingUser.UserName), new Claim("Group", "Admin")}),
+                Subject = new ClaimsIdentity(new[] {
+                    new Claim("Username", existingUser.UserName),
+                    new Claim("Group", "Admin")}),
                 Expires = DateTime.Now.AddDays(7),
-                Issuer = "https://localhost:5001",
-                Audience = "Nån app",
+                Issuer = "https://localhost:44307",
+                Audience = "LyricsCollector",
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 
