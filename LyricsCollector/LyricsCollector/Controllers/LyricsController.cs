@@ -1,6 +1,7 @@
 ﻿using LyricsCollector.Entities;
 using LyricsCollector.Models;
 using LyricsCollector.Services.Contracts;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -29,7 +30,7 @@ namespace LyricsCollector.Controllers
         }
 
         //POST: 
-        [Authorize]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost] // Borde väl vara get? japp och inte responseModel utan ta in string?
         public async Task<IActionResult> GetLyrics([FromBody] LyricsResponseModel lyricsRM)
         {

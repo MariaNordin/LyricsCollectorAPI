@@ -4,6 +4,7 @@ using LyricsCollector.Models;
 using LyricsCollector.Services.Contracts;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
@@ -46,7 +47,6 @@ namespace LyricsCollector.Services.ConcreteServices
 
             return new User
             {
-                UserName = userPM.UserName,
                 Password = userPM.Password,
                 Salt = base64StringOfSalt,
                 Hash = hashedPw,
@@ -55,16 +55,18 @@ namespace LyricsCollector.Services.ConcreteServices
             };
         }
 
-        public UserResponseModel Authenticate(UserPostModel user)
-        {
-            var existingUser = _context.Users.Where(u => u.UserName == user.UserName).FirstOrDefault();
+        //public async Task<ActionResult<UserWithToken>> Authenticate(UserPostModel user)
+        //{
+        //    var existingUser = await _context.Users
+        //        .Where(u => u.UserName == user.UserName
+        //            && u.Password == u.Password).FirstOrDefaultAsync();
 
-            if (existingUser == null) return null;
+        //    if (existingUser == null) return null;
 
-            var token = GenerateJwtToken(existingUser);
+        //    var token = GenerateJwtToken(existingUser);
 
-            return new UserResponseModel { Name = existingUser.Name, Email = existingUser.Email, Collections = existingUser.Collections };
-        }
+        //    return new UserResponseModel { Name = existingUser.Name, Email = existingUser.Email, Collections = existingUser.Collections };
+        //}
 
         private static string GenerateJwtToken(User existingUser)
         {
@@ -73,12 +75,11 @@ namespace LyricsCollector.Services.ConcreteServices
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new[] {
-                    new Claim("Username", existingUser.UserName),
-                    new Claim("Group", "Admin")}),
+                Subject = new ClaimsIdentity(new[]
+                {
+                    new Claim(ClaimTypes.Name, existingUser.Email)
+                }),
                 Expires = DateTime.Now.AddDays(7),
-                Issuer = "https://localhost:44307",
-                Audience = "LyricsCollector",
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 

@@ -45,9 +45,9 @@ namespace LyricsCollector.Middleware
             }, out SecurityToken validatedToken);
 
             var jwtToken = (JwtSecurityToken)validatedToken;
-            var userName = jwtToken.Claims.First(c => c.Type == "UserName");
+            var email = jwtToken.Claims.First(c => c.Type == "Email");
 
-            context.Items["User"] = userName;
+            context.Items["User"] = email;
         }
     }
 }

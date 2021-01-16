@@ -1,5 +1,6 @@
 using LyricsCollector.Context;
 using LyricsCollector.Middleware;
+using LyricsCollector.Models;
 using LyricsCollector.Services.ConcreteServices;
 using LyricsCollector.Services.Contracts;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SpotifyAPI.Web;
 using System;
+using System.Text;
 
 namespace LyricsCollector
 {
@@ -46,12 +49,29 @@ namespace LyricsCollector
                 options.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"]);
             });
 
+            var jwtSection = Configuration.GetSection("JWTSettings");
+            services.Configure<JWTSettings>(jwtSection);
+
+            var appSettings = jwtSection.Get<JWTSettings>();
+            var key = Encoding.ASCII.GetBytes(appSettings.SecretKey);
+
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer();
+                //options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(x =>
+           {
+               x.RequireHttpsMetadata = true;
+               x.SaveToken = true;
+               x.TokenValidationParameters = new TokenValidationParameters
+               {
+                   ValidateIssuerSigningKey = true,
+                   IssuerSigningKey = new SymmetricSecurityKey(key),
+                   ValidateIssuer = false,
+                   ValidateAudience = false
+               };
+           });
 
             services.AddSwaggerGen(c =>
             {
@@ -62,6 +82,7 @@ namespace LyricsCollector
             services.AddHttpClient("lyrics", c =>
             {
                 c.BaseAddress = new Uri(Configuration.GetValue<string>("LyricsAPI"));
+                c.DefaultRequestHeaders.Add("Authorization", "Bearer");
             });
             services.AddHttpClient("spotify", c =>
             {
@@ -120,7 +141,7 @@ namespace LyricsCollector
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseMiddleware<JwtMiddleware>();
+            //app.UseMiddleware<JwtMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {
