@@ -1,5 +1,4 @@
 using LyricsCollector.Context;
-using LyricsCollector.Middleware;
 using LyricsCollector.Models;
 using LyricsCollector.Services.ConcreteServices;
 using LyricsCollector.Services.Contracts;
@@ -140,8 +139,6 @@ namespace LyricsCollector
 
             app.UseAuthentication();
             app.UseAuthorization();
-
-            //app.UseMiddleware<JwtMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {

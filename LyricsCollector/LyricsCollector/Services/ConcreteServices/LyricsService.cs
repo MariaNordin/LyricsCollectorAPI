@@ -49,8 +49,8 @@ namespace LyricsCollector.Services.ConcreteServices
                         lyrics.Artist = ToTitleCase(artist);
                         lyrics.Title = ToTitleCase(title);
                         await SaveLyricsToDb(lyrics);
+                        _memoryCache.Set("DbLyrics", _context.Lyrics.ToList());
                     }
-                    _memoryCache.Set("DbLyrics", _context.Lyrics.ToList());
                     return lyrics;
                 }
                 catch (Exception)
