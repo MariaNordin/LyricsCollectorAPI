@@ -31,7 +31,7 @@ namespace LyricsCollector.Controllers
 
         //POST: 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        [HttpPost] // Borde väl vara get? japp och inte responseModel utan ta in string?
+        [HttpPost]
         public async Task<IActionResult> GetLyrics([FromBody] LyricsResponseModel lyricsRM)
         {
             //var cacheKey = $"Get_Lyrics_From_Search-{lyricsRM}";

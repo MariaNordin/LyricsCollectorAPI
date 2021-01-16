@@ -52,32 +52,6 @@ namespace LyricsCollector.Controllers
                 return NotFound(new { Message = "Username or password was incorrect." });
             }
             return Ok(userWithToken);
-
-            //var tokenHandler = new JwtSecurityTokenHandler();
-            //var key = Encoding.ASCII.GetBytes(_jwtSettings.SecretKey);
-            //var tokenDescriptor = new SecurityTokenDescriptor
-            //{
-            //    Subject = new ClaimsIdentity(new Claim[]
-            //    {
-            //        new Claim(ClaimTypes.Name, existingUser.Email)
-            //    }),
-            //    Expires = DateTime.Now.AddDays(7),
-            //    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), 
-            //    SecurityAlgorithms.HmacSha256Signature)
-            //};
-            //var token = tokenHandler.CreateToken(tokenDescriptor);
-            //userWithToken.User.Token = tokenHandler.WriteToken(token);
-
-            //return Ok(userWithToken);
         }
-
-        //[HttpGet]
-        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        //public IActionResult GetUsers()
-        //{
-        //    var users = _userService.G
-        //    return Ok();
-        //}
-
     }
 }
