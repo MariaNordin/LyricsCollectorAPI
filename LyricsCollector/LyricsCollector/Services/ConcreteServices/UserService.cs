@@ -71,18 +71,27 @@ namespace LyricsCollector.Services.ConcreteServices
 
         }
 
-        public async Task<ActionResult<UserWithToken>> Authenticate(UserPostModel userPM)
+        public async Task<UserWithToken> Authenticate(UserPostModel userPM)
         {
             var existingUser = await _context.Users.Where
                 (u => u.Email == userPM.Email && u.Password == userPM.Password).FirstOrDefaultAsync();
 
-            UserWithToken userWithToken = new UserWithToken(existingUser);
+            if(existingUser == null) return null;
 
-            if (userWithToken == null)
+            var token = GenerateJwtToken(existingUser);
+
+            var authenticatedUser = new UserResponseModel
             {
-                return null;
-            }
+                Email = existingUser.Email,
+                Name = existingUser.Name,
+                Collections = existingUser.Collections
+            };
 
+            return new UserWithToken(authenticatedUser, token); 
+        }
+
+        private string GenerateJwtToken(User existingUser)
+        {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_jwtSettings.SecretKey);
             var tokenDescriptor = new SecurityTokenDescriptor
@@ -96,9 +105,9 @@ namespace LyricsCollector.Services.ConcreteServices
                 SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
-            userWithToken.User.Token = tokenHandler.WriteToken(token);
+            var result = tokenHandler.WriteToken(token);
 
-            return userWithToken;
+            return result;
         }
     }
 }

@@ -4,11 +4,13 @@ namespace LyricsCollector.Models
 {
     public class UserWithToken
     {
-        public User User { get; set; }
+        public UserResponseModel User { get; set; }
+        public string Token { get; set; }
 
-        public UserWithToken(User user)
+        public UserWithToken(UserResponseModel user, string token)
         {
             User = user;
+            Token = token;
         }
     }
 }

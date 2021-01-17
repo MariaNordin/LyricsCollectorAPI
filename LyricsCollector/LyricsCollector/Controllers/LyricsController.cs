@@ -30,7 +30,7 @@ namespace LyricsCollector.Controllers
         }
 
         //POST: 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost]
         public async Task<IActionResult> GetLyrics([FromBody] LyricsResponseModel lyricsRM)
         {

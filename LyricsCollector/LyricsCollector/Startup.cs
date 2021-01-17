@@ -58,19 +58,18 @@ namespace LyricsCollector
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                //options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
             }).AddJwtBearer(x =>
-           {
-               x.RequireHttpsMetadata = true;
-               x.SaveToken = true;
-               x.TokenValidationParameters = new TokenValidationParameters
                {
-                   ValidateIssuerSigningKey = true,
-                   IssuerSigningKey = new SymmetricSecurityKey(key),
-                   ValidateIssuer = false,
-                   ValidateAudience = false
-               };
-           });
+                   x.RequireHttpsMetadata = true;
+                   x.SaveToken = true;
+                   x.TokenValidationParameters = new TokenValidationParameters
+                   {
+                       ValidateIssuerSigningKey = true,
+                       IssuerSigningKey = new SymmetricSecurityKey(key),
+                       ValidateIssuer = false,
+                       ValidateAudience = false
+                   };
+               });
 
             services.AddSwaggerGen(c =>
             {
