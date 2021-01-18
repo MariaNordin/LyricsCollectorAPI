@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using LyricsCollector.Models;
 using System.Threading.Tasks;
 
 namespace LyricsCollector.Services.Contracts
 {
-    interface ISpotifyService
+    public interface ISpotifyService
     {
         public Task<SpotifyTokenModel> GetAccessToken();
         public Task<TrackResponseModel> GetThisTrack();
         public Task<UserResponseModel> GetUserIdAsync(string userName, string token);
-        public Task<PlaylistsResponseModel> GetPlaylistsAsync(string token, string userId);
     }
-}
 }
