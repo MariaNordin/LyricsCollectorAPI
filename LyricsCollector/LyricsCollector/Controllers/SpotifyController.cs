@@ -36,6 +36,15 @@ namespace LyricsCollector.Controllers
             }
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Search([FromBody] LyricsResponseModel lyrics)
+        {
+            var searchResponse = await _spotifyService.Search(lyrics.Artist, lyrics.Title);
+
+            return Ok(searchResponse);
+        }
+
+
         [HttpGet("GetThisTrack")]
         public async Task<IActionResult> GetTrackAsync()
         {
@@ -43,9 +52,6 @@ namespace LyricsCollector.Controllers
 
             return Ok(track);
         }
-
-        //POST:
-        //[HttpPost()]
 
         //GET: api/Spotify (Authorization)
         //[HttpGet ("oauth")]
@@ -92,12 +98,6 @@ namespace LyricsCollector.Controllers
             else return BadRequest(new { error = "Getting User from Spotify failed" });
 
         }
-
-        //[HttpGet("searchString")]
-        //public async Task<IActionResult> SearchTrackAsync(string searchString)
-        //{
-
-        //} 
 
         //[HttpGet("{userId}")]
         //public async Task<IActionResult> GetUsersPlaylistsAsync(string userId, string token)

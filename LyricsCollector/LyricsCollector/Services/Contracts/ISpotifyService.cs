@@ -7,6 +7,7 @@ namespace LyricsCollector.Services.Contracts
     {
         public Task<SpotifyTokenModel> GetAccessToken();
         public Task<TrackResponseModel> GetThisTrack();
+        public Task<SearchResponseModel> Search(string artist, string title);
         public Task<UserResponseModel> GetUserIdAsync(string userName, string token);
     }
 }

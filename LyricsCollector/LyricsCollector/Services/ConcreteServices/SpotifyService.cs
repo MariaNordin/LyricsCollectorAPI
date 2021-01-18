@@ -23,9 +23,30 @@ namespace LyricsCollector.Services.ConcreteServices
             _clientFactory = clientFactory;
         }
 
-        public async Task<SearchResponseModel> Search()
+        public async Task<SearchResponseModel> Search(string artist, string title)
         {
+            if (currentToken == null) await GetAccessToken();
 
+            var request = new HttpRequestMessage(HttpMethod.Get,
+                "search");
+            request.Headers.Add("Authorization", $"Bearer {currentToken}");
+            request.Headers.Add("Accept", "application/json");
+            request.Headers.Add("Content-Type", "application/json");
+
+            request.Content = new FormUrlEncodedContent(new Dictionary<string, string>
+            {
+                { "q", $"{artist}{title}" },
+                { "type", "track" }
+            });
+
+            var client = _clientFactory.CreateClient("spotify");
+
+            HttpResponseMessage response = await client.SendAsync(request);
+
+            if (response.IsSuccessStatusCode)
+            {
+
+            }
         }
 
         public async Task<TrackResponseModel> GetThisTrack()
