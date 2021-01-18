@@ -1,43 +1,45 @@
 ﻿using LyricsCollector.Models;
 using LyricsCollector.Services.Contracts;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace LyricsCollector.Services.ConcreteServices
 {
     public class SpotifyService : ISpotifyService
     {
         private readonly IHttpClientFactory _clientFactory;
+        //private readonly SpotifyCredentials _credentials;
+
         SpotifyTokenModel token;
         TrackResponseModel track;
-        UserResponseModel _user;
+        SearchResponseModel trackResponse;
+        UserResponseModel user;
 
         private string currentToken;
 
         public SpotifyService(IHttpClientFactory clientFactory)
         {
             _clientFactory = clientFactory;
+            //_credentials = credentials.Value;
         }
 
         public async Task<SearchResponseModel> Search(string artist, string title)
         {
+            var queryString = HttpUtility.UrlEncode($"{artist} {title}");
+
             if (currentToken == null) await GetAccessToken();
 
             var request = new HttpRequestMessage(HttpMethod.Get,
-                "search");
+                $"search?q={queryString}&type=track&limit=1");
             request.Headers.Add("Authorization", $"Bearer {currentToken}");
             request.Headers.Add("Accept", "application/json");
-            request.Headers.Add("Content-Type", "application/json");
-
-            request.Content = new FormUrlEncodedContent(new Dictionary<string, string>
-            {
-                { "q", $"{artist}{title}" },
-                { "type", "track" }
-            });
 
             var client = _clientFactory.CreateClient("spotify");
 
@@ -45,8 +47,10 @@ namespace LyricsCollector.Services.ConcreteServices
 
             if (response.IsSuccessStatusCode)
             {
-
+                trackResponse = await response.Content.ReadFromJsonAsync<SearchResponseModel>();
+                return trackResponse;
             }
+            else return null;
         }
 
         public async Task<TrackResponseModel> GetThisTrack()
@@ -75,7 +79,8 @@ namespace LyricsCollector.Services.ConcreteServices
         {
             var clientId = "7e335aa2c7ed476abf4de347ae1c1ddc";
             var clientSecret = "1e32bdd892ad40acac7966727e3a101e";
-            var credentials = Convert.ToBase64String(Encoding.UTF8.GetBytes(string.Format($"{clientId}:{clientSecret}")));
+            var credentials = Convert.ToBase64String(Encoding.UTF8.GetBytes(
+                string.Format($"{clientId}:{clientSecret}")));
 
             var request = new HttpRequestMessage(HttpMethod.Post,
             "https://accounts.spotify.com/api/token");
@@ -171,8 +176,8 @@ namespace LyricsCollector.Services.ConcreteServices
 
             if (response.IsSuccessStatusCode)
             {
-                _user = await response.Content.ReadFromJsonAsync<UserResponseModel>();
-                return _user;
+                user = await response.Content.ReadFromJsonAsync<UserResponseModel>();
+                return user;
             }
             else return null;
         } 

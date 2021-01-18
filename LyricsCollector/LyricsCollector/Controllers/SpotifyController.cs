@@ -36,7 +36,7 @@ namespace LyricsCollector.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost("Search")]
         public async Task<IActionResult> Search([FromBody] LyricsResponseModel lyrics)
         {
             var searchResponse = await _spotifyService.Search(lyrics.Artist, lyrics.Title);

@@ -41,12 +41,13 @@ namespace LyricsCollector
                 .AllowAnyHeader()
             ));
 
-            //services.AddSingleton<ISpotifyService, SpotifyService>();
-
             services.AddDbContext<LyricsCollectorDbContext>(options =>
             {
                 options.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"]);
             });
+
+            //var spotifySection = Configuration.GetSection("SpotifyCredentials");
+            //services.Configure<SpotifyCredentials>(spotifySection);
 
             var jwtSection = Configuration.GetSection("JWTSettings");
             services.Configure<JWTSettings>(jwtSection);
@@ -89,8 +90,10 @@ namespace LyricsCollector
 
             services.AddTransient<ILyricsService, LyricsService>();
             services.AddTransient<IUserService, UserService>();
+            services.AddTransient<ISpotifyService, SpotifyService>();
 
             services.AddHttpContextAccessor();
+            
             //services.AddSingleton(SpotifyClientConfig.CreateDefault());
             //services.AddScoped<SpotifyClientBuilder>();
 
