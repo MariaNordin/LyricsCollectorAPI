@@ -21,6 +21,7 @@ namespace LyricsCollector.Services.ConcreteServices
         TrackResponseModel track;
         SearchResponseModel trackResponse;
         UserResponseModel user;
+        Image imgUrl;
 
         private string currentToken;
 
@@ -30,7 +31,7 @@ namespace LyricsCollector.Services.ConcreteServices
             //_credentials = credentials.Value;
         }
 
-        public async Task<SearchResponseModel> Search(string artist, string title)
+        public async Task<Image> Search(string artist, string title)
         {
             var queryString = HttpUtility.UrlEncode($"{artist} {title}");
 
@@ -48,7 +49,10 @@ namespace LyricsCollector.Services.ConcreteServices
             if (response.IsSuccessStatusCode)
             {
                 trackResponse = await response.Content.ReadFromJsonAsync<SearchResponseModel>();
-                return trackResponse;
+
+                imgUrl = trackResponse.Track.Items[0].Album.Images[1];
+
+                return imgUrl;
             }
             else return null;
         }

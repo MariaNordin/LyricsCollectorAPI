@@ -46,12 +46,8 @@ namespace LyricsCollector
                 options.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"]);
             });
 
-            //var spotifySection = Configuration.GetSection("SpotifyCredentials");
-            //services.Configure<SpotifyCredentials>(spotifySection);
-
             var jwtSection = Configuration.GetSection("JWTSettings");
             services.Configure<JWTSettings>(jwtSection);
-
             var appSettings = jwtSection.Get<JWTSettings>();
             var key = Encoding.ASCII.GetBytes(appSettings.SecretKey);
 
