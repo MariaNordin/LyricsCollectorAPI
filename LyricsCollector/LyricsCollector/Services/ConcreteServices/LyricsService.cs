@@ -40,23 +40,20 @@ namespace LyricsCollector.Services.ConcreteServices
             {
                 var client = _clientFactory.CreateClient("lyrics");
 
-                try
+                try // ?
                 {
                     lyrics = await client.GetFromJsonAsync<LyricsResponseModel>($"{artist}/{title}");
-
-                    if (lyrics.Lyrics != "")
-                    {
-                        lyrics.Artist = ToTitleCase(artist);
-                        lyrics.Title = ToTitleCase(title);
-                        await SaveLyricsToDb(lyrics);
-                        _memoryCache.Set("DbLyrics", _context.Lyrics.ToList());
-                    }
-                    return lyrics;
                 }
                 catch (Exception)
                 {
-                    return null;
+                    throw;
                 }
+
+                lyrics.Artist = ToTitleCase(artist);
+                lyrics.Title = ToTitleCase(title);
+                await SaveLyricsToDb(lyrics);
+                _memoryCache.Set("DbLyrics", _context.Lyrics.ToList());
+                return lyrics;
             }
         }
 
@@ -83,13 +80,13 @@ namespace LyricsCollector.Services.ConcreteServices
             };
             _context.Lyrics.Add(lyrics);
 
-            try
+            try //behövs denna ens? om jag ska stänga db connection
             {
                 await _context.SaveChangesAsync();
             }
             catch (Exception)
             {
-                // log 
+                throw; 
             }
         }
 

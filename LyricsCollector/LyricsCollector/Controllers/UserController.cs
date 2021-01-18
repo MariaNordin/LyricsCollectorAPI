@@ -21,37 +21,49 @@ namespace LyricsCollector.Controllers
 
         //--------------------------------------------
         private readonly IUserService _userService;
-        private readonly LyricsCollectorDbContext _context;
 
-
-        public UserController(IUserService userService, LyricsCollectorDbContext context)
+        public UserController(IUserService userService)
         {
             _userService = userService;
-            _context = context;
         }
 
-        [HttpPost]
+        [HttpPost("Register")]
         public async Task<IActionResult> Register(UserPostModel payload)
         {
-            var user = await _userService.RegisterUser(payload);
-
-            if (user != null)
+            //Kolla user input här?
+            try
             {
-                return Ok(user);
+                var result = await _userService.RegisterUser(payload);
             }
-            return BadRequest();
+            catch (Exception ex)
+            {
+                // logg
+                return BadRequest(ex.Message);
+            }
+            return Ok();
         }
 
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] UserPostModel userPM)
         {
-            var userWithToken = await _userService.Authenticate(userPM);
+            UserWithToken userWithToken;
 
-            if (userWithToken == null)
+            try
             {
-                return NotFound(new { Message = "Username or password was incorrect." });
+                userWithToken = await _userService.Authenticate(userPM);
+
+                if (userWithToken != null)
+                {
+                    return Ok(userWithToken);
+                }
+                return NotFound();
+
             }
-            return Ok(userWithToken);
+            catch (Exception ex)
+            {
+                // logg
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

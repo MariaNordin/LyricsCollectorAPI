@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -29,33 +30,24 @@ namespace LyricsCollector.Controllers
             _lyricsService = lyricsService;
         }
 
-        //POST: 
-        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        //POST:
         [HttpPost]
         public async Task<IActionResult> GetLyrics([FromBody] LyricsResponseModel lyricsRM)
         {
             //var cacheKey = $"Get_Lyrics_From_Search-{lyricsRM}";
 
-            lyrics = await _lyricsService.Search(lyricsRM.Artist, lyricsRM.Title);
-
-            if (lyrics is null)
+            try
             {
-                //Show "Loading"
-                return Ok(new { message = "Loading" });
+                lyrics = await _lyricsService.Search(lyricsRM.Artist, lyricsRM.Title);
             }
-            else if (lyrics.Lyrics == "")
+            catch (Exception)
             {
-                return Ok(new { message = "No lyrics found" });
+                return BadRequest(); // user message?
             }
-            else
-            {
-                //_memoryCache.Set(cacheKey, lyrics);
-               
-                return Ok(lyrics);
-            }
+            return Ok(lyrics);
         }
 
-        [Authorize]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("Save")]
         public async Task<IActionResult> SaveToCollectionAsync([FromBody] LyricsResponseModel lyricsRM, int userId, int collectionId)
         {

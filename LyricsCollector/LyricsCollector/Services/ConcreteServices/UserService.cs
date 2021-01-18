@@ -28,9 +28,35 @@ namespace LyricsCollector.Services.ConcreteServices
             _jwtSettings = jwtSettings.Value;
         }
 
-        public async Task<ActionResult<User>> RegisterUser(UserPostModel userPM)
+        public async Task<User> RegisterUser(UserPostModel userPM)
         {
-            //User user = 
+            var existingUser = await _context.Users.Where(u => u.Password == userPM.Password).FirstOrDefaultAsync();
+
+            if (existingUser != null)
+            {
+                return existingUser;
+            }
+            else
+            {
+                //Kolla user input här?
+                var user = GeneratePassword(userPM);
+                _context.Users.Add(user);
+
+                try
+                {
+                    await _context.SaveChangesAsync();
+                    return user; // return här?
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
+                 // eller här?
+            }
+        }
+
+        private static User GeneratePassword(UserPostModel userPM)
+        {
             var saltByteArray = new byte[128 / 8];
 
             using (var rng = RandomNumberGenerator.Create())
@@ -56,19 +82,7 @@ namespace LyricsCollector.Services.ConcreteServices
                 Email = userPM.Email,
                 Name = userPM.Name
             };
-
-            _context.Users.Add(user);
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-            return user;
-
+            return user;            
         }
 
         public async Task<UserWithToken> Authenticate(UserPostModel userPM)
@@ -76,7 +90,7 @@ namespace LyricsCollector.Services.ConcreteServices
             var existingUser = await _context.Users.Where
                 (u => u.Email == userPM.Email && u.Password == userPM.Password).FirstOrDefaultAsync();
 
-            if(existingUser == null) return null;
+            if (existingUser == null) return null;
 
             var token = GenerateJwtToken(existingUser);
 
@@ -87,7 +101,7 @@ namespace LyricsCollector.Services.ConcreteServices
                 Collections = existingUser.Collections
             };
 
-            return new UserWithToken(authenticatedUser, token); 
+            return new UserWithToken(authenticatedUser, token);
         }
 
         private string GenerateJwtToken(User existingUser)
