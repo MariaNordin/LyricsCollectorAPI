@@ -30,11 +30,6 @@ namespace LyricsCollector.Services.ConcreteServices
             //_credentials = credentials.Value;
         }
 
-        public void OnLyricsFound(object source, EventArgs e)
-        {
-
-        }
-
         public async Task<Image> Search(string artist, string title)
         {
             var queryString = HttpUtility.UrlEncode($"{artist} {title}");
@@ -117,6 +112,7 @@ namespace LyricsCollector.Services.ConcreteServices
             }
         }
 
+
         //public async Task<string> GetAuthorization()
         //{
         //var url = "" +
@@ -189,6 +185,6 @@ namespace LyricsCollector.Services.ConcreteServices
                 return user;
             }
             else return null;
-        } 
+        }
     }
 }

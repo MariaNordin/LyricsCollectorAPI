@@ -2,6 +2,7 @@
 using LyricsCollector.Entities;
 using LyricsCollector.Models.Contracts;
 using LyricsCollector.Models.LyricsModels;
+using LyricsCollector.Models.SpotifyModels;
 using LyricsCollector.Services.Contracts;
 using Microsoft.Extensions.Caching.Memory;
 using System;
@@ -20,13 +21,19 @@ namespace LyricsCollector.Services.ConcreteServices
         private readonly IMemoryCache _memoryCache;
         private readonly LyricsCollectorDbContext _context;
 
+        private string _spotifyLink;
+        private string _albumCover;
+
+        //private TrackResponseModel _trackResponse;
+
         LyricsResponseModel lyrics = new LyricsResponseModel();
 
-        public LyricsService(IHttpClientFactory clientFactory, LyricsCollectorDbContext context, IMemoryCache memoryCache)
+        public LyricsService(IHttpClientFactory clientFactory, LyricsCollectorDbContext context, IMemoryCache memoryCache, ISubject trackResponse)
         {
             _clientFactory = clientFactory;
             _memoryCache = memoryCache;
             _context = context;
+            //_trackResponse = trackResponse as TrackResponseModel;
         }
 
         //public delegate void LyricsFoundEventHandler(object source, EventArgs args);
@@ -116,6 +123,11 @@ namespace LyricsCollector.Services.ConcreteServices
 
             return null;
         }
+        private static string ToTitleCase(string text)
+        {
+            TextInfo ti = CultureInfo.CurrentCulture.TextInfo;
+            return ti.ToTitleCase(text);
+        }
 
         public async Task<bool> SaveCollectionLyricsAsync(LyricsResponseModel lyrics, int userId, int collectionId) {
 
@@ -130,12 +142,20 @@ namespace LyricsCollector.Services.ConcreteServices
             }
             catch (Exception)
             {
-                return false;
-                //logg
+                throw;
             }
-
-            //return new ( status: "Lyrics saved");
         }
+
+        public void Update(ISubject subject)
+        {
+            if (subject is TrackResponseModel trackResponse)
+            {
+                _spotifyLink = trackResponse.Track.Items[0].External_urls.Spotify;
+                _albumCover = trackResponse.Track.Items[0].Album.Images[1].Url;
+            }
+        }
+
+
         //{
         //    var existingCollection = _context.Collections.Where(c => c.CollectionOfUserId == userId).FirstOrDefault();
 
@@ -167,16 +187,5 @@ namespace LyricsCollector.Services.ConcreteServices
         //{
         //    var existingLyrics = _context.Collections.Where(c => c.Id == collectionId)
         //}
-
-        private static string ToTitleCase(string text)
-        {
-            TextInfo ti = CultureInfo.CurrentCulture.TextInfo;
-            return ti.ToTitleCase(text);
-        }
-
-        public void Update(ISubject subject)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

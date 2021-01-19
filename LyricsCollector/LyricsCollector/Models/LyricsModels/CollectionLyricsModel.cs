@@ -1,5 +1,5 @@
 ﻿
-namespace LyricsCollector.Models
+namespace LyricsCollector.Models.LyricsModels
 {
     public class CollectionLyricsModel
     {
