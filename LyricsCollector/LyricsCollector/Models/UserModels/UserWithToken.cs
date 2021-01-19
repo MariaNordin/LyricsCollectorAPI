@@ -1,6 +1,5 @@
-﻿using LyricsCollector.Entities;
-
-namespace LyricsCollector.Models
+﻿
+namespace LyricsCollector.Models.UserModels
 {
     public class UserWithToken
     {

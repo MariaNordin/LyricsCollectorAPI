@@ -1,4 +1,6 @@
 ﻿using LyricsCollector.Models;
+using LyricsCollector.Models.SpotifyModels;
+using LyricsCollector.Models.UserModels;
 using System.Threading.Tasks;
 
 namespace LyricsCollector.Services.Contracts

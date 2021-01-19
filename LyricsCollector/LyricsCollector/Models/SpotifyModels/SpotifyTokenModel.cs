@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace LyricsCollector.Models
+namespace LyricsCollector.Models.SpotifyModels
 {
     public class SpotifyTokenModel
     {

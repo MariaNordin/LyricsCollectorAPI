@@ -1,5 +1,5 @@
 ﻿using LyricsCollector.Entities;
-using LyricsCollector.Models;
+using LyricsCollector.Models.UserModels;
 using System.Threading.Tasks;
 
 namespace LyricsCollector.Services.Contracts

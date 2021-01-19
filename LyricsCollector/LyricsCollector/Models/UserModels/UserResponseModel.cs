@@ -1,7 +1,7 @@
 ﻿using LyricsCollector.Entities;
 using System.Collections.Generic;
 
-namespace LyricsCollector.Models
+namespace LyricsCollector.Models.UserModels
 {
     public class UserResponseModel
     {

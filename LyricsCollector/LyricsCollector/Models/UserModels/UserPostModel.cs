@@ -1,5 +1,5 @@
 ﻿
-namespace LyricsCollector.Models
+namespace LyricsCollector.Models.UserModels
 {
     public class UserPostModel
     {

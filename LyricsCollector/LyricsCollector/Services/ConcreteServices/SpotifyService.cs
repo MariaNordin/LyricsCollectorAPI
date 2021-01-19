@@ -1,4 +1,5 @@
-﻿using LyricsCollector.Models;
+﻿using LyricsCollector.Models.SpotifyModels;
+using LyricsCollector.Models.UserModels;
 using LyricsCollector.Services.Contracts;
 using System;
 using System.Collections.Generic;

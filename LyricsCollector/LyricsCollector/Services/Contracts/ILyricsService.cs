@@ -1,5 +1,5 @@
 ﻿using LyricsCollector.Entities;
-using LyricsCollector.Models;
+using LyricsCollector.Models.LyricsModels;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

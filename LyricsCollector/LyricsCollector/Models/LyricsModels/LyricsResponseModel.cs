@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace LyricsCollector.Models
+namespace LyricsCollector.Models.LyricsModels
 {
     public class LyricsResponseModel
     {
@@ -8,9 +8,12 @@ namespace LyricsCollector.Models
         public string Lyrics { get; set; }
 
         [JsonPropertyName("artist")]
-        public string Artist { get; set; } = "";
+        public string Artist { get; set; }
 
         [JsonPropertyName("title")]
-        public string Title { get; set; } = "";
+        public string Title { get; set; }
+
+        public string SpotifyLink { get; set; }
+        public string CoverImage { get; set; }
     }
 }

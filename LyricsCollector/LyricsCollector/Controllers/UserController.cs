@@ -1,5 +1,4 @@
-﻿using LyricsCollector.Context;
-using LyricsCollector.Models;
+﻿using LyricsCollector.Models.UserModels;
 using LyricsCollector.Services.Contracts;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -30,7 +29,7 @@ namespace LyricsCollector.Controllers
         [HttpPost("Register")]
         public async Task<IActionResult> Register(UserPostModel payload)
         {
-            //Kolla user input här?
+            
             try
             {
                 var result = await _userService.RegisterUser(payload);
