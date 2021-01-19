@@ -1,12 +1,10 @@
 ﻿using LyricsCollector.Models;
 using LyricsCollector.Services.Contracts;
-using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
-using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using System.Web;
 

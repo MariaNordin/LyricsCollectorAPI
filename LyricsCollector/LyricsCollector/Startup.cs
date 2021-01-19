@@ -84,6 +84,7 @@ namespace LyricsCollector
                 c.BaseAddress = new Uri(Configuration.GetValue<string>("SpotifyAPI"));
             });
 
+
             services.AddTransient<ILyricsService, LyricsService>();
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<ISpotifyService, SpotifyService>();

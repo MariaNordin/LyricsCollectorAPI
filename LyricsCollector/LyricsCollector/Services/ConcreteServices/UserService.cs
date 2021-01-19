@@ -38,20 +38,20 @@ namespace LyricsCollector.Services.ConcreteServices
             }
             else
             {
-                //Kolla user input här?
+                
                 var user = GeneratePassword(userPM);
                 _context.Users.Add(user);
 
                 try
                 {
                     await _context.SaveChangesAsync();
-                    return user; // return här?
+                    return user; 
                 }
                 catch (Exception)
                 {
                     throw;
                 }
-                 // eller här?
+                
             }
         }
 
