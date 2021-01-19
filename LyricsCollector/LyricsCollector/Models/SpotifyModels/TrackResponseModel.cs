@@ -1,15 +1,55 @@
-﻿using System.Text.Json.Serialization;
+﻿using LyricsCollector.Models.Contracts;
+using System.Text.Json.Serialization;
 
 namespace LyricsCollector.Models.SpotifyModels
 {
-    public class TrackResponseModel
+    public class TrackResponseModel : ISubject
     {
-        [JsonPropertyName("id")]
+        [JsonPropertyName("tracks")]
+        public Track Track { get; set; }
+
+        public void Attach(IObserver observer)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void Notify()
+        {
+            throw new System.NotImplementedException();
+        }
+    }
+
+
+    public class Track
+    {
+        [JsonPropertyName("items")]
+        public Item[] Items { get; set; }
+    }
+
+    public class Item
+    {
+        public Album Album { get; set; }
+        public External_Urls External_urls { get; set; } //this
+        public string Href { get; set; }
         public string Id { get; set; }
+    }
 
-        [JsonPropertyName("name")]
+    public class Album
+    {
+        public string Album_type { get; set; }
+        public string Id { get; set; }
+        public Image[] Images { get; set; } //this
         public string Name { get; set; }
+        public string Release_date { get; set; }
+    }
 
+    public class Image
+    {
         public string Url { get; set; }
+    }
+
+    public class External_Urls
+    {
+        public string Spotify { get; set; }
     }
 }

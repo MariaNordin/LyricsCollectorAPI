@@ -29,13 +29,13 @@ namespace LyricsCollector.Controllers
 
         //POST:
         [HttpPost]
-        public async Task<IActionResult> GetLyrics([FromBody] LyricsResponseModel lyricsRM)
+        public async Task<IActionResult> GetLyrics([FromBody] LyricsPostModel lyricsPM)
         {
             //var cacheKey = $"Get_Lyrics_From_Search-{lyricsRM}";
 
             try
             {
-                lyrics = await _lyricsService.Search(lyricsRM.Artist, lyricsRM.Title);
+                lyrics = await _lyricsService.Search(lyricsPM.Artist, lyricsPM.Title);
             }
             catch (Exception)
             {

@@ -39,7 +39,7 @@ namespace LyricsCollector.Controllers
         }
 
         [HttpPost("Search")]
-        public async Task<IActionResult> Search([FromBody] LyricsResponseModel lyrics)
+        public async Task<IActionResult> Search([FromBody] LyricsPostModel lyrics)
         {
             var searchResponse = await _spotifyService.Search(lyrics.Artist, lyrics.Title);
 
@@ -54,6 +54,8 @@ namespace LyricsCollector.Controllers
 
             return Ok(track);
         }
+
+
 
         //GET: api/Spotify (Authorization)
         //[HttpGet ("oauth")]
@@ -88,33 +90,6 @@ namespace LyricsCollector.Controllers
         //else return BadRequest(new { error = "Something went wrong" });
         //}
 
-        [HttpGet("{userName}, {token}")]
-        public async Task<IActionResult> GetUserAsync(string userName, string token)
-        {
-            _user = await _spotifyService.GetUserIdAsync(userName, token);
-
-            if (_user != null)
-            {
-                return Ok(_user);
-            }
-            else return BadRequest(new { error = "Getting User from Spotify failed" });
-
-        }
-
-        //[HttpGet("{userId}")]
-        //public async Task<IActionResult> GetUsersPlaylistsAsync(string userId, string token)
-        //{
-        //    PlaylistsResponseModel playlists = await _spotifyService.GetPlaylistsAsync(userId, token);
-
-        //    if (playlists == null)
-        //    {
-        //        return BadRequest(new { response = $"Getting playlists from Spotify failed" });
-        //    }
-        //    else
-        //    {
-        //        return Ok(playlists);
-        //    }
-        //}
 
         //private async Task<string> GetTokenAsync()
         //{

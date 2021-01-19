@@ -1,5 +1,6 @@
 ﻿using LyricsCollector.Context;
 using LyricsCollector.Entities;
+using LyricsCollector.Models.Contracts;
 using LyricsCollector.Models.LyricsModels;
 using LyricsCollector.Services.Contracts;
 using Microsoft.Extensions.Caching.Memory;
@@ -13,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace LyricsCollector.Services.ConcreteServices
 {
-    public class LyricsService : ILyricsService
+    public class LyricsService : ILyricsService, IObserver
     {
         private readonly IHttpClientFactory _clientFactory;
         private readonly IMemoryCache _memoryCache;
@@ -28,6 +29,15 @@ namespace LyricsCollector.Services.ConcreteServices
             _context = context;
         }
 
+        //public delegate void LyricsFoundEventHandler(object source, EventArgs args);
+
+        public event EventHandler LyricsFound;
+
+        protected virtual void OnLyricsFound()
+        {
+            LyricsFound?.Invoke(this, EventArgs.Empty);
+        }
+
         public async Task<LyricsResponseModel> Search(string artist, string title)
         {
             var dbLyrics = CheckIfLyricsInDb(artist, title);
@@ -39,7 +49,7 @@ namespace LyricsCollector.Services.ConcreteServices
             {
                 var client = _clientFactory.CreateClient("lyrics");
 
-                try // ?
+                try
                 {
                     lyrics = await client.GetFromJsonAsync<LyricsResponseModel>($"{artist}/{title}");
                 }
@@ -79,7 +89,7 @@ namespace LyricsCollector.Services.ConcreteServices
             };
             _context.Lyrics.Add(lyrics);
 
-            try //behövs denna ens? om jag ska stänga db connection
+            try
             {
                 await _context.SaveChangesAsync();
             }
@@ -88,7 +98,6 @@ namespace LyricsCollector.Services.ConcreteServices
                 throw; 
             }
         }
-
         private LyricsResponseModel CheckIfLyricsInDb(string artist, string title)
         {
             artist = ToTitleCase(artist);
@@ -163,6 +172,11 @@ namespace LyricsCollector.Services.ConcreteServices
         {
             TextInfo ti = CultureInfo.CurrentCulture.TextInfo;
             return ti.ToTitleCase(text);
+        }
+
+        public void Update(ISubject subject)
+        {
+            throw new NotImplementedException();
         }
     }
 }

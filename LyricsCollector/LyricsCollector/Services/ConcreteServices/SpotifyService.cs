@@ -18,7 +18,7 @@ namespace LyricsCollector.Services.ConcreteServices
 
         SpotifyTokenModel token;
         TrackResponseModel track;
-        SearchResponseModel trackResponse;
+        TrackResponseModel trackResponse;
         UserResponseModel user;
         Image imgUrl;
 
@@ -28,6 +28,11 @@ namespace LyricsCollector.Services.ConcreteServices
         {
             _clientFactory = clientFactory;
             //_credentials = credentials.Value;
+        }
+
+        public void OnLyricsFound(object source, EventArgs e)
+        {
+
         }
 
         public async Task<Image> Search(string artist, string title)
@@ -47,7 +52,7 @@ namespace LyricsCollector.Services.ConcreteServices
 
             if (response.IsSuccessStatusCode)
             {
-                trackResponse = await response.Content.ReadFromJsonAsync<SearchResponseModel>();
+                trackResponse = await response.Content.ReadFromJsonAsync<TrackResponseModel>();
 
                 imgUrl = trackResponse.Track.Items[0].Album.Images[1];
 
@@ -72,7 +77,8 @@ namespace LyricsCollector.Services.ConcreteServices
             if (response.IsSuccessStatusCode)
             {
                 track = await response.Content.ReadFromJsonAsync<TrackResponseModel>();
-                track.Url = "https://open.spotify.com/track/" + track.Id;
+                track.Track.Items[0].External_urls.Spotify = "https://open.spotify.com/track/" +
+                    track.Track.Items[0].Id;
                 return track;
             }
             else return null;
