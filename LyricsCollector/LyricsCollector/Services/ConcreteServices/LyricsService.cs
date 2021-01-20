@@ -41,7 +41,7 @@ namespace LyricsCollector.Services.ConcreteServices
 
         public async Task<LyricsResponseModel> Search(string artist, string title)
         {
-            var dbLyrics = CheckIfLyricsInDb(artist, title);
+            var dbLyrics = LyricsInDbMatch(artist, title);
             if (dbLyrics != null)
             {
                 return dbLyrics;
@@ -100,7 +100,7 @@ namespace LyricsCollector.Services.ConcreteServices
                 throw; 
             }
         }
-        private LyricsResponseModel CheckIfLyricsInDb(string artist, string title)
+        private LyricsResponseModel LyricsInDbMatch(string artist, string title)
         {
             artist = ToTitleCase(artist);
             title = ToTitleCase(title);
