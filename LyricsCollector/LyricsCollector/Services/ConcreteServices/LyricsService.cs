@@ -1,5 +1,6 @@
 ﻿using LyricsCollector.Context;
 using LyricsCollector.Entities;
+using LyricsCollector.Events;
 using LyricsCollector.Models.Contracts;
 using LyricsCollector.Models.LyricsModels;
 using LyricsCollector.Models.SpotifyModels;
@@ -19,25 +20,27 @@ namespace LyricsCollector.Services.ConcreteServices
     {
         private readonly IHttpClientFactory _clientFactory;
         private readonly IMemoryCache _memoryCache;
+        private readonly ISpotifyService _spotifyService;
         private readonly LyricsCollectorDbContext _context;
 
         private LyricsResponseModel _lyrics = new LyricsResponseModel();
 
-        public LyricsService(IHttpClientFactory clientFactory, LyricsCollectorDbContext context, IMemoryCache memoryCache)
+        public LyricsService(IHttpClientFactory clientFactory, LyricsCollectorDbContext context, IMemoryCache memoryCache, ISpotifyService spotifyService)
         {
             _clientFactory = clientFactory;
             _memoryCache = memoryCache;
+            _spotifyService = spotifyService;
             _context = context;
+
+            _spotifyService.TrackFound += this.OnTrackFound;
         }
 
-        //public delegate void LyricsFoundEventHandler(object source, EventArgs args);
-
-        public event EventHandler LyricsFound;
-
-        protected virtual void OnLyricsFound()
+        public void OnTrackFound(object source, TrackEventArgs e)
         {
-            LyricsFound?.Invoke(this, EventArgs.Empty);
+            _lyrics.CoverImage = e.Track.Track.Items[0].Album.Images[1].Url;
+            _lyrics.SpotifyLink = e.Track.Track.Items[0].External_urls.Spotify;
         }
+
 
         public async Task<LyricsResponseModel> Search(string artist, string title)
         {
@@ -53,7 +56,8 @@ namespace LyricsCollector.Services.ConcreteServices
                 try
                 {
                     _lyrics = await client.GetFromJsonAsync<LyricsResponseModel>($"{artist}/{title}");
-                    
+                    await _spotifyService.Search(artist, title);
+
                 }
                 catch (Exception)
                 {
@@ -70,14 +74,12 @@ namespace LyricsCollector.Services.ConcreteServices
 
         public IEnumerable<Lyrics> GetDbLyrics()
         {
-
-            if (!_memoryCache.TryGetValue("DbLyrics", out List<Lyrics> listOfLyrics))
+            if (!_memoryCache.TryGetValue("DbLyrics", out List<Lyrics> _))
             {
                 _memoryCache.Set("DbLyrics", _context.Lyrics.ToList());
             }
 
-            listOfLyrics = _memoryCache.Get("DbLyrics") as List<Lyrics>;
-
+            List<Lyrics> listOfLyrics = _memoryCache.Get("DbLyrics") as List<Lyrics>;
             return listOfLyrics;
         }
 

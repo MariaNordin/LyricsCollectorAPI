@@ -38,13 +38,13 @@ namespace LyricsCollector.Controllers
             }
         }
 
-        [HttpPost("Search")]
-        public async Task<IActionResult> Search([FromBody] LyricsPostModel lyrics)
-        {
-            var searchResponse = await _spotifyService.Search(lyrics.Artist, lyrics.Title);
+        //[HttpPost("Search")]
+        //public async Task<IActionResult> Search([FromBody] LyricsPostModel lyrics)
+        //{
+        //    var searchResponse = await _spotifyService.Search(lyrics.Artist, lyrics.Title);
 
-            return Ok(searchResponse);
-        }
+        //    return Ok(searchResponse);
+        //}
 
 
         //[HttpGet("GetThisTrack")]
