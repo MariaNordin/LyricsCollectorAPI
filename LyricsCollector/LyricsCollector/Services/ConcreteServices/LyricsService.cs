@@ -4,6 +4,7 @@ using LyricsCollector.Events;
 using LyricsCollector.Models.Contracts;
 using LyricsCollector.Models.LyricsModels;
 using LyricsCollector.Models.SpotifyModels;
+using LyricsCollector.Models.UserModels;
 using LyricsCollector.Services.Contracts;
 using Microsoft.Extensions.Caching.Memory;
 using System;
@@ -144,6 +145,10 @@ namespace LyricsCollector.Services.ConcreteServices
             {
                 throw;
             }
+        }
+
+        public void Notify(UserWithToken user)
+        {
         }
 
 

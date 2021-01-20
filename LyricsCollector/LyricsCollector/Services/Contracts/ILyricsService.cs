@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LyricsCollector.Services.Contracts
 {
-    public interface ILyricsService
+    public interface ILyricsService : IService
     {
 
         public Task<LyricsResponseModel> Search(string artist, string title);

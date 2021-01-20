@@ -20,6 +20,7 @@ namespace LyricsCollector.Controllers
 
         //--------------------------------------------
         private readonly IUserService _userService;
+        UserWithToken userWithToken;
 
         public UserController(IUserService userService)
         {
@@ -45,8 +46,6 @@ namespace LyricsCollector.Controllers
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] UserPostModel userPM)
         {
-            UserWithToken userWithToken;
-
             try
             {
                 userWithToken = await _userService.Authenticate(userPM);

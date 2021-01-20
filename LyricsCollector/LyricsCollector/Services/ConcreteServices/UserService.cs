@@ -93,14 +93,14 @@ namespace LyricsCollector.Services.ConcreteServices
 
             var token = GenerateJwtToken(existingUser);
 
-            var authenticatedUser = new UserResponseModel
-            {
-                Email = existingUser.Email,
-                Name = existingUser.Name,
-                Collections = existingUser.Collections
-            };
+            //var authenticatedUser = new User
+            //{
+            //    Email = existingUser.Email,
+            //    Name = existingUser.Name,
+            //    Collections = existingUser.Collections
+            //};
 
-            return new UserWithToken(authenticatedUser, token);
+            return new UserWithToken(existingUser, token);
         }
 
         private async Task<User> ValidatePassword(UserPostModel userPM)
