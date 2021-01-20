@@ -37,7 +37,7 @@ namespace LyricsCollector.Services.ConcreteServices
             TrackFound?.Invoke(this, new TrackEventArgs() { Track = trackResponse });
         }
 
-        public async Task Search(string artist, string title)
+        public async Task<TrackResponseModel> Search(string artist, string title)
         {
             var queryString = HttpUtility.UrlEncode($"{artist} {title}");
 
@@ -52,15 +52,24 @@ namespace LyricsCollector.Services.ConcreteServices
 
             HttpResponseMessage response = await client.SendAsync(request);
 
-            if (response.IsSuccessStatusCode)
+            try
             {
                 trackResponse = await response.Content.ReadFromJsonAsync<TrackResponseModel>();
-
-                OnTrackFound();
-
-                //imgUrl = trackResponse.Track.Items[0].Album.Images[1];
-                //return imgUrl;
+                return trackResponse;
             }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            //if (response.IsSuccessStatusCode)
+            //{
+                
+            //    //OnTrackFound();
+
+            //    //imgUrl = trackResponse.Track.Items[0].Album.Images[1];
+            //    //return imgUrl;
+            //}
             //else return null;
         }
 

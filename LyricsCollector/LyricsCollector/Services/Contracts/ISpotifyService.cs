@@ -10,6 +10,6 @@ namespace LyricsCollector.Services.Contracts
         public event EventHandler<TrackEventArgs> TrackFound;
         public Task<SpotifyTokenModel> GetAccessToken();
         //public Task<TrackResponseModel> GetThisTrack();
-        public Task Search(string artist, string title);
+        public Task<TrackResponseModel> Search(string artist, string title);
     }
 }

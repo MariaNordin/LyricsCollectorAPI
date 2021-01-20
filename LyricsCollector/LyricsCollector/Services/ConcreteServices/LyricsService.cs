@@ -24,6 +24,7 @@ namespace LyricsCollector.Services.ConcreteServices
         private readonly LyricsCollectorDbContext _context;
 
         private LyricsResponseModel _lyrics = new LyricsResponseModel();
+        private TrackResponseModel _track = new TrackResponseModel();
 
         public LyricsService(IHttpClientFactory clientFactory, LyricsCollectorDbContext context, IMemoryCache memoryCache, ISpotifyService spotifyService)
         {
@@ -56,8 +57,6 @@ namespace LyricsCollector.Services.ConcreteServices
                 try
                 {
                     _lyrics = await client.GetFromJsonAsync<LyricsResponseModel>($"{artist}/{title}");
-                    await _spotifyService.Search(artist, title);
-
                 }
                 catch (Exception)
                 {
@@ -66,8 +65,12 @@ namespace LyricsCollector.Services.ConcreteServices
 
                 _lyrics.Artist = ToTitleCase(artist);
                 _lyrics.Title = ToTitleCase(title);
-                await SaveLyricsToDb(_lyrics);
-                _memoryCache.Set("DbLyrics", _context.Lyrics.ToList());
+
+                if (_lyrics.Lyrics != "")
+                {
+                    await SaveLyricsToDb(_lyrics);
+                    _memoryCache.Set("DbLyrics", _context.Lyrics.ToList());
+                }              
                 return _lyrics;
             }
         }
