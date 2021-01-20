@@ -17,7 +17,7 @@ namespace LyricsCollector.Services.ConcreteServices
         //private readonly SpotifyCredentials _credentials;
 
         SpotifyTokenModel token;
-        TrackResponseModel track;
+        //Track track;
         TrackResponseModel trackResponse;
         UserResponseModel user;
         Image imgUrl;
@@ -56,28 +56,28 @@ namespace LyricsCollector.Services.ConcreteServices
             else return null;
         }
 
-        public async Task<TrackResponseModel> GetThisTrack()
-        {
-            if (currentToken == null) await GetAccessToken();
+        //public async Task<TrackResponseModel> GetThisTrack()
+        //{
+        //    if (currentToken == null) await GetAccessToken();
 
-            var request = new HttpRequestMessage(HttpMethod.Get,
-                "tracks/2TpxZ7JUBn3uw46aR7qd6V");
-            request.Headers.Add("Authorization", $"Bearer {currentToken}");
-            request.Headers.Add("Accept", "application/json");
+        //    var request = new HttpRequestMessage(HttpMethod.Get,
+        //        "tracks/2TpxZ7JUBn3uw46aR7qd6V");
+        //    request.Headers.Add("Authorization", $"Bearer {currentToken}");
+        //    request.Headers.Add("Accept", "application/json");
 
-            var client = _clientFactory.CreateClient("spotify");
+        //    var client = _clientFactory.CreateClient("spotify");
 
-            HttpResponseMessage response = await client.SendAsync(request);
+        //    HttpResponseMessage response = await client.SendAsync(request);
 
-            if (response.IsSuccessStatusCode)
-            {
-                track = await response.Content.ReadFromJsonAsync<TrackResponseModel>();
-                track.Track.Items[0].External_urls.Spotify = "https://open.spotify.com/track/" +
-                    track.Track.Items[0].Id;
-                return track;
-            }
-            else return null;
-        }
+        //    if (response.IsSuccessStatusCode)
+        //    {
+        //        track = await response.Content.ReadFromJsonAsync<TrackResponseModel>();
+        //        track.Track.Items[0].External_urls.Spotify = "https://open.spotify.com/track/" +
+        //            track.Track.Items[0].Id;
+        //        return track;
+        //    }
+        //    else return null;
+        //}
 
         public async Task<SpotifyTokenModel> GetAccessToken()
         {

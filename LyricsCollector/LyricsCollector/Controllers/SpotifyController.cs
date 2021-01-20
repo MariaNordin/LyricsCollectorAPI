@@ -47,13 +47,13 @@ namespace LyricsCollector.Controllers
         }
 
 
-        [HttpGet("GetThisTrack")]
-        public async Task<IActionResult> GetTrackAsync()
-        {
-            var track = await _spotifyService.GetThisTrack();
+        //[HttpGet("GetThisTrack")]
+        //public async Task<IActionResult> GetTrackAsync()
+        //{
+        //    var track = await _spotifyService.GetThisTrack();
 
-            return Ok(track);
-        }
+        //    return Ok(track);
+        //}
 
 
 

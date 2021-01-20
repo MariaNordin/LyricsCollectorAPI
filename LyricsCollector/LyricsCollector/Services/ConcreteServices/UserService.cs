@@ -30,7 +30,8 @@ namespace LyricsCollector.Services.ConcreteServices
 
         public async Task<User> RegisterUser(UserPostModel userPM)
         {
-            var existingUser = await _context.Users.Where(u => u.Password == userPM.Password).FirstOrDefaultAsync();
+            var existingUser = await _context.Users.Where(u => u.Email == userPM.Email).FirstOrDefaultAsync();
+
 
             if (existingUser != null)
             {
@@ -64,7 +65,7 @@ namespace LyricsCollector.Services.ConcreteServices
                 rng.GetBytes(saltByteArray);
             }
 
-            var base64StringOfSalt = Convert.ToBase64String(saltByteArray);
+            //var base64StringOfSalt = Convert.ToBase64String(saltByteArray);
 
             var hashedPw = Convert.ToBase64String(KeyDerivation.Pbkdf2(
                 password: userPM.Password,
@@ -76,8 +77,7 @@ namespace LyricsCollector.Services.ConcreteServices
 
             var user = new User
             {
-                Password = userPM.Password,
-                Salt = base64StringOfSalt,
+                Salt = saltByteArray,
                 Hash = hashedPw,
                 Email = userPM.Email,
                 Name = userPM.Name
@@ -87,8 +87,7 @@ namespace LyricsCollector.Services.ConcreteServices
 
         public async Task<UserWithToken> Authenticate(UserPostModel userPM)
         {
-            var existingUser = await _context.Users.Where
-                (u => u.Email == userPM.Email && u.Password == userPM.Password).FirstOrDefaultAsync();
+            var existingUser = await ValidatePassword(userPM);
 
             if (existingUser == null) return null;
 
@@ -102,6 +101,23 @@ namespace LyricsCollector.Services.ConcreteServices
             };
 
             return new UserWithToken(authenticatedUser, token);
+        }
+
+        private async Task<User> ValidatePassword(UserPostModel userPM)
+        {
+            var foundUser = await _context.Users.Where
+                (u => u.Email == userPM.Email).FirstOrDefaultAsync();
+
+            var hashedPw = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+                password: userPM.Password,
+                salt: foundUser.Salt,
+                prf: KeyDerivationPrf.HMACSHA1,
+                iterationCount: 100000,
+                numBytesRequested: 256 / 8
+                ));
+
+            if (hashedPw == foundUser.Hash) return foundUser;
+            else return null;
         }
 
         private string GenerateJwtToken(User existingUser)

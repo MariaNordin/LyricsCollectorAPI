@@ -15,25 +15,19 @@ using System.Threading.Tasks;
 
 namespace LyricsCollector.Services.ConcreteServices
 {
-    public class LyricsService : ILyricsService, IObserver
+    public class LyricsService : ILyricsService
     {
         private readonly IHttpClientFactory _clientFactory;
         private readonly IMemoryCache _memoryCache;
         private readonly LyricsCollectorDbContext _context;
 
-        private string _spotifyLink;
-        private string _albumCover;
+        private LyricsResponseModel _lyrics = new LyricsResponseModel();
 
-        //private TrackResponseModel _trackResponse;
-
-        LyricsResponseModel lyrics = new LyricsResponseModel();
-
-        public LyricsService(IHttpClientFactory clientFactory, LyricsCollectorDbContext context, IMemoryCache memoryCache, ISubject trackResponse)
+        public LyricsService(IHttpClientFactory clientFactory, LyricsCollectorDbContext context, IMemoryCache memoryCache)
         {
             _clientFactory = clientFactory;
             _memoryCache = memoryCache;
             _context = context;
-            //_trackResponse = trackResponse as TrackResponseModel;
         }
 
         //public delegate void LyricsFoundEventHandler(object source, EventArgs args);
@@ -58,18 +52,19 @@ namespace LyricsCollector.Services.ConcreteServices
 
                 try
                 {
-                    lyrics = await client.GetFromJsonAsync<LyricsResponseModel>($"{artist}/{title}");
+                    _lyrics = await client.GetFromJsonAsync<LyricsResponseModel>($"{artist}/{title}");
+                    
                 }
                 catch (Exception)
                 {
                     throw;
                 }
 
-                lyrics.Artist = ToTitleCase(artist);
-                lyrics.Title = ToTitleCase(title);
-                await SaveLyricsToDb(lyrics);
+                _lyrics.Artist = ToTitleCase(artist);
+                _lyrics.Title = ToTitleCase(title);
+                await SaveLyricsToDb(_lyrics);
                 _memoryCache.Set("DbLyrics", _context.Lyrics.ToList());
-                return lyrics;
+                return _lyrics;
             }
         }
 
@@ -115,10 +110,10 @@ namespace LyricsCollector.Services.ConcreteServices
 
             if (existingLyrics != null)
             {
-                lyrics.Artist = existingLyrics.Artist;
-                lyrics.Title = existingLyrics.Title;
-                lyrics.Lyrics = existingLyrics.SongLyrics;
-                return lyrics;
+                _lyrics.Artist = existingLyrics.Artist;
+                _lyrics.Title = existingLyrics.Title;
+                _lyrics.Lyrics = existingLyrics.SongLyrics;
+                return _lyrics;
             }
 
             return null;
@@ -143,15 +138,6 @@ namespace LyricsCollector.Services.ConcreteServices
             catch (Exception)
             {
                 throw;
-            }
-        }
-
-        public void Update(ISubject subject)
-        {
-            if (subject is TrackResponseModel trackResponse)
-            {
-                _spotifyLink = trackResponse.Track.Items[0].External_urls.Spotify;
-                _albumCover = trackResponse.Track.Items[0].Album.Images[1].Url;
             }
         }
 

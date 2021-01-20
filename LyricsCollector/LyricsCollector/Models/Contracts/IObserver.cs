@@ -1,6 +1,6 @@
 ﻿using LyricsCollector.Models.Contracts;
 
-namespace LyricsCollector.Services.Contracts
+namespace LyricsCollector.Models.Contracts
 {
     public interface IObserver
     {

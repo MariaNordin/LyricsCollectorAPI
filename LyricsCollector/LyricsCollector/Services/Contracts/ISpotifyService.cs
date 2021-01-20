@@ -8,7 +8,7 @@ namespace LyricsCollector.Services.Contracts
     public interface ISpotifyService
     {
         public Task<SpotifyTokenModel> GetAccessToken();
-        public Task<TrackResponseModel> GetThisTrack();
+        //public Task<TrackResponseModel> GetThisTrack();
         public Task<Image> Search(string artist, string title);
     }
 }

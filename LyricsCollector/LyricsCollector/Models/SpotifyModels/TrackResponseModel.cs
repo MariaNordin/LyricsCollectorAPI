@@ -1,45 +1,16 @@
-﻿using LyricsCollector.Models.Contracts;
+using LyricsCollector.Models.Contracts;
 using LyricsCollector.Services.Contracts;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace LyricsCollector.Models.SpotifyModels
 {
-    public class TrackResponseModel : ISubject
+    public class TrackResponseModel
     {
-        private List<IObserver> _observers;
-        private Track _track;
-
-        public TrackResponseModel()
-        {
-            _observers = new List<IObserver>();
-        }
 
         [JsonPropertyName("tracks")]
-        public Track Track 
-        { 
-            get { return _track; } 
-            set
-            {
-                _track = value;
-                Notify();
-            } 
-        }
-
-        public void Attach(IObserver observer)
-        {
-            _observers.Add(observer);
-        }
-
-        public void Notify()
-        {
-            _observers.ForEach(o =>
-            {
-                o.Update(this);
-            });
-        }
+        public Track Track { get; set; }
     }
-
 
     public class Track
     {
