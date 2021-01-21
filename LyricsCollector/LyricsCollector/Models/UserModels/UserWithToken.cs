@@ -7,35 +7,37 @@ namespace LyricsCollector.Models.UserModels
 {
     public class UserWithToken : IUserWithToken
     {
-        private List<IService> _observers;
+        private readonly List<IUserWithTokenObserver> _observers;
 
         private User _user;
         public User User 
         {
             get { return _user; } 
-            set { _user = value; }
+            set 
+            { 
+                _user = value;
+                NotifyObserver();
+            }
         }
         
         public string Token { get; set; }
 
-        public UserWithToken(User user, string token)
+        public UserWithToken()
         {
-            User = user;
-            Token = token;
-            _observers = new List<IService>();
+            _observers = new List<IUserWithTokenObserver>();
         }
 
-        public void Attach(IService service)
+        public void AttachObserver(IUserWithTokenObserver observer)
         {
-            _observers.Add(service);
+            _observers.Add(observer);
         }
 
-        public void Detach(IService service)
+        public void DetachObserver(IUserWithTokenObserver observer)
         {
-            _observers.Remove(service);
+            _observers.Remove(observer);
         }
 
-        public void NotifyService()
+        public void NotifyObserver()
         {
             foreach (var observer in _observers)
             {

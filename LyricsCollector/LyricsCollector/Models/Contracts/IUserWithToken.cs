@@ -4,8 +4,8 @@ namespace LyricsCollector.Models.Contracts
 {
     public interface IUserWithToken
     {
-        void Attach(IService service);
-        void Detach(IService service);
-        void NotifyService();
+        void AttachObserver(IUserWithTokenObserver observer);
+        void DetachObserver(IUserWithTokenObserver observer);
+        void NotifyObserver();
     }
 }

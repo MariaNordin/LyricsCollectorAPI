@@ -30,7 +30,6 @@ namespace LyricsCollector.Controllers
         [HttpPost("Register")]
         public async Task<IActionResult> Register(UserPostModel payload)
         {
-            
             try
             {
                 var result = await _userService.RegisterUser(payload);

@@ -15,17 +15,17 @@ namespace LyricsCollector.Controllers
         // DELETE: Ta bort lista 
 
         private readonly ICollectionService _collectionService;
-        private Collection _collection;
+        //private Collection _collection;
 
         public CollectionController(ICollectionService collectionService)
         {
             _collectionService = collectionService;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAllUsersLists([FromBody] UserPostModel userPM)
-        {
+        //[HttpGet]
+        //public async Task<IActionResult> GetAllUsersLists([FromBody] UserPostModel userPM)
+        //{
 
-        }
+        //}
     }
 }
