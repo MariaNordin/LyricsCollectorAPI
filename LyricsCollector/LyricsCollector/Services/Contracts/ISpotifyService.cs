@@ -1,14 +1,15 @@
-﻿using LyricsCollector.Models;
+﻿using LyricsCollector.Events;
 using LyricsCollector.Models.SpotifyModels;
-using LyricsCollector.Models.UserModels;
+using System;
 using System.Threading.Tasks;
 
 namespace LyricsCollector.Services.Contracts
 {
     public interface ISpotifyService
     {
+        public event EventHandler<TrackEventArgs> TrackFound;
         public Task<SpotifyTokenModel> GetAccessToken();
         //public Task<TrackResponseModel> GetThisTrack();
-        public Task<Image> Search(string artist, string title);
+        public Task<TrackResponseModel> Search(string artist, string title);
     }
 }

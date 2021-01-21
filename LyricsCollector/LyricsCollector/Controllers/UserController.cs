@@ -20,6 +20,7 @@ namespace LyricsCollector.Controllers
 
         //--------------------------------------------
         private readonly IUserService _userService;
+        UserWithToken userWithToken;
 
         public UserController(IUserService userService)
         {
@@ -29,7 +30,6 @@ namespace LyricsCollector.Controllers
         [HttpPost("Register")]
         public async Task<IActionResult> Register(UserPostModel payload)
         {
-            
             try
             {
                 var result = await _userService.RegisterUser(payload);
@@ -45,8 +45,6 @@ namespace LyricsCollector.Controllers
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] UserPostModel userPM)
         {
-            UserWithToken userWithToken;
-
             try
             {
                 userWithToken = await _userService.Authenticate(userPM);

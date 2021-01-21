@@ -1,4 +1,5 @@
-﻿using LyricsCollector.Models.SpotifyModels;
+﻿using LyricsCollector.Events;
+using LyricsCollector.Models.SpotifyModels;
 using LyricsCollector.Models.UserModels;
 using LyricsCollector.Services.Contracts;
 using System;
@@ -20,7 +21,6 @@ namespace LyricsCollector.Services.ConcreteServices
         //Track track;
         TrackResponseModel trackResponse;
         UserResponseModel user;
-        Image imgUrl;
 
         private string currentToken;
 
@@ -30,7 +30,14 @@ namespace LyricsCollector.Services.ConcreteServices
             //_credentials = credentials.Value;
         }
 
-        public async Task<Image> Search(string artist, string title)
+        public event EventHandler<TrackEventArgs> TrackFound;
+
+        protected virtual void OnTrackFound()
+        {
+            TrackFound?.Invoke(this, new TrackEventArgs() { Track = trackResponse });
+        }
+
+        public async Task<TrackResponseModel> Search(string artist, string title)
         {
             var queryString = HttpUtility.UrlEncode($"{artist} {title}");
 
@@ -45,39 +52,26 @@ namespace LyricsCollector.Services.ConcreteServices
 
             HttpResponseMessage response = await client.SendAsync(request);
 
-            if (response.IsSuccessStatusCode)
+            try
             {
                 trackResponse = await response.Content.ReadFromJsonAsync<TrackResponseModel>();
-
-                imgUrl = trackResponse.Track.Items[0].Album.Images[1];
-
-                return imgUrl;
+                return trackResponse;
             }
-            else return null;
+            catch (Exception)
+            {
+
+                throw;
+            }
+            //if (response.IsSuccessStatusCode)
+            //{
+                
+            //    //OnTrackFound();
+
+            //    //imgUrl = trackResponse.Track.Items[0].Album.Images[1];
+            //    //return imgUrl;
+            //}
+            //else return null;
         }
-
-        //public async Task<TrackResponseModel> GetThisTrack()
-        //{
-        //    if (currentToken == null) await GetAccessToken();
-
-        //    var request = new HttpRequestMessage(HttpMethod.Get,
-        //        "tracks/2TpxZ7JUBn3uw46aR7qd6V");
-        //    request.Headers.Add("Authorization", $"Bearer {currentToken}");
-        //    request.Headers.Add("Accept", "application/json");
-
-        //    var client = _clientFactory.CreateClient("spotify");
-
-        //    HttpResponseMessage response = await client.SendAsync(request);
-
-        //    if (response.IsSuccessStatusCode)
-        //    {
-        //        track = await response.Content.ReadFromJsonAsync<TrackResponseModel>();
-        //        track.Track.Items[0].External_urls.Spotify = "https://open.spotify.com/track/" +
-        //            track.Track.Items[0].Id;
-        //        return track;
-        //    }
-        //    else return null;
-        //}
 
         public async Task<SpotifyTokenModel> GetAccessToken()
         {
@@ -111,6 +105,31 @@ namespace LyricsCollector.Services.ConcreteServices
                 return null;
             }
         }
+
+        //public async Task<TrackResponseModel> GetThisTrack()
+        //{
+        //    if (currentToken == null) await GetAccessToken();
+
+        //    var request = new HttpRequestMessage(HttpMethod.Get,
+        //        "tracks/2TpxZ7JUBn3uw46aR7qd6V");
+        //    request.Headers.Add("Authorization", $"Bearer {currentToken}");
+        //    request.Headers.Add("Accept", "application/json");
+
+        //    var client = _clientFactory.CreateClient("spotify");
+
+        //    HttpResponseMessage response = await client.SendAsync(request);
+
+        //    if (response.IsSuccessStatusCode)
+        //    {
+        //        track = await response.Content.ReadFromJsonAsync<TrackResponseModel>();
+        //        track.Track.Items[0].External_urls.Spotify = "https://open.spotify.com/track/" +
+        //            track.Track.Items[0].Id;
+        //        return track;
+        //    }
+        //    else return null;
+        //}
+
+
 
 
         //public async Task<string> GetAuthorization()

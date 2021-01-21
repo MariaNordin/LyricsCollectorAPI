@@ -1,8 +1,10 @@
 ﻿using LyricsCollector.Context;
 using LyricsCollector.Entities;
+using LyricsCollector.Events;
 using LyricsCollector.Models.Contracts;
 using LyricsCollector.Models.LyricsModels;
 using LyricsCollector.Models.SpotifyModels;
+using LyricsCollector.Models.UserModels;
 using LyricsCollector.Services.Contracts;
 using Microsoft.Extensions.Caching.Memory;
 using System;
@@ -15,33 +17,28 @@ using System.Threading.Tasks;
 
 namespace LyricsCollector.Services.ConcreteServices
 {
-    public class LyricsService : ILyricsService
+    public class LyricsService : ILyricsService, IUserWithTokenObserver
     {
         private readonly IHttpClientFactory _clientFactory;
         private readonly IMemoryCache _memoryCache;
+        //private readonly IUserWithToken _userWithToken;
         private readonly LyricsCollectorDbContext _context;
 
+        private User _user;
         private LyricsResponseModel _lyrics = new LyricsResponseModel();
 
-        public LyricsService(IHttpClientFactory clientFactory, LyricsCollectorDbContext context, IMemoryCache memoryCache)
+        public LyricsService(IHttpClientFactory clientFactory, LyricsCollectorDbContext context, IMemoryCache memoryCache, IUserWithToken userWithToken)
         {
             _clientFactory = clientFactory;
             _memoryCache = memoryCache;
             _context = context;
-        }
-
-        //public delegate void LyricsFoundEventHandler(object source, EventArgs args);
-
-        public event EventHandler LyricsFound;
-
-        protected virtual void OnLyricsFound()
-        {
-            LyricsFound?.Invoke(this, EventArgs.Empty);
+            //userWithToken = userWithToken;
+            userWithToken.AttachObserver(this);
         }
 
         public async Task<LyricsResponseModel> Search(string artist, string title)
         {
-            var dbLyrics = CheckIfLyricsInDb(artist, title);
+            var dbLyrics = LyricsInDbMatch(artist, title);
             if (dbLyrics != null)
             {
                 return dbLyrics;
@@ -53,7 +50,6 @@ namespace LyricsCollector.Services.ConcreteServices
                 try
                 {
                     _lyrics = await client.GetFromJsonAsync<LyricsResponseModel>($"{artist}/{title}");
-                    
                 }
                 catch (Exception)
                 {
@@ -62,22 +58,24 @@ namespace LyricsCollector.Services.ConcreteServices
 
                 _lyrics.Artist = ToTitleCase(artist);
                 _lyrics.Title = ToTitleCase(title);
-                await SaveLyricsToDb(_lyrics);
-                _memoryCache.Set("DbLyrics", _context.Lyrics.ToList());
+
+                if (_lyrics.Lyrics != "")
+                {
+                    await SaveLyricsToDb(_lyrics);
+                    _memoryCache.Set("DbLyrics", _context.Lyrics.ToList());
+                }              
                 return _lyrics;
             }
         }
 
         public IEnumerable<Lyrics> GetDbLyrics()
         {
-
-            if (!_memoryCache.TryGetValue("DbLyrics", out List<Lyrics> listOfLyrics))
+            if (!_memoryCache.TryGetValue("DbLyrics", out List<Lyrics> _))
             {
                 _memoryCache.Set("DbLyrics", _context.Lyrics.ToList());
             }
 
-            listOfLyrics = _memoryCache.Get("DbLyrics") as List<Lyrics>;
-
+            List<Lyrics> listOfLyrics = _memoryCache.Get("DbLyrics") as List<Lyrics>;
             return listOfLyrics;
         }
 
@@ -100,7 +98,7 @@ namespace LyricsCollector.Services.ConcreteServices
                 throw; 
             }
         }
-        private LyricsResponseModel CheckIfLyricsInDb(string artist, string title)
+        private LyricsResponseModel LyricsInDbMatch(string artist, string title)
         {
             artist = ToTitleCase(artist);
             title = ToTitleCase(title);
@@ -139,6 +137,11 @@ namespace LyricsCollector.Services.ConcreteServices
             {
                 throw;
             }
+        }
+
+        public void Notify(User user)
+        {
+            _user = user;
         }
 
 

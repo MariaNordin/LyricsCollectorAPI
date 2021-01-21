@@ -1,8 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using LyricsCollector.Entities;
+using LyricsCollector.Models.UserModels;
+using LyricsCollector.Services.Contracts;
+using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace LyricsCollector.Controllers
 {
-    public class CollectionController : Controller
+    public class CollectionController : ControllerBase
     {
         // GET: Hämta alla listor
         // GET: Hämta en lista
@@ -10,9 +14,18 @@ namespace LyricsCollector.Controllers
         // POST: Lägg till låt i lista
         // DELETE: Ta bort lista 
 
-        public IActionResult Index()
+        private readonly ICollectionService _collectionService;
+        //private Collection _collection;
+
+        public CollectionController(ICollectionService collectionService)
         {
-            return View();
+            _collectionService = collectionService;
         }
+
+        //[HttpGet]
+        //public async Task<IActionResult> GetAllUsersLists([FromBody] UserPostModel userPM)
+        //{
+
+        //}
     }
 }
