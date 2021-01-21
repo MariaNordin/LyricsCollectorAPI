@@ -1,6 +1,9 @@
 ﻿using LyricsCollector.Context;
 using LyricsCollector.Entities;
+using LyricsCollector.Models.LyricsModels;
 using LyricsCollector.Models.UserModels;
+using LyricsCollector.Observer.Observer;
+using LyricsCollector.Observer.Subject;
 using LyricsCollector.Services.Contracts;
 using System;
 using System.Collections.Generic;
@@ -9,20 +12,20 @@ using System.Threading.Tasks;
 
 namespace LyricsCollector.Services.ConcreteServices
 {
-    public class CollectionService : ICollectionService
+    public class CollectionService : ICollectionService, ILoggedInUserObserver
     {
         private readonly LyricsCollectorDbContext _context;
-        private User _user;
+        private UserWithToken _user;
 
-        public CollectionService(LyricsCollectorDbContext context, IUserWithToken userWithToken)
+        public CollectionService(LyricsCollectorDbContext context, ILoggedInUser loggedInUser)
         {
             _context = context;
-            userWithToken.AttachObserver(this);
+            loggedInUser.AttachObserver(this);
         }
 
-        public void Notify(User user)
+        public void Notify(UserWithToken userWithtoken)
         {
-            _user = user;
+            _user = userWithtoken;
         }
 
         public async Task<bool> SaveCollectionLyricsAsync(LyricsResponseModel lyrics, int userId, int collectionId)
@@ -41,11 +44,6 @@ namespace LyricsCollector.Services.ConcreteServices
             {
                 throw;
             }
-        }
-
-        public void Notify(User user)
-        {
-            _user = user;
         }
 
 

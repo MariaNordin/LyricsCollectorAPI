@@ -1,8 +1,8 @@
 ﻿using LyricsCollector.Context;
 using LyricsCollector.Entities;
 using LyricsCollector.Models;
-using LyricsCollector.Models.Contracts;
 using LyricsCollector.Models.UserModels;
+using LyricsCollector.Observer.Subject;
 using LyricsCollector.Services.Contracts;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.EntityFrameworkCore;
@@ -22,13 +22,14 @@ namespace LyricsCollector.Services.ConcreteServices
     {
         private readonly LyricsCollectorDbContext _context;
         private readonly JWTSettings _jwtSettings;
-        private IUserWithToken _userWithToken;
+        private readonly ILoggedInUser _loggedInUser;
+        private UserWithToken _userWithToken;
 
-        public UserService(LyricsCollectorDbContext context, IOptions<JWTSettings> jwtSettings, IUserWithToken userWithToken)
+        public UserService(LyricsCollectorDbContext context, IOptions<JWTSettings> jwtSettings, ILoggedInUser loggedInUser)
         {
             _context = context;
             _jwtSettings = jwtSettings.Value;
-            _userWithToken = userWithToken;
+            _loggedInUser = loggedInUser;
         }
 
         public async Task<User> RegisterUser(UserPostModel userPM)
@@ -42,7 +43,6 @@ namespace LyricsCollector.Services.ConcreteServices
             }
             else
             {
-                
                 var user = GeneratePassword(userPM);
                 _context.Users.Add(user);
 
@@ -71,7 +71,9 @@ namespace LyricsCollector.Services.ConcreteServices
                 Token = token,
                 User = existingUser
             };
-            
+
+            _loggedInUser.NotifyObserver(_userWithToken);
+
             return _userWithToken as UserWithToken;
         }
 
@@ -138,10 +140,5 @@ namespace LyricsCollector.Services.ConcreteServices
 
             return result;
         }
-
-        //public void Notify(User user)
-        //{
-        //    throw new NotImplementedException();
-        //}
     }
 }

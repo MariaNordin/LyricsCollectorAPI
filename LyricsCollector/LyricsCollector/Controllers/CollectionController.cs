@@ -1,9 +1,5 @@
-﻿using LyricsCollector.Entities;
-using LyricsCollector.Models.LyricsModels;
-using LyricsCollector.Models.UserModels;
-using LyricsCollector.Services.Contracts;
+﻿using LyricsCollector.Services.Contracts;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace LyricsCollector.Controllers
 {

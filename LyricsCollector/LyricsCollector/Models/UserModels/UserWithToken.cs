@@ -5,44 +5,21 @@ using System.Collections.Generic;
 
 namespace LyricsCollector.Models.UserModels
 {
-    public class UserWithToken : IUserWithToken
+    public class UserWithToken
     {
-        private readonly List<IUserWithTokenObserver> _observers;
-
         private User _user;
-        public User User 
-        {
-            get { return _user; } 
-            set 
-            { 
-                _user = value;
-                NotifyObserver();
-            }
-        }
-        
-        public string Token { get; set; }
+        private string _token;
 
-        public UserWithToken()
+        public User User
         {
-            _observers = new List<IUserWithTokenObserver>();
+            get { return _user;  }
+            set { _user = value; }
         }
 
-        public void AttachObserver(IUserWithTokenObserver observer)
+        public string Token
         {
-            _observers.Add(observer);
-        }
-
-        public void DetachObserver(IUserWithTokenObserver observer)
-        {
-            _observers.Remove(observer);
-        }
-
-        public void NotifyObserver()
-        {
-            foreach (var observer in _observers)
-            {
-                observer.Notify(_user);
-            }
+            get { return _token; }
+            set { _token = value; }
         }
     }
 }
