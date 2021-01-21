@@ -2,6 +2,7 @@
 using LyricsCollector.Entities;
 using LyricsCollector.Events;
 using LyricsCollector.Models;
+using LyricsCollector.Models.Contracts;
 using LyricsCollector.Models.UserModels;
 using LyricsCollector.Services.Contracts;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
@@ -24,10 +25,11 @@ namespace LyricsCollector.Services.ConcreteServices
         private readonly JWTSettings _jwtSettings;
         private UserWithToken _userWithToken;
 
-        public UserService(LyricsCollectorDbContext context, IOptions<JWTSettings> jwtSettings)
+        public UserService(LyricsCollectorDbContext context, IOptions<JWTSettings> jwtSettings, IUserWithToken userWithToken)
         {
             _context = context;
             _jwtSettings = jwtSettings.Value;
+            _userWithToken = userWithToken;
         }
 
         public event EventHandler<UserEventArgs> UserLoggedIn;
@@ -153,5 +155,10 @@ namespace LyricsCollector.Services.ConcreteServices
 
             return result;
         }
+
+        //public void Notify(User user)
+        //{
+        //    throw new NotImplementedException();
+        //}
     }
 }
