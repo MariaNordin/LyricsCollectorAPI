@@ -1,10 +1,7 @@
 ﻿using LyricsCollector.Context;
 using LyricsCollector.Entities;
-using LyricsCollector.Events;
 using LyricsCollector.Models.Contracts;
 using LyricsCollector.Models.LyricsModels;
-using LyricsCollector.Models.SpotifyModels;
-using LyricsCollector.Models.UserModels;
 using LyricsCollector.Services.Contracts;
 using Microsoft.Extensions.Caching.Memory;
 using System;
@@ -17,23 +14,19 @@ using System.Threading.Tasks;
 
 namespace LyricsCollector.Services.ConcreteServices
 {
-    public class LyricsService : ILyricsService, IUserWithTokenObserver
+    public class LyricsService : ILyricsService
     {
         private readonly IHttpClientFactory _clientFactory;
         private readonly IMemoryCache _memoryCache;
-        //private readonly IUserWithToken _userWithToken;
         private readonly LyricsCollectorDbContext _context;
 
-        private User _user;
         private LyricsResponseModel _lyrics = new LyricsResponseModel();
 
-        public LyricsService(IHttpClientFactory clientFactory, LyricsCollectorDbContext context, IMemoryCache memoryCache, IUserWithToken userWithToken)
+        public LyricsService(IHttpClientFactory clientFactory, LyricsCollectorDbContext context, IMemoryCache memoryCache)
         {
             _clientFactory = clientFactory;
             _memoryCache = memoryCache;
             _context = context;
-            //userWithToken = userWithToken;
-            userWithToken.AttachObserver(this);
         }
 
         public async Task<LyricsResponseModel> Search(string artist, string title)
@@ -121,60 +114,5 @@ namespace LyricsCollector.Services.ConcreteServices
             TextInfo ti = CultureInfo.CurrentCulture.TextInfo;
             return ti.ToTitleCase(text);
         }
-
-        public async Task<bool> SaveCollectionLyricsAsync(LyricsResponseModel lyrics, int userId, int collectionId) {
-
-            var collectionLyrics = new CollectionLyrics();
-
-            _context.CollectionLyrics.Add(collectionLyrics);
-
-            try
-            {
-                await _context.SaveChangesAsync();
-                return true;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        public void Notify(User user)
-        {
-            _user = user;
-        }
-
-
-        //{
-        //    var existingCollection = _context.Collections.Where(c => c.CollectionOfUserId == userId).FirstOrDefault();
-
-        //    if (existingCollectionLyrics != null)
-        //    {
-
-        //    }
-        //    var existingCollectionLyrics = _context.CollectionLyrics.Where(cl => cl.CollectionId == userRM.CollectionId).FirstOrDefault();
-
-        //    //var existingLyrics = _context.Lyrics.Where(l => l.)
-        //    //var isInList = CheckLyricsInExistingList(lyricsRM, userRM.CollectionId);
-
-        //    var lyrics = new Lyrics
-        //    {
-        //        Artist = lyricsRM.Artist,
-        //        Title = lyricsRM.Title,
-        //        SongLyrics = lyricsRM.Lyrics
-        //    };
-
-        //    if (existingCollection != null)
-        //    {
-        //        existingCollection.Lyrics.Add(lyrics);
-        //    }
-        //    return "hej";
-
-        //}
-
-        //private bool CheckLyricsInExistingList(LyricsResponseModel lyricsRM, int collectionId)
-        //{
-        //    var existingLyrics = _context.Collections.Where(c => c.Id == collectionId)
-        //}
     }
 }

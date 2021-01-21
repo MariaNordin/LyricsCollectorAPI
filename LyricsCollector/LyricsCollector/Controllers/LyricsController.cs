@@ -1,8 +1,6 @@
 ﻿using LyricsCollector.Models.LyricsModels;
 using LyricsCollector.Models.SpotifyModels;
 using LyricsCollector.Services.Contracts;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -15,10 +13,8 @@ namespace LyricsCollector.Controllers
     [ApiController]
     public class LyricsController : ControllerBase
     {
-        // Authorize:
-        // POST: Lägga till låt i lista
-        // DELETE: Ta bort låt ur lista
-        // GET: Alla låtar som finns i Db (ADMIN)
+        // GET: Alla låtar som finns i Db (Authorize: ADMIN)
+        // POST: Search
 
         private readonly ILyricsService _lyricsService;
         private readonly ISpotifyService _spotifyService;
@@ -50,25 +46,6 @@ namespace LyricsCollector.Controllers
             lyrics.SpotifyLink = track.Track.Items[0].External_urls.Spotify;
             lyrics.CoverImage = track.Track.Items[0].Album.Images[1].Url;
             return Ok(lyrics);
-        }
-
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        [HttpPost("Save")]
-        public async Task<IActionResult> SaveToCollectionAsync([FromBody] LyricsResponseModel lyricsRM, int userId, int collectionId)
-        {
-            var result = await _lyricsService.SaveCollectionLyricsAsync(lyricsRM, userId, collectionId);
-            // Save in collection:
-            // check if lyrics in db : lägg tll annars
-
-            if (result)
-            {
-                return Ok(new
-                {
-                    Status = "Saved lyrics to list"
-                });
-            }
-            return BadRequest(new { Status = "Saving lyrics to list failed." });
-
         }
     }
 }
