@@ -1,6 +1,7 @@
 ﻿using LyricsCollector.Context;
 using LyricsCollector.Entities;
 using LyricsCollector.Models;
+using LyricsCollector.Models.Contracts;
 using LyricsCollector.Models.UserModels;
 using LyricsCollector.Services.Contracts;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
@@ -21,11 +22,13 @@ namespace LyricsCollector.Services.ConcreteServices
     {
         private readonly LyricsCollectorDbContext _context;
         private readonly JWTSettings _jwtSettings;
+        private IUserWithToken _userWithToken;
 
-        public UserService(LyricsCollectorDbContext context, IOptions<JWTSettings> jwtSettings)
+        public UserService(LyricsCollectorDbContext context, IOptions<JWTSettings> jwtSettings, IUserWithToken userWithToken)
         {
             _context = context;
             _jwtSettings = jwtSettings.Value;
+            _userWithToken = userWithToken;
         }
 
         public async Task<User> RegisterUser(UserPostModel userPM)
@@ -51,9 +54,25 @@ namespace LyricsCollector.Services.ConcreteServices
                 catch (Exception)
                 {
                     throw;
-                }
-                
+                }               
             }
+        }
+
+        public async Task<UserWithToken> Authenticate(UserPostModel userPM)
+        {
+            var existingUser = await ValidatePassword(userPM);
+
+            if (existingUser == null) return null;
+
+            var token = GenerateJwtToken(existingUser);
+
+            _userWithToken = new UserWithToken
+            {
+                Token = token,
+                User = existingUser
+            };
+            
+            return _userWithToken as UserWithToken;
         }
 
         private static User GeneratePassword(UserPostModel userPM)
@@ -64,8 +83,6 @@ namespace LyricsCollector.Services.ConcreteServices
             {
                 rng.GetBytes(saltByteArray);
             }
-
-            //var base64StringOfSalt = Convert.ToBase64String(saltByteArray);
 
             var hashedPw = Convert.ToBase64String(KeyDerivation.Pbkdf2(
                 password: userPM.Password,
@@ -83,24 +100,6 @@ namespace LyricsCollector.Services.ConcreteServices
                 Name = userPM.Name
             };
             return user;            
-        }
-
-        public async Task<UserWithToken> Authenticate(UserPostModel userPM)
-        {
-            var existingUser = await ValidatePassword(userPM);
-
-            if (existingUser == null) return null;
-
-            var token = GenerateJwtToken(existingUser);
-
-            var authenticatedUser = new UserResponseModel
-            {
-                Email = existingUser.Email,
-                Name = existingUser.Name,
-                Collections = existingUser.Collections
-            };
-
-            return new UserWithToken(authenticatedUser, token);
         }
 
         private async Task<User> ValidatePassword(UserPostModel userPM)
@@ -139,5 +138,10 @@ namespace LyricsCollector.Services.ConcreteServices
 
             return result;
         }
+
+        //public void Notify(User user)
+        //{
+        //    throw new NotImplementedException();
+        //}
     }
 }

@@ -4,6 +4,7 @@ using LyricsCollector.Events;
 using LyricsCollector.Models.Contracts;
 using LyricsCollector.Models.LyricsModels;
 using LyricsCollector.Models.SpotifyModels;
+using LyricsCollector.Models.UserModels;
 using LyricsCollector.Services.Contracts;
 using Microsoft.Extensions.Caching.Memory;
 using System;
@@ -16,32 +17,24 @@ using System.Threading.Tasks;
 
 namespace LyricsCollector.Services.ConcreteServices
 {
-    public class LyricsService : ILyricsService
+    public class LyricsService : ILyricsService, IUserWithTokenObserver
     {
         private readonly IHttpClientFactory _clientFactory;
         private readonly IMemoryCache _memoryCache;
-        private readonly ISpotifyService _spotifyService;
+        //private readonly IUserWithToken _userWithToken;
         private readonly LyricsCollectorDbContext _context;
 
+        private User _user;
         private LyricsResponseModel _lyrics = new LyricsResponseModel();
-        private TrackResponseModel _track = new TrackResponseModel();
 
-        public LyricsService(IHttpClientFactory clientFactory, LyricsCollectorDbContext context, IMemoryCache memoryCache, ISpotifyService spotifyService)
+        public LyricsService(IHttpClientFactory clientFactory, LyricsCollectorDbContext context, IMemoryCache memoryCache, IUserWithToken userWithToken)
         {
             _clientFactory = clientFactory;
             _memoryCache = memoryCache;
-            _spotifyService = spotifyService;
             _context = context;
-
-            _spotifyService.TrackFound += this.OnTrackFound;
+            //userWithToken = userWithToken;
+            userWithToken.AttachObserver(this);
         }
-
-        public void OnTrackFound(object source, TrackEventArgs e)
-        {
-            _lyrics.CoverImage = e.Track.Track.Items[0].Album.Images[1].Url;
-            _lyrics.SpotifyLink = e.Track.Track.Items[0].External_urls.Spotify;
-        }
-
 
         public async Task<LyricsResponseModel> Search(string artist, string title)
         {
@@ -144,6 +137,11 @@ namespace LyricsCollector.Services.ConcreteServices
             {
                 throw;
             }
+        }
+
+        public void Notify(User user)
+        {
+            _user = user;
         }
 
 
