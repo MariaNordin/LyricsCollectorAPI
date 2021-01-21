@@ -36,7 +36,14 @@ namespace LyricsCollector.Services.ConcreteServices
 
         protected virtual void OnUserLoggedIn()
         {
-            UserLoggedIn?.Invoke(this, new UserEventArgs() { UserWithToken = _userWithToken });
+            UserLoggedIn?.Invoke(this, new UserEventArgs() { User = _userWithToken.User });
+        }
+
+        public event EventHandler<UserEventArgs> RegisteredUser;
+
+        public virtual void OnRegisteredUser(User user)
+        {
+            RegisteredUser?.Invoke(this, new UserEventArgs() { User = user });
         }
 
         public async Task<User> RegisterUser(UserPostModel userPM)
@@ -57,12 +64,13 @@ namespace LyricsCollector.Services.ConcreteServices
                 try
                 {
                     await _context.SaveChangesAsync();
-                    return user; 
+                    OnRegisteredUser(user);
+                    return user;
                 }
                 catch (Exception)
                 {
                     throw;
-                }               
+                }                
             }
         }
 
@@ -148,10 +156,5 @@ namespace LyricsCollector.Services.ConcreteServices
 
             return result;
         }
-
-        //public void Notify(User user)
-        //{
-        //    throw new NotImplementedException();
-        //}
     }
 }

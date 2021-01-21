@@ -13,7 +13,8 @@ namespace LyricsCollector.Services.ConcreteServices
     public class CollectionService : ICollectionService
     {
         private readonly LyricsCollectorDbContext _context;
-        private UserWithToken _userWithToken;
+        private User _loggedInUser;
+       
         public CollectionService(LyricsCollectorDbContext context)
         {
             _context = context;
@@ -21,7 +22,12 @@ namespace LyricsCollector.Services.ConcreteServices
 
         public void OnUserLoggedIn(object source, UserEventArgs args)
         {
-            _userWithToken = args.UserWithToken;
+            _loggedInUser = args.User;
+        }
+
+        public void OnRegisteredUser(object source, UserEventArgs args)
+        {
+
         }
     }
 }
