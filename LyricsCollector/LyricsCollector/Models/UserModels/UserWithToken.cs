@@ -1,25 +1,46 @@
 ﻿using LyricsCollector.Entities;
-using LyricsCollector.Models.Contracts;
-using LyricsCollector.Services.Contracts;
+using LyricsCollector.Observer.Observer;
 using System.Collections.Generic;
 
 namespace LyricsCollector.Models.UserModels
 {
-    public class UserWithToken
+    public class UserWithToken : IUserWithToken
     {
-        private User _user;
-        private string _token;
+        private List<ILoggedInUserObserver> _observers;
 
-        public User User
+        public UserWithToken()
         {
-            get { return _user;  }
-            set { _user = value; }
+            _observers = new List<ILoggedInUserObserver>();
         }
 
-        public string Token
+        private User _user;
+        public User User
         {
-            get { return _token; }
-            set { _token = value; }
+            get { return _user; }
+            set
+            {
+                _user = value;
+                NotifyObserver();
+            }
+        }
+        public string Token { get; set; }
+
+        public void AttachObserver(ILoggedInUserObserver observer)
+        {
+            _observers.Add(observer);
+        }
+
+        public void DetachObserver(ILoggedInUserObserver observer)
+        {
+            _observers.Remove(observer);
+        }
+
+        public void NotifyObserver()
+        {
+            foreach (var observer in _observers)
+            {
+                observer.Update(_user);
+            }
         }
     }
 }

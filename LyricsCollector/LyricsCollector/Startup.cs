@@ -89,7 +89,7 @@ namespace LyricsCollector
             services.AddSingleton<IUserService, UserService>();
             services.AddSingleton<ISpotifyService, SpotifyService>();
             //services.AddSingleton<ILoggedInUserObserver, CollectionService>();
-            services.AddSingleton<ILoggedInUser, LoggedInUser>();
+            //services.AddSingleton<IUserWithToken, UserWithToken>();
 
             services.AddHttpContextAccessor();
             

@@ -1,9 +1,9 @@
-﻿using LyricsCollector.Models.UserModels;
+﻿using LyricsCollector.Entities;
 
 namespace LyricsCollector.Observer.Observer
 {
     public interface ILoggedInUserObserver
     {
-        void Notify(UserWithToken userWithtoken);
+        void Update(User user);
     }
 }

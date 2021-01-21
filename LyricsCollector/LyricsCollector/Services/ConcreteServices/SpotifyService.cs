@@ -1,5 +1,4 @@
-﻿using LyricsCollector.Events;
-using LyricsCollector.Models.SpotifyModels;
+﻿using LyricsCollector.Models.SpotifyModels;
 using LyricsCollector.Models.UserModels;
 using LyricsCollector.Services.Contracts;
 using System;
@@ -28,13 +27,6 @@ namespace LyricsCollector.Services.ConcreteServices
         {
             _clientFactory = clientFactory;
             //_credentials = credentials.Value;
-        }
-
-        public event EventHandler<TrackEventArgs> TrackFound;
-
-        protected virtual void OnTrackFound()
-        {
-            TrackFound?.Invoke(this, new TrackEventArgs() { Track = trackResponse });
         }
 
         public async Task<TrackResponseModel> Search(string artist, string title)

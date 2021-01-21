@@ -3,7 +3,6 @@ using LyricsCollector.Entities;
 using LyricsCollector.Models.LyricsModels;
 using LyricsCollector.Models.UserModels;
 using LyricsCollector.Observer.Observer;
-using LyricsCollector.Observer.Subject;
 using LyricsCollector.Services.Contracts;
 using System;
 using System.Collections.Generic;
@@ -15,36 +14,52 @@ namespace LyricsCollector.Services.ConcreteServices
     public class CollectionService : ICollectionService, ILoggedInUserObserver
     {
         private readonly LyricsCollectorDbContext _context;
-        private UserWithToken _user;
+        private UserWithToken _userWithToken;
+        //private User _user;
 
-        public CollectionService(LyricsCollectorDbContext context, ILoggedInUser loggedInUser)
+        public CollectionService(LyricsCollectorDbContext context)
         {
             _context = context;
-            loggedInUser.AttachObserver(this);
+            _userWithToken = new UserWithToken();
+            _userWithToken.AttachObserver(this);
         }
 
-        public void Notify(UserWithToken userWithtoken)
+
+        public void Update(User user)
         {
-            _user = userWithtoken;
+            _userWithToken.User = user;
         }
 
-        public async Task<bool> SaveCollectionLyricsAsync(LyricsResponseModel lyrics, int userId, int collectionId)
+        public void CreateDefaultCollection()
         {
-
-            var collectionLyrics = new CollectionLyrics();
-
-            _context.CollectionLyrics.Add(collectionLyrics);
-
-            try
+            var collection = new Collection
             {
-                await _context.SaveChangesAsync();
-                return true;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+                Name = "MyLyrics",
+                User = _userWithToken.User
+            };
+
+            _context.Collections.Add(collection);
+
+            _context.SaveChanges();
         }
+
+        //public async Task<bool> SaveCollectionLyricsAsync(LyricsResponseModel lyrics, int userId, int collectionId)
+        //{
+
+        //    var collectionLyrics = new CollectionLyrics();
+
+        //    _context.CollectionLyrics.Add(collectionLyrics);
+
+        //    try
+        //    {
+        //        await _context.SaveChangesAsync();
+        //        return true;
+        //    }
+        //    catch (Exception)
+        //    {
+        //        throw;
+        //    }
+        //}
 
 
         //{

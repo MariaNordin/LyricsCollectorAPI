@@ -1,7 +1,7 @@
 ﻿using LyricsCollector.Models.UserModels;
 using LyricsCollector.Observer.Observer;
 
-namespace LyricsCollector.Observer.Subject
+namespace LyricsCollector.Models.UserModels
 {
     public interface IUserWithToken
     {

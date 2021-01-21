@@ -4,16 +4,25 @@ using System.Collections.Generic;
 
 namespace LyricsCollector.Models.UserModels
 {
-    public class LoggedInUser : ILoggedInUser
+    public class LoggedInUser : IUserWithToken
     {
-        private List<ILoggedInUserObserver> _observers = new List<ILoggedInUserObserver>();
+        private List<ILoggedInUserObserver> _observers;
+
+        private UserWithToken _userWithToken;
+
+        public UserWithToken userWithToken
+        {
+            get { return _userWithToken; }
+            set
+            {
+                _userWithToken = value;
+                NotifyObserver();
+            }
+        }
 
         public LoggedInUser()
         {
-            //foreach (var observer in loggedInUserObservers)
-            //{
-            //    AttachObserver(observer);
-            //} 
+           _observers = new List<ILoggedInUserObserver>();
         }
 
         public void AttachObserver(ILoggedInUserObserver observer)
@@ -26,11 +35,11 @@ namespace LyricsCollector.Models.UserModels
             _observers.Remove(observer);
         }
 
-        public void NotifyObserver(UserWithToken userWithToken)
+        public void NotifyObserver()
         {
             foreach (var observer in _observers)
             {
-                observer.Notify(userWithToken);
+                observer.Notify(_userWithToken);
             }
         }
     }

@@ -2,7 +2,6 @@
 using LyricsCollector.Entities;
 using LyricsCollector.Models;
 using LyricsCollector.Models.UserModels;
-using LyricsCollector.Observer.Subject;
 using LyricsCollector.Services.Contracts;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.EntityFrameworkCore;
@@ -22,14 +21,14 @@ namespace LyricsCollector.Services.ConcreteServices
     {
         private readonly LyricsCollectorDbContext _context;
         private readonly JWTSettings _jwtSettings;
-        private readonly ILoggedInUser _loggedInUser;
+        //private readonly IUserWithToken _userWithToken;
         private UserWithToken _userWithToken;
 
-        public UserService(LyricsCollectorDbContext context, IOptions<JWTSettings> jwtSettings, ILoggedInUser loggedInUser)
+        public UserService(LyricsCollectorDbContext context, IOptions<JWTSettings> jwtSettings)
         {
             _context = context;
             _jwtSettings = jwtSettings.Value;
-            _loggedInUser = loggedInUser;
+            _userWithToken = new UserWithToken();
         }
 
         public async Task<User> RegisterUser(UserPostModel userPM)
@@ -66,15 +65,13 @@ namespace LyricsCollector.Services.ConcreteServices
 
             var token = GenerateJwtToken(existingUser);
 
-            _userWithToken = new UserWithToken
+            var userWithToken = new UserWithToken
             {
                 Token = token,
                 User = existingUser
             };
 
-            _loggedInUser.NotifyObserver(_userWithToken);
-
-            return _userWithToken as UserWithToken;
+            return userWithToken as UserWithToken;
         }
 
         private static User GeneratePassword(UserPostModel userPM)
