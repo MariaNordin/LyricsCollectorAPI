@@ -22,10 +22,32 @@ namespace LyricsCollector.Controllers
             _collectionService = collectionService;
         }
 
-        //[HttpGet]
-        //public async Task<IActionResult> GetAllUsersLists([FromBody] UserPostModel userPM)
-        //{
+        [HttpGet("Collection")]
+        public async Task<IActionResult> GetCollection(int collectionId)
+        {
+            try
+            {
+                var collection = await _collectionService.GetCollectionAsync(collectionId);
+                return Ok(collection);
+            }
+            catch (System.Exception)
+            {
+                return BadRequest();
+            }
+        }
 
-        //}
+        [HttpGet("Collections")]
+        public async Task<IActionResult> GetAllUsersCollections()
+        {
+            try
+            {
+                var collection = await _collectionService.GetAllCollectionsAsync();
+                return Ok(collection);
+            }
+            catch (System.Exception)
+            {
+                return BadRequest();
+            }
+        }
     }
 }

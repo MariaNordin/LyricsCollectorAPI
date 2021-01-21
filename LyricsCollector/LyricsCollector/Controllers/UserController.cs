@@ -22,13 +22,13 @@ namespace LyricsCollector.Controllers
         //--------------------------------------------
         private readonly IUserService _userService;
         private UserWithToken _userWithToken;
-        private CollectionService _collectionService;
+        private ICollectionService _collectionService;
 
         public UserController(IUserService userService, ICollectionService collectionService)
         {
             _userService = userService;
             //_userWithToken = new UserWithToken();
-            _collectionService = (CollectionService)collectionService;
+            _collectionService = collectionService;
             _userService.RegisteredUser += _collectionService.OnRegisteredUser;
             _userService.UserLoggedIn += _collectionService.OnUserLoggedIn;
         }

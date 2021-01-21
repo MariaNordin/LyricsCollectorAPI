@@ -22,14 +22,12 @@ namespace LyricsCollector.Services.ConcreteServices
     {
         private readonly LyricsCollectorDbContext _context;
         private readonly JWTSettings _jwtSettings;
-        //private IUserWithToken _userWithToken;
         private UserWithToken _userWithToken;
 
         public UserService(LyricsCollectorDbContext context, IOptions<JWTSettings> jwtSettings)
         {
             _context = context;
             _jwtSettings = jwtSettings.Value;
-            //_userWithToken = userWithToken;
         }
 
         public event EventHandler<UserEventArgs> UserLoggedIn;
@@ -122,7 +120,7 @@ namespace LyricsCollector.Services.ConcreteServices
         private async Task<User> ValidatePassword(UserPostModel userPM)
         {
             var foundUser = await _context.Users.Where
-                (u => u.Email == userPM.Email).FirstOrDefaultAsync();
+                (u => u.Email == userPM.Email).Include(u => u.Collections).FirstOrDefaultAsync();
 
             var hashedPw = Convert.ToBase64String(KeyDerivation.Pbkdf2(
                 password: userPM.Password,
