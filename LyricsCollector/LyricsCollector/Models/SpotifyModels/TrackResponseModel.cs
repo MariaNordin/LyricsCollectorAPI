@@ -1,6 +1,3 @@
-using LyricsCollector.Models.Contracts;
-using LyricsCollector.Services.Contracts;
-using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace LyricsCollector.Models.SpotifyModels

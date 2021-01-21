@@ -1,10 +1,6 @@
 ﻿using LyricsCollector.Context;
 using LyricsCollector.Entities;
-using LyricsCollector.Events;
-using LyricsCollector.Models.Contracts;
 using LyricsCollector.Models.LyricsModels;
-using LyricsCollector.Models.SpotifyModels;
-using LyricsCollector.Models.UserModels;
 using LyricsCollector.Services.Contracts;
 using Microsoft.Extensions.Caching.Memory;
 using System;
@@ -17,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace LyricsCollector.Services.ConcreteServices
 {
-    public class LyricsService : ILyricsService, IUserWithTokenObserver
+    public class LyricsService : ILyricsService
     {
         private readonly IHttpClientFactory _clientFactory;
         private readonly IMemoryCache _memoryCache;
@@ -27,13 +23,11 @@ namespace LyricsCollector.Services.ConcreteServices
         private User _user;
         private LyricsResponseModel _lyrics = new LyricsResponseModel();
 
-        public LyricsService(IHttpClientFactory clientFactory, LyricsCollectorDbContext context, IMemoryCache memoryCache, IUserWithToken userWithToken)
+        public LyricsService(IHttpClientFactory clientFactory, LyricsCollectorDbContext context, IMemoryCache memoryCache)
         {
             _clientFactory = clientFactory;
             _memoryCache = memoryCache;
             _context = context;
-            //userWithToken = userWithToken;
-            userWithToken.AttachObserver(this);
         }
 
         public async Task<LyricsResponseModel> Search(string artist, string title)

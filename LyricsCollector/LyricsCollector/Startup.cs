@@ -1,6 +1,5 @@
 using LyricsCollector.Context;
 using LyricsCollector.Models;
-using LyricsCollector.Models.Contracts;
 using LyricsCollector.Models.UserModels;
 using LyricsCollector.Services.ConcreteServices;
 using LyricsCollector.Services.Contracts;
@@ -91,8 +90,6 @@ namespace LyricsCollector
             services.AddTransient<ILyricsService, LyricsService>();
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<ISpotifyService, SpotifyService>();
-            //services.AddTransient<List<IUserWithTokenObserver>;
-            services.AddSingleton<IUserWithToken, UserWithToken>();
 
             services.AddHttpContextAccessor();
             

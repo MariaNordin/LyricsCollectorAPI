@@ -1,5 +1,6 @@
 ﻿using LyricsCollector.Context;
 using LyricsCollector.Entities;
+using LyricsCollector.Events;
 using LyricsCollector.Models.UserModels;
 using LyricsCollector.Services.Contracts;
 using System;
@@ -12,15 +13,15 @@ namespace LyricsCollector.Services.ConcreteServices
     public class CollectionService : ICollectionService
     {
         private readonly LyricsCollectorDbContext _context;
-        private User _user;
+        private UserWithToken _userWithToken;
         public CollectionService(LyricsCollectorDbContext context)
         {
             _context = context;
         }
 
-        public void Notify(User user)
+        public void OnUserLoggedIn(object source, UserEventArgs args)
         {
-            _user = user;
+            _userWithToken = args.UserWithToken;
         }
     }
 }
