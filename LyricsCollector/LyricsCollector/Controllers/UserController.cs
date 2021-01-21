@@ -1,4 +1,5 @@
 ﻿using LyricsCollector.Models.UserModels;
+using LyricsCollector.Services.ConcreteServices;
 using LyricsCollector.Services.Contracts;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -20,11 +21,16 @@ namespace LyricsCollector.Controllers
 
         //--------------------------------------------
         private readonly IUserService _userService;
-        UserWithToken userWithToken;
+        private UserWithToken _userWithToken;
+        private CollectionService _collectionService;
 
-        public UserController(IUserService userService)
+        public UserController(IUserService userService, ICollectionService collectionService)
         {
             _userService = userService;
+            //_userWithToken = new UserWithToken();
+            _collectionService = (CollectionService)collectionService;
+            _userService.RegisteredUser += _collectionService.OnRegisteredUser;
+            _userService.UserLoggedIn += _collectionService.OnUserLoggedIn;
         }
 
         [HttpPost("Register")]
@@ -47,11 +53,11 @@ namespace LyricsCollector.Controllers
         {
             try
             {
-                userWithToken = await _userService.Authenticate(userPM);
+                _userWithToken = await _userService.Authenticate(userPM);
 
-                if (userWithToken != null)
+                if (_userWithToken != null)
                 {
-                    return Ok(userWithToken);
+                    return Ok(_userWithToken);
                 }
                 return NotFound();
 
