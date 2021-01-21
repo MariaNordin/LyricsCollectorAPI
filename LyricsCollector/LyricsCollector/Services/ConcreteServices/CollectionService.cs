@@ -15,9 +15,11 @@ namespace LyricsCollector.Services.ConcreteServices
         private readonly LyricsCollectorDbContext _context;
         private User _loggedInUser;
        
-        public CollectionService(LyricsCollectorDbContext context)
+        public CollectionService(LyricsCollectorDbContext context, IUserService userService)
         {
             _context = context;
+            userService.RegisteredUser += this.OnRegisteredUser;
+            userService.UserLoggedIn += this.OnUserLoggedIn;
         }
 
         public void OnUserLoggedIn(object source, UserEventArgs args)
@@ -27,6 +29,20 @@ namespace LyricsCollector.Services.ConcreteServices
 
         public void OnRegisteredUser(object source, UserEventArgs args)
         {
+            CreateDefaultCollection(args.User);
+        }
+
+        private void CreateDefaultCollection(User user)
+        {
+            var collection = new Collection
+            {
+                Name = "MyLyrics",
+                CollectionOfUserId = user.Id
+            };
+
+            _context.Collections.Add(collection);
+
+            _context.SaveChanges();
 
         }
     }

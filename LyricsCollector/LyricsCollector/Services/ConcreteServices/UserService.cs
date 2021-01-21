@@ -33,15 +33,14 @@ namespace LyricsCollector.Services.ConcreteServices
         }
 
         public event EventHandler<UserEventArgs> UserLoggedIn;
+        public event EventHandler<UserEventArgs> RegisteredUser;
 
         protected virtual void OnUserLoggedIn()
         {
             UserLoggedIn?.Invoke(this, new UserEventArgs() { User = _userWithToken.User });
         }
 
-        public event EventHandler<UserEventArgs> RegisteredUser;
-
-        public virtual void OnRegisteredUser(User user)
+        protected virtual void OnRegisteredUser(User user)
         {
             RegisteredUser?.Invoke(this, new UserEventArgs() { User = user });
         }
