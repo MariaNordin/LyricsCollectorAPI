@@ -27,10 +27,7 @@ namespace LyricsCollector.Controllers
         public UserController(IUserService userService, ICollectionService collectionService)
         {
             _userService = userService;
-            //_userWithToken = new UserWithToken();
             _collectionService = collectionService;
-            _userService.RegisteredUser += _collectionService.OnRegisteredUser;
-            _userService.UserLoggedIn += _collectionService.OnUserLoggedIn;
         }
 
         [HttpPost("Register")]
@@ -59,7 +56,7 @@ namespace LyricsCollector.Controllers
                 {
                     return Ok(_userWithToken);
                 }
-                return NotFound();
+                return Unauthorized();
 
             }
             catch (Exception ex)

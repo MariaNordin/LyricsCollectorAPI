@@ -1,7 +1,10 @@
 ﻿using LyricsCollector.Entities;
 using LyricsCollector.Models.UserModels;
 using LyricsCollector.Services.Contracts;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace LyricsCollector.Controllers
@@ -22,26 +25,27 @@ namespace LyricsCollector.Controllers
             _collectionService = collectionService;
         }
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet("Collection")]
-        public async Task<IActionResult> GetCollection(int collectionId, int userId)
+        public async Task<IActionResult> GetCollectionAsync([FromBody] UserPostModel userPM)
         {
             try
             {
-                var collection = await _collectionService.GetCollectionAsync(collectionId, userId);
+                var collection = await _collectionService.GetCollectionAsync(userPM.CollectionId, userPM.Email);
                 return Ok(collection);
             }
             catch (System.Exception)
             {
-                return BadRequest();
+                return BadRequest(); 
             }
         }
 
         [HttpGet("AllCollections")]
-        public async Task<IActionResult> GetAllUsersCollections(int userId)
+        public async Task<IActionResult> GetUsersCollectionsAsync([FromBody] UserPostModel userPM)
         {
             try
             {
-                var collections = await _collectionService.GetAllCollectionsAsync(userId);
+                var collections = await _collectionService.GetAllCollectionsAsync(userPM.Email);
                 return Ok(collections);
             }
             catch (System.Exception)
@@ -51,11 +55,11 @@ namespace LyricsCollector.Controllers
         }
 
         [HttpPost("NewCollection")]
-        public async Task<IActionResult> NewCollection(string name, int userId)
+        public async Task<IActionResult> CreateNewCollectionAsync([FromBody] UserPostModel userPM)
         {
             try
             {
-                var collection = await _collectionService.NewCollection(name, userId);
+                var collection = await _collectionService.NewCollection(userPM.NewCollectionName, userPM.Email);
                 return Ok(collection);
             }
             catch (System.Exception)

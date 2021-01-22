@@ -16,7 +16,7 @@ namespace LyricsCollector.Services.ConcreteServices
     {
         private readonly LyricsCollectorDbContext _context;
         //private UserService _userService;
-        private User _loggedInUser;
+        //private User _loggedInUser;
         private Collection[] _collections;
 
         public CollectionService(LyricsCollectorDbContext context)
@@ -24,15 +24,15 @@ namespace LyricsCollector.Services.ConcreteServices
             _context = context;
         }
 
-        public void OnUserLoggedIn(object source, UserEventArgs args)
-        {
-            _loggedInUser = args.User;
-        }
+        //public void OnUserLoggedIn(object source, UserEventArgs args)
+        //{
+        //    _loggedInUser = args.User;
+        //}
 
-        public void OnRegisteredUser(object source, UserEventArgs args)
-        {
-            CreateDefaultCollection(args.User);
-        }
+        //public void OnRegisteredUser(object source, UserEventArgs args)
+        //{
+        //    CreateDefaultCollection(args.User);
+        //}
 
         private void CreateDefaultCollection(User user) //async?
         {
@@ -47,12 +47,12 @@ namespace LyricsCollector.Services.ConcreteServices
             _context.SaveChanges();
         }
 
-        public async Task<Collection> NewCollection(string name, int userId)
+        public async Task<Collection> NewCollection(string CollectionName, string email)
         {
             var collection = new Collection
             {
-                Name = name,
-                CollectionOfUserId = userId //_loggedInUser.Id
+                Name = CollectionName,
+                //CollectionOfUserId = userId //_loggedInUser.Id
             };
 
             _context.Collections.Add(collection);
@@ -89,7 +89,7 @@ namespace LyricsCollector.Services.ConcreteServices
             //else return null;
         }
 
-        public async Task<IEnumerable<Collection>> GetCollectionAsync(int collectionId, int userId)
+        public async Task<IEnumerable<Collection>> GetCollectionAsync(int collectionId, string email)
         {
             try
             {
@@ -97,7 +97,7 @@ namespace LyricsCollector.Services.ConcreteServices
                    .Include(c => c.Lyrics)
                    .ThenInclude(cl => cl.Lyrics)
                    .Where(c => c.Id == collectionId
-                   && c.User.Id == userId).ToArrayAsync();
+                   && c.User.Email == email).ToArrayAsync();
 
                 return _collections;
             }
@@ -126,14 +126,14 @@ namespace LyricsCollector.Services.ConcreteServices
             //else return null;
         }
 
-        public async Task<IEnumerable<Collection>> GetAllCollectionsAsync(int userId)
+        public async Task<IEnumerable<Collection>> GetAllCollectionsAsync(string email)
         {
             try
             {
                 _collections = await _context.Collections
                    .Include(c => c.Lyrics)
                    .ThenInclude(cl => cl.Lyrics)
-                   .Where(c => c.CollectionOfUserId == userId).ToArrayAsync();
+                   .Where(c => c.User.Email == email).ToArrayAsync();
 
                 return _collections;
             }

@@ -1,7 +1,7 @@
 ﻿using LyricsCollector.Context;
 using LyricsCollector.Entities;
 using LyricsCollector.Events;
-using LyricsCollector.Models;
+using LyricsCollector.JWT;
 using LyricsCollector.Models.UserModels;
 using LyricsCollector.Services.Contracts;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
@@ -142,7 +142,7 @@ namespace LyricsCollector.Services.ConcreteServices
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.Name, existingUser.Email)
+                    new Claim(ClaimTypes.Email, existingUser.Email)
                 }),
                 Expires = DateTime.Now.AddDays(7),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),
@@ -153,10 +153,5 @@ namespace LyricsCollector.Services.ConcreteServices
 
             return result;
         }
-
-        //public void Notify(User user)
-        //{
-        //    throw new NotImplementedException();
-        //}
     }
 }

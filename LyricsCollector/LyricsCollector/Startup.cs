@@ -1,4 +1,5 @@
 using LyricsCollector.Context;
+using LyricsCollector.JWT;
 using LyricsCollector.Models;
 using LyricsCollector.Models.UserModels;
 using LyricsCollector.Services.ConcreteServices;
@@ -59,7 +60,7 @@ namespace LyricsCollector
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             }).AddJwtBearer(x =>
                {
-                   x.RequireHttpsMetadata = true;
+                   x.RequireHttpsMetadata = false;
                    x.SaveToken = true;
                    x.TokenValidationParameters = new TokenValidationParameters
                    {

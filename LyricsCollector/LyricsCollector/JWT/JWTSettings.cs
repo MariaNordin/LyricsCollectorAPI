@@ -1,5 +1,5 @@
 ﻿
-namespace LyricsCollector.Models
+namespace LyricsCollector.JWT
 {
     public class JWTSettings
     {
