@@ -39,7 +39,7 @@ namespace LyricsCollector.Models.UserModels
         {
             foreach (var observer in _observers)
             {
-                observer.Notify(_userWithToken);
+                observer.Update(_userWithToken.User);
             }
         }
     }

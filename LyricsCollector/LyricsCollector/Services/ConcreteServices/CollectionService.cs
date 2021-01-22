@@ -9,20 +9,20 @@ namespace LyricsCollector.Services.ConcreteServices
     public class CollectionService : ICollectionService, ILoggedInUserObserver
     {
         private readonly LyricsCollectorDbContext _context;
-        private UserWithToken _userWithToken;
-        //private User _user;
+        private IUserWithToken _userWithToken;
+        private User _user;
 
-        public CollectionService(LyricsCollectorDbContext context)
+        public CollectionService(LyricsCollectorDbContext context, IUserWithToken userWithToken)
         {
             _context = context;
-            _userWithToken = new UserWithToken();
+            _userWithToken = userWithToken;
             _userWithToken.AttachObserver(this);
         }
 
 
         public void Update(User user)
         {
-            _userWithToken.User = user;
+            _user = user;
         }
 
         public void CreateDefaultCollection()
@@ -30,7 +30,7 @@ namespace LyricsCollector.Services.ConcreteServices
             var collection = new Collection
             {
                 Name = "MyLyrics",
-                User = _userWithToken.User
+                User = _user
             };
 
             _context.Collections.Add(collection);

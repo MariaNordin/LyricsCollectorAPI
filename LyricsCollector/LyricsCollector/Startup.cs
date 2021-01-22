@@ -1,7 +1,7 @@
 using LyricsCollector.Context;
 using LyricsCollector.Models;
 using LyricsCollector.Models.UserModels;
-using LyricsCollector.Observer.Subject;
+using LyricsCollector.Observer.Observer;
 using LyricsCollector.Services.ConcreteServices;
 using LyricsCollector.Services.Contracts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -85,11 +85,11 @@ namespace LyricsCollector
             });
 
 
-            services.AddSingleton<ILyricsService, LyricsService>();
-            services.AddSingleton<IUserService, UserService>();
-            services.AddSingleton<ISpotifyService, SpotifyService>();
-            //services.AddSingleton<ILoggedInUserObserver, CollectionService>();
-            //services.AddSingleton<IUserWithToken, UserWithToken>();
+            services.AddTransient<ILyricsService, LyricsService>();
+            services.AddTransient<IUserService, UserService>();
+            services.AddTransient<ISpotifyService, SpotifyService>();
+            services.AddTransient<ICollectionService, CollectionService>();
+            services.AddTransient<IUserWithToken, UserWithToken>();
 
             services.AddHttpContextAccessor();
             

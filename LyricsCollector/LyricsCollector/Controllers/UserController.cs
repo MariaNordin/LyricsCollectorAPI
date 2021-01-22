@@ -14,7 +14,6 @@ namespace LyricsCollector.Controllers
     {
         // GET: Hämta alla users
         // GET: Hämta en specifik user
-        // POST: "Register" (ny user)
         // PUT: Ändra uppgifter
         // DELETE: Ta bort user
 

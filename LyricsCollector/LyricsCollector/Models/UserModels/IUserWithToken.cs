@@ -1,4 +1,4 @@
-﻿using LyricsCollector.Models.UserModels;
+﻿using LyricsCollector.Entities;
 using LyricsCollector.Observer.Observer;
 
 namespace LyricsCollector.Models.UserModels

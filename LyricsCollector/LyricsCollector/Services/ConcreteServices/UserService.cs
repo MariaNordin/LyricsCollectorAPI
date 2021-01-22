@@ -21,14 +21,16 @@ namespace LyricsCollector.Services.ConcreteServices
     {
         private readonly LyricsCollectorDbContext _context;
         private readonly JWTSettings _jwtSettings;
-        //private readonly IUserWithToken _userWithToken;
+        private CollectionService _collection;
         private UserWithToken _userWithToken;
 
-        public UserService(LyricsCollectorDbContext context, IOptions<JWTSettings> jwtSettings)
+        public UserService(LyricsCollectorDbContext context, IOptions<JWTSettings> jwtSettings, ICollectionService collection)
         {
             _context = context;
             _jwtSettings = jwtSettings.Value;
             _userWithToken = new UserWithToken();
+            _collection = (CollectionService)collection;
+            _userWithToken.AttachObserver(_collection);
         }
 
         public async Task<User> RegisterUser(UserPostModel userPM)
