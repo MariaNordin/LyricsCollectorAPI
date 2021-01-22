@@ -9,7 +9,7 @@ namespace LyricsCollector.Services.Contracts
     public interface IUserService
     {
         public Task<User> RegisterUser(UserPostModel userPM);
-        public Task<UserWithToken> Authenticate(UserPostModel userPM);
+        public Task<UserResponseModel> Authenticate(UserPostModel userPM);
         
         public event EventHandler<UserEventArgs> UserLoggedIn;
 

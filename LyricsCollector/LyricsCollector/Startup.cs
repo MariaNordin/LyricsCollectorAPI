@@ -1,10 +1,7 @@
 using LyricsCollector.Context;
 using LyricsCollector.JWT;
-using LyricsCollector.Models;
-using LyricsCollector.Models.UserModels;
 using LyricsCollector.Services.ConcreteServices;
 using LyricsCollector.Services.Contracts;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -80,7 +77,6 @@ namespace LyricsCollector
             services.AddHttpClient("lyrics", c =>
             {
                 c.BaseAddress = new Uri(Configuration.GetValue<string>("LyricsAPI"));
-                c.DefaultRequestHeaders.Add("Authorization", "Bearer");
             });
             services.AddHttpClient("spotify", c =>
             {

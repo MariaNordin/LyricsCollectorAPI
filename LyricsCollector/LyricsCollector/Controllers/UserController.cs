@@ -21,17 +21,17 @@ namespace LyricsCollector.Controllers
 
         //--------------------------------------------
         private readonly IUserService _userService;
-        private UserWithToken _userWithToken;
-        private ICollectionService _collectionService;
+        //private UserWithToken _userWithToken;
+        //private ICollectionService _collectionService;
 
-        public UserController(IUserService userService, ICollectionService collectionService)
+        public UserController(IUserService userService)
         {
             _userService = userService;
-            _collectionService = collectionService;
+            //_collectionService = collectionService;
         }
 
         [HttpPost("Register")]
-        public async Task<IActionResult> Register(UserPostModel payload)
+        public async Task<IActionResult> Register([FromBody] UserPostModel payload)
         {
             try
             {
@@ -50,11 +50,11 @@ namespace LyricsCollector.Controllers
         {
             try
             {
-                _userWithToken = await _userService.Authenticate(userPM);
+                var authenticatedUser = await _userService.Authenticate(userPM);
 
-                if (_userWithToken != null)
+                if (authenticatedUser != null)
                 {
-                    return Ok(_userWithToken);
+                    return Ok(authenticatedUser);
                 }
                 return Unauthorized();
 

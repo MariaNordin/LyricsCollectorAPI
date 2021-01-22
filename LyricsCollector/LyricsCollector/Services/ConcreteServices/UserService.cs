@@ -22,7 +22,7 @@ namespace LyricsCollector.Services.ConcreteServices
     {
         private readonly LyricsCollectorDbContext _context;
         private readonly JWTSettings _jwtSettings;
-        private UserWithToken _userWithToken;
+        //private UserWithToken _userWithToken;
 
         public UserService(LyricsCollectorDbContext context, IOptions<JWTSettings> jwtSettings)
         {
@@ -33,15 +33,15 @@ namespace LyricsCollector.Services.ConcreteServices
         public event EventHandler<UserEventArgs> UserLoggedIn;
         public event EventHandler<UserEventArgs> RegisteredUser;
 
-        protected virtual void OnUserLoggedIn()
-        {
-            UserLoggedIn?.Invoke(this, new UserEventArgs() { User = _userWithToken.User });
-        }
+        //protected virtual void OnUserLoggedIn()
+        //{
+        //    UserLoggedIn?.Invoke(this, new UserEventArgs() { User = _userWithToken.User });
+        //}
 
-        protected virtual void OnRegisteredUser(User user)
-        {
-            RegisteredUser?.Invoke(this, new UserEventArgs() { User = user });
-        }
+        //protected virtual void OnRegisteredUser(User user)
+        //{
+        //    RegisteredUser?.Invoke(this, new UserEventArgs() { User = user });
+        //}
 
         public async Task<User> RegisterUser(UserPostModel userPM)
         {
@@ -61,17 +61,19 @@ namespace LyricsCollector.Services.ConcreteServices
                 try
                 {
                     await _context.SaveChangesAsync();
-                    OnRegisteredUser(user);
-                    return user;
+                    //OnRegisteredUser(user);
+                   
                 }
                 catch (Exception)
                 {
                     throw;
-                }                
+                }
+                //skapa default collection här?
+                return user;
             }
         }
 
-        public async Task<UserWithToken> Authenticate(UserPostModel userPM)
+        public async Task<UserResponseModel> Authenticate(UserPostModel userPM)
         {
             var existingUser = await ValidatePassword(userPM);
 
@@ -79,15 +81,17 @@ namespace LyricsCollector.Services.ConcreteServices
 
             var token = GenerateJwtToken(existingUser);
 
-            _userWithToken = new UserWithToken
+            var authenticatedUser = new UserResponseModel
             {
                 Token = token,
-                User = existingUser
+                Name = existingUser.Name,
+                Email = existingUser.Email,
+                Collections = existingUser.Collections
             };
 
-            OnUserLoggedIn();
+            //OnUserLoggedIn();
 
-            return _userWithToken;
+            return authenticatedUser;
         }
 
         private static User GeneratePassword(UserPostModel userPM)

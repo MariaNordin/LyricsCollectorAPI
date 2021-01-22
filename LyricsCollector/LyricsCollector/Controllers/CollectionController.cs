@@ -3,12 +3,16 @@ using LyricsCollector.Models.UserModels;
 using LyricsCollector.Services.Contracts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Threading.Tasks;
 
 namespace LyricsCollector.Controllers
 {
+    [Route("api/[controller]")]
+    [EnableCors("CORSPolicy")]
+    [ApiController]
     public class CollectionController : ControllerBase
     {
         // GET: Hämta alla listor
@@ -26,7 +30,7 @@ namespace LyricsCollector.Controllers
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        [HttpGet("Collection")]
+        [HttpPost("Collection")]
         public async Task<IActionResult> GetCollectionAsync([FromBody] UserPostModel userPM)
         {
             try
@@ -40,7 +44,7 @@ namespace LyricsCollector.Controllers
             }
         }
 
-        [HttpGet("AllCollections")]
+        [HttpPost("AllCollections")]
         public async Task<IActionResult> GetUsersCollectionsAsync([FromBody] UserPostModel userPM)
         {
             try
