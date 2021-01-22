@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace LyricsCollector.Services.ConcreteServices
 {
-    public class LyricsService : ILyricsService, IUserWithTokenObserver
+    public class LyricsService : ILyricsService
     {
         private readonly IHttpClientFactory _clientFactory;
         private readonly IMemoryCache _memoryCache;

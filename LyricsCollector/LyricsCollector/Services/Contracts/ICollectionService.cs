@@ -11,8 +11,9 @@ namespace LyricsCollector.Services.Contracts
     {
         void OnRegisteredUser(object source, UserEventArgs args);
         void OnUserLoggedIn(object source, UserEventArgs args);
-        Task<IEnumerable<Collection>> GetCollectionAsync(int collectionId);
+        Task<Collection> NewCollection(string name, int userId);
+        Task<IEnumerable<Collection>> GetCollectionAsync(int collectionId, int userId);
 
-        Task<IEnumerable<Collection>> GetAllCollectionsAsync();
+        Task<IEnumerable<Collection>> GetAllCollectionsAsync(int userId);
     }
 }

@@ -47,72 +47,117 @@ namespace LyricsCollector.Services.ConcreteServices
             _context.SaveChanges();
         }
 
-        public async Task<Collection> NewCollection(string name)
+        public async Task<Collection> NewCollection(string name, int userId)
         {
-            if (_loggedInUser != null)
+            var collection = new Collection
             {
-                var collection = new Collection
-                {
-                    Name = name,
-                    CollectionOfUserId = _loggedInUser.Id
-                };
+                Name = name,
+                CollectionOfUserId = userId //_loggedInUser.Id
+            };
 
-                _context.Collections.Add(collection);
+            _context.Collections.Add(collection);
 
-                try
-                {
-                    await _context.SaveChangesAsync();
-                    return collection;
-                }
-                catch (Exception)
-                {
-                    throw;
-                }
+            try
+            {
+                await _context.SaveChangesAsync();
+                return collection;
             }
-            else return null;
+            catch (Exception)
+            {
+                throw;
+            }
+            //if (_loggedInUser != null)
+            //{
+            //    var collection = new Collection
+            //    {
+            //        Name = name,
+            //        CollectionOfUserId = _loggedInUser.Id
+            //    };
+
+            //    _context.Collections.Add(collection);
+
+            //    try
+            //    {
+            //        await _context.SaveChangesAsync();
+            //        return collection;
+            //    }
+            //    catch (Exception)
+            //    {
+            //        throw;
+            //    }
+            //}
+            //else return null;
         }
 
-        public async Task<IEnumerable<Collection>> GetCollectionAsync(int collectionId)
+        public async Task<IEnumerable<Collection>> GetCollectionAsync(int collectionId, int userId)
         {
-            if (_loggedInUser != null)
+            try
             {
-                try
-                {
-                    _collections = await _context.Collections
-                       .Include(c => c.Lyrics)
-                       .ThenInclude(cl => cl.Lyrics)
-                       .Where(c => c.Id == collectionId
-                       && c.User.Id == _loggedInUser.Id).ToArrayAsync();
+                _collections = await _context.Collections
+                   .Include(c => c.Lyrics)
+                   .ThenInclude(cl => cl.Lyrics)
+                   .Where(c => c.Id == collectionId
+                   && c.User.Id == userId).ToArrayAsync();
 
-                    return _collections;
-                }
-                catch (Exception)
-                {
-                    throw;
-                }
+                return _collections;
             }
-            else return null;
+            catch (Exception)
+            {
+                throw;
+            }
+
+            //if (_loggedInUser != null)
+            //{
+            //    try
+            //    {
+            //        _collections = await _context.Collections
+            //           .Include(c => c.Lyrics)
+            //           .ThenInclude(cl => cl.Lyrics)
+            //           .Where(c => c.Id == collectionId
+            //           && c.User.Id == _loggedInUser.Id).ToArrayAsync();
+
+            //        return _collections;
+            //    }
+            //    catch (Exception)
+            //    {
+            //        throw;
+            //    }
+            //}
+            //else return null;
         }
 
-        public async Task<IEnumerable<Collection>> GetAllCollectionsAsync()
+        public async Task<IEnumerable<Collection>> GetAllCollectionsAsync(int userId)
         {
-            if (_loggedInUser != null)
+            try
             {
-                try
-                {
-                    _collections = await _context.Collections
-                       .Include(c => c.Lyrics)
-                       .ThenInclude(cl => cl.Lyrics)
-                       .Where(c => c.CollectionOfUserId == _loggedInUser.Id).ToArrayAsync();
+                _collections = await _context.Collections
+                   .Include(c => c.Lyrics)
+                   .ThenInclude(cl => cl.Lyrics)
+                   .Where(c => c.CollectionOfUserId == userId).ToArrayAsync();
 
-                    return _collections;
-                }
-                catch (Exception)
-                {
-                    throw;
-                }
+                return _collections;
             }
-            else return null;
+            catch (Exception)
+            {
+                throw;
+            }
+            //if (_loggedInUser != null)
+            //{
+            //    try
+            //    {
+            //        _collections = await _context.Collections
+            //           .Include(c => c.Lyrics)
+            //           .ThenInclude(cl => cl.Lyrics)
+            //           .Where(c => c.CollectionOfUserId == _loggedInUser.Id).ToArrayAsync();
+
+            //        return _collections;
+            //    }
+            //    catch (Exception)
+            //    {
+            //        throw;
+            //    }
+            //}
+            //else return null;
         }
     }
 }

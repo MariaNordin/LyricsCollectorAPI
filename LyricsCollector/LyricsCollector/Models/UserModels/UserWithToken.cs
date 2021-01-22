@@ -2,7 +2,7 @@
 
 namespace LyricsCollector.Models.UserModels
 {
-    public class UserWithToken : IUserWithToken
+    public class UserWithToken
     {
         public User User { get; set; }
         public string Token { get; set; }

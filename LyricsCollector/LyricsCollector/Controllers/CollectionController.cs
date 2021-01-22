@@ -23,11 +23,11 @@ namespace LyricsCollector.Controllers
         }
 
         [HttpGet("Collection")]
-        public async Task<IActionResult> GetCollection(int collectionId)
+        public async Task<IActionResult> GetCollection(int collectionId, int userId)
         {
             try
             {
-                var collection = await _collectionService.GetCollectionAsync(collectionId);
+                var collection = await _collectionService.GetCollectionAsync(collectionId, userId);
                 return Ok(collection);
             }
             catch (System.Exception)
@@ -36,12 +36,26 @@ namespace LyricsCollector.Controllers
             }
         }
 
-        [HttpGet("Collections")]
-        public async Task<IActionResult> GetAllUsersCollections()
+        [HttpGet("AllCollections")]
+        public async Task<IActionResult> GetAllUsersCollections(int userId)
         {
             try
             {
-                var collection = await _collectionService.GetAllCollectionsAsync();
+                var collections = await _collectionService.GetAllCollectionsAsync(userId);
+                return Ok(collections);
+            }
+            catch (System.Exception)
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpPost("NewCollection")]
+        public async Task<IActionResult> NewCollection(string name, int userId)
+        {
+            try
+            {
+                var collection = await _collectionService.NewCollection(name, userId);
                 return Ok(collection);
             }
             catch (System.Exception)
