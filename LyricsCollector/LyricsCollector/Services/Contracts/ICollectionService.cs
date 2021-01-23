@@ -14,6 +14,6 @@ namespace LyricsCollector.Services.Contracts
         Task<Collection> NewCollection(string name, string email);
         Task<IEnumerable<Collection>> GetCollectionAsync(int collectionId, string email);
 
-        Task<IEnumerable<Collection>> GetAllCollectionsAsync(string email);
+        Task<IEnumerable<Collection>> GetAllCollectionsAsync(string userName);
     }
 }

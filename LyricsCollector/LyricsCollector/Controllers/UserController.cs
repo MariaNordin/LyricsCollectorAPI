@@ -1,6 +1,8 @@
 ﻿using LyricsCollector.Models.UserModels;
 using LyricsCollector.Services.ConcreteServices;
 using LyricsCollector.Services.Contracts;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -21,21 +23,18 @@ namespace LyricsCollector.Controllers
 
         //--------------------------------------------
         private readonly IUserService _userService;
-        //private UserWithToken _userWithToken;
-        //private ICollectionService _collectionService;
 
         public UserController(IUserService userService)
         {
             _userService = userService;
-            //_collectionService = collectionService;
         }
 
         [HttpPost("Register")]
-        public async Task<IActionResult> Register([FromBody] UserPostModel payload)
+        public async Task<IActionResult> RegisterAsync([FromBody] UserPostModel payload)
         {
             try
             {
-                var result = await _userService.RegisterUser(payload);
+                var result = await _userService.RegisterUserAsync(payload);
             }
             catch (Exception ex)
             {
@@ -46,15 +45,15 @@ namespace LyricsCollector.Controllers
         }
 
         [HttpPost("Login")]
-        public async Task<IActionResult> Login([FromBody] UserPostModel userPM)
+        public async Task<IActionResult> LoginAsync([FromBody] UserPostModel userPM)
         {
             try
             {
-                var authenticatedUser = await _userService.Authenticate(userPM);
+                var userToken = await _userService.AuthenticateAsync(userPM);
 
-                if (authenticatedUser != null)
+                if (userToken != null)
                 {
-                    return Ok(authenticatedUser);
+                    return Ok(userToken);
                 }
                 return Unauthorized();
 
@@ -63,6 +62,24 @@ namespace LyricsCollector.Controllers
             {
                 // logg
                 return BadRequest(ex.Message);
+            }
+        }
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpPost("GetUser")]
+        public async Task<IActionResult> GetUserAsync()
+        {
+            var userName = HttpContext.User.Identity.Name;
+
+            try
+            {
+                var user = await _userService.GetUserAsync(userName);
+                return Ok(user);
+            }
+            catch (Exception)
+            {
+                //logg
+                return BadRequest();
             }
         }
     }

@@ -8,11 +8,8 @@ namespace LyricsCollector.Services.Contracts
 {
     public interface IUserService
     {
-        public Task<User> RegisterUser(UserPostModel userPM);
-        public Task<UserResponseModel> Authenticate(UserPostModel userPM);
-        
-        public event EventHandler<UserEventArgs> UserLoggedIn;
-
-        public event EventHandler<UserEventArgs> RegisteredUser;
+        Task<User> RegisterUserAsync(UserPostModel userPM);
+        Task<UserToken> AuthenticateAsync(UserPostModel userPM);
+        Task<UserResponseModel> GetUserAsync(string name);
     }
 }

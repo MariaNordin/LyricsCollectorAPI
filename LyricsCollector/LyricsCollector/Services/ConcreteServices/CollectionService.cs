@@ -66,27 +66,6 @@ namespace LyricsCollector.Services.ConcreteServices
             {
                 throw;
             }
-            //if (_loggedInUser != null)
-            //{
-            //    var collection = new Collection
-            //    {
-            //        Name = name,
-            //        CollectionOfUserId = _loggedInUser.Id
-            //    };
-
-            //    _context.Collections.Add(collection);
-
-            //    try
-            //    {
-            //        await _context.SaveChangesAsync();
-            //        return collection;
-            //    }
-            //    catch (Exception)
-            //    {
-            //        throw;
-            //    }
-            //}
-            //else return null;
         }
 
         public async Task<IEnumerable<Collection>> GetCollectionAsync(int collectionId, string email)
@@ -105,35 +84,16 @@ namespace LyricsCollector.Services.ConcreteServices
             {
                 throw;
             }
-
-            //if (_loggedInUser != null)
-            //{
-            //    try
-            //    {
-            //        _collections = await _context.Collections
-            //           .Include(c => c.Lyrics)
-            //           .ThenInclude(cl => cl.Lyrics)
-            //           .Where(c => c.Id == collectionId
-            //           && c.User.Id == _loggedInUser.Id).ToArrayAsync();
-
-            //        return _collections;
-            //    }
-            //    catch (Exception)
-            //    {
-            //        throw;
-            //    }
-            //}
-            //else return null;
         }
 
-        public async Task<IEnumerable<Collection>> GetAllCollectionsAsync(string email)
+        public async Task<IEnumerable<Collection>> GetAllCollectionsAsync(string userName)
         {
             try
             {
                 _collections = await _context.Collections
                    .Include(c => c.Lyrics)
                    .ThenInclude(cl => cl.Lyrics)
-                   .Where(c => c.User.Email == email).ToArrayAsync();
+                   .Where(c => c.User.Name == userName).ToArrayAsync();
 
                 return _collections;
             }
@@ -141,23 +101,6 @@ namespace LyricsCollector.Services.ConcreteServices
             {
                 throw;
             }
-            //if (_loggedInUser != null)
-            //{
-            //    try
-            //    {
-            //        _collections = await _context.Collections
-            //           .Include(c => c.Lyrics)
-            //           .ThenInclude(cl => cl.Lyrics)
-            //           .Where(c => c.CollectionOfUserId == _loggedInUser.Id).ToArrayAsync();
-
-            //        return _collections;
-            //    }
-            //    catch (Exception)
-            //    {
-            //        throw;
-            //    }
-            //}
-            //else return null;
         }
     }
 }

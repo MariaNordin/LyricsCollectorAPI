@@ -13,6 +13,7 @@ namespace LyricsCollector.Controllers
     [Route("api/[controller]")]
     [EnableCors("CORSPolicy")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class CollectionController : ControllerBase
     {
         // GET: Hämta alla listor
@@ -28,10 +29,9 @@ namespace LyricsCollector.Controllers
         {
             _collectionService = collectionService;
         }
-
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        [HttpPost("Collection")]
-        public async Task<IActionResult> GetCollectionAsync([FromBody] UserPostModel userPM)
+  
+        [HttpPost("Collection")] //?? behöver jag denna? beror på hur jag hämtar listor och låtar - när user loggar in eller när de frågas efter
+        public async Task<IActionResult> GetCollectionAsync()
         {
             try
             {
@@ -45,11 +45,13 @@ namespace LyricsCollector.Controllers
         }
 
         [HttpPost("AllCollections")]
-        public async Task<IActionResult> GetUsersCollectionsAsync([FromBody] UserPostModel userPM)
+        public async Task<IActionResult> GetUsersCollectionsAsync()
         {
+            var userName = HttpContext.User.Identity.Name;
+
             try
             {
-                var collections = await _collectionService.GetAllCollectionsAsync(userPM.Email);
+                var collections = await _collectionService.GetAllCollectionsAsync(userName);
                 return Ok(collections);
             }
             catch (System.Exception)
@@ -59,7 +61,7 @@ namespace LyricsCollector.Controllers
         }
 
         [HttpPost("NewCollection")]
-        public async Task<IActionResult> CreateNewCollectionAsync([FromBody] UserPostModel userPM)
+        public async Task<IActionResult> CreateNewCollectionAsync([FromBody] UserPostModel userPM) // bara skicka namn på collection
         {
             try
             {

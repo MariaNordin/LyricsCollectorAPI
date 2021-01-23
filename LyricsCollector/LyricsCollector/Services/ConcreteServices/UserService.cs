@@ -30,8 +30,8 @@ namespace LyricsCollector.Services.ConcreteServices
             _jwtSettings = jwtSettings.Value;
         }
 
-        public event EventHandler<UserEventArgs> UserLoggedIn;
-        public event EventHandler<UserEventArgs> RegisteredUser;
+        //public event EventHandler<UserEventArgs> UserLoggedIn;
+        //public event EventHandler<UserEventArgs> RegisteredUser;
 
         //protected virtual void OnUserLoggedIn()
         //{
@@ -43,7 +43,7 @@ namespace LyricsCollector.Services.ConcreteServices
         //    RegisteredUser?.Invoke(this, new UserEventArgs() { User = user });
         //}
 
-        public async Task<User> RegisterUser(UserPostModel userPM)
+        public async Task<User> RegisterUserAsync(UserPostModel userPM)
         {
             var existingUser = await _context.Users.Where(u => u.Email == userPM.Email).FirstOrDefaultAsync();
 
@@ -60,38 +60,25 @@ namespace LyricsCollector.Services.ConcreteServices
 
                 try
                 {
-                    await _context.SaveChangesAsync();
-                    //OnRegisteredUser(user);
-                   
+                    await _context.SaveChangesAsync();                   
                 }
                 catch (Exception)
                 {
                     throw;
                 }
-                //skapa default collection här?
                 return user;
             }
         }
 
-        public async Task<UserResponseModel> Authenticate(UserPostModel userPM)
+        public async Task<UserToken> AuthenticateAsync(UserPostModel userPM)
         {
-            var existingUser = await ValidatePassword(userPM);
+            var existingUser = await ValidatePasswordAsync(userPM);
 
             if (existingUser == null) return null;
 
             var token = GenerateJwtToken(existingUser);
 
-            var authenticatedUser = new UserResponseModel
-            {
-                Token = token,
-                Name = existingUser.Name,
-                Email = existingUser.Email,
-                Collections = existingUser.Collections
-            };
-
-            //OnUserLoggedIn();
-
-            return authenticatedUser;
+            return new UserToken { Token = token };
         }
 
         private static User GeneratePassword(UserPostModel userPM)
@@ -121,7 +108,7 @@ namespace LyricsCollector.Services.ConcreteServices
             return user;            
         }
 
-        private async Task<User> ValidatePassword(UserPostModel userPM)
+        private async Task<User> ValidatePasswordAsync(UserPostModel userPM)
         {
             var foundUser = await _context.Users.Where
                 (u => u.Email == userPM.Email).Include(u => u.Collections).FirstOrDefaultAsync();
@@ -146,7 +133,8 @@ namespace LyricsCollector.Services.ConcreteServices
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.Email, existingUser.Email)
+                    new Claim(ClaimTypes.Email, existingUser.Email),
+                    new Claim(ClaimTypes.Name, existingUser.Name)
                 }),
                 Expires = DateTime.Now.AddDays(7),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),
@@ -156,6 +144,37 @@ namespace LyricsCollector.Services.ConcreteServices
             var result = tokenHandler.WriteToken(token);
 
             return result;
+        }
+
+        public async Task<UserResponseModel> GetUserAsync(string name)
+        {
+            User user;
+
+            try
+            {
+                user = await _context.Users
+                    .Include(u => u.Collections)
+                    .ThenInclude(c => c.Lyrics)
+                    .ThenInclude(cl => cl.Lyrics)
+                    .Where(u => u.Name == name).FirstOrDefaultAsync();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+            if (user != null)
+            {
+                var response = new UserResponseModel
+                {
+                    Name = user.Name,
+                    Collections = user.Collections
+                };
+
+                return response;
+            }
+            else return null;           
         }
     }
 }
