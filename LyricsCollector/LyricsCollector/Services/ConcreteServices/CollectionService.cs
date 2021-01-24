@@ -34,25 +34,29 @@ namespace LyricsCollector.Services.ConcreteServices
         //    CreateDefaultCollection(args.User);
         //}
 
-        private void CreateDefaultCollection(User user) //async?
+        private async Task<User> GetUserAsync(string userName)
         {
-            var collection = new Collection
+            User user;
+
+            try
             {
-                Name = "MyLyrics",
-                CollectionOfUserId = user.Id
-            };
-
-            _context.Collections.Add(collection);
-
-            _context.SaveChanges();
+                user = await _context.Users.Where(u => u.Name == userName).FirstOrDefaultAsync();
+                return user;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
-        public async Task<Collection> NewCollection(string CollectionName, string email)
+        public async Task<Collection> NewCollectionAsync(string CollectionName, string userName)
         {
+            var user = await GetUserAsync(userName);
+
             var collection = new Collection
             {
                 Name = CollectionName,
-                //CollectionOfUserId = userId //_loggedInUser.Id
+                User = user
             };
 
             _context.Collections.Add(collection);
@@ -68,17 +72,17 @@ namespace LyricsCollector.Services.ConcreteServices
             }
         }
 
-        public async Task<IEnumerable<Collection>> GetCollectionAsync(int collectionId, string email)
+        public async Task<IEnumerable<Collection>> GetCollectionAsync(int collectionId, string userName)
         {
             try
             {
-                _collections = await _context.Collections
+                var collection = await _context.Collections
                    .Include(c => c.Lyrics)
                    .ThenInclude(cl => cl.Lyrics)
                    .Where(c => c.Id == collectionId
-                   && c.User.Email == email).ToArrayAsync();
+                   && c.User.Name == userName && c.Id == collectionId).ToArrayAsync();
 
-                return _collections;
+                return collection;
             }
             catch (Exception)
             {
@@ -94,13 +98,13 @@ namespace LyricsCollector.Services.ConcreteServices
                    .Include(c => c.Lyrics)
                    .ThenInclude(cl => cl.Lyrics)
                    .Where(c => c.User.Name == userName).ToArrayAsync();
-
-                return _collections;
             }
             catch (Exception)
             {
                 throw;
             }
+
+            return _collections;
         }
     }
 }

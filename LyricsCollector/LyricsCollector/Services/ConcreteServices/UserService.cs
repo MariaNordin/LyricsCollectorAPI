@@ -45,7 +45,7 @@ namespace LyricsCollector.Services.ConcreteServices
 
         public async Task<User> RegisterUserAsync(UserPostModel userPM)
         {
-            var existingUser = await _context.Users.Where(u => u.Email == userPM.Email).FirstOrDefaultAsync();
+            var existingUser = await _context.Users.Where(u => u.Name == userPM.Name).FirstOrDefaultAsync();
 
 
             if (existingUser != null)
@@ -54,19 +54,21 @@ namespace LyricsCollector.Services.ConcreteServices
             }
             else
             {
-                
-                var user = GeneratePassword(userPM);
+                var user = GeneratePassword(userPM);            
                 _context.Users.Add(user);
+
+                var collection = new Collection { Name = "MyLyrics", User = user };
+                _context.Collections.Add(collection);
 
                 try
                 {
-                    await _context.SaveChangesAsync();                   
+                    await _context.SaveChangesAsync();
                 }
                 catch (Exception)
                 {
                     throw;
                 }
-                return user;
+                return user; // bool ist?
             }
         }
 
@@ -105,13 +107,13 @@ namespace LyricsCollector.Services.ConcreteServices
                 Email = userPM.Email,
                 Name = userPM.Name
             };
-            return user;            
+            return user;
         }
 
         private async Task<User> ValidatePasswordAsync(UserPostModel userPM)
         {
             var foundUser = await _context.Users.Where
-                (u => u.Email == userPM.Email).Include(u => u.Collections).FirstOrDefaultAsync();
+                (u => u.Name == userPM.Name).Include(u => u.Collections).FirstOrDefaultAsync();
 
             var hashedPw = Convert.ToBase64String(KeyDerivation.Pbkdf2(
                 password: userPM.Password,
@@ -133,7 +135,6 @@ namespace LyricsCollector.Services.ConcreteServices
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.Email, existingUser.Email),
                     new Claim(ClaimTypes.Name, existingUser.Name)
                 }),
                 Expires = DateTime.Now.AddDays(7),
@@ -174,7 +175,7 @@ namespace LyricsCollector.Services.ConcreteServices
 
                 return response;
             }
-            else return null;           
+            else return null;
         }
     }
 }

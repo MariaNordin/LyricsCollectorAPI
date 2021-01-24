@@ -31,11 +31,12 @@ namespace LyricsCollector.Controllers
         }
   
         [HttpPost("Collection")] //?? behöver jag denna? beror på hur jag hämtar listor och låtar - när user loggar in eller när de frågas efter
-        public async Task<IActionResult> GetCollectionAsync()
+        public async Task<IActionResult> GetCollectionAsync(int collectionId)
         {
+            var userName = HttpContext.User.Identity.Name;
             try
             {
-                var collection = await _collectionService.GetCollectionAsync(userPM.CollectionId, userPM.Email);
+                var collection = await _collectionService.GetCollectionAsync(collectionId, userName);
                 return Ok(collection);
             }
             catch (System.Exception)
@@ -65,7 +66,7 @@ namespace LyricsCollector.Controllers
         {
             try
             {
-                var collection = await _collectionService.NewCollection(userPM.NewCollectionName, userPM.Email);
+                var collection = await _collectionService.NewCollectionAsync(userPM.NewCollectionName, userPM.Email);
                 return Ok(collection);
             }
             catch (System.Exception)
