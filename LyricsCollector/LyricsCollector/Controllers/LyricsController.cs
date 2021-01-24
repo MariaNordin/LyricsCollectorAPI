@@ -33,7 +33,7 @@ namespace LyricsCollector.Controllers
 
         //POST:
         [HttpPost("Search")]
-        public async Task<IActionResult> GetLyrics([FromBody] LyricsPostModel lyricsPM)
+        public async Task<IActionResult> GetLyricsAsync([FromBody] LyricsPostModel lyricsPM)
         {
             //var cacheKey = $"Get_Lyrics_From_Search-{lyricsRM}";
 

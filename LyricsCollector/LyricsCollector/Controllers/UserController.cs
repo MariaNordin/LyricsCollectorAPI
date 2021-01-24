@@ -1,4 +1,5 @@
-﻿using LyricsCollector.Models.UserModels;
+﻿using LyricsCollector.Entities;
+using LyricsCollector.Models.UserModels;
 using LyricsCollector.Services.ConcreteServices;
 using LyricsCollector.Services.Contracts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -32,15 +33,23 @@ namespace LyricsCollector.Controllers
         [HttpPost("Register")]
         public async Task<IActionResult> RegisterAsync([FromBody] UserPostModel payload)
         {
+            User user;
+
             try
             {
-                var result = await _userService.RegisterUserAsync(payload);
+                user = await _userService.RegisterUserAsync(payload);
             }
             catch (Exception ex)
             {
                 // logg
                 return BadRequest(ex.Message);
             }
+
+            if (user == null)
+            {
+                return Ok(new { message = "Username or Email allready exists." });
+            }
+
             return Ok();
         }
 
@@ -66,7 +75,7 @@ namespace LyricsCollector.Controllers
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        [HttpPost("GetUser")]
+        [HttpPost("User")]
         public async Task<IActionResult> GetUserAsync()
         {
             var userName = HttpContext.User.Identity.Name;
