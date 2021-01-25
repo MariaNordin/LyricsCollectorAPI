@@ -66,8 +66,8 @@ namespace LyricsCollector.Services.ConcreteServices
                 var collection = await _context.Collections
                    .Include(c => c.Lyrics)
                    .ThenInclude(cl => cl.Lyrics)
-                   .Where(c => c.Id == collectionId
-                    && c.Id == collectionId).ToArrayAsync();
+                   .Where(c => c.Id == collectionId)
+                   .ToArrayAsync();
 
                 return collection;
             }
@@ -94,20 +94,12 @@ namespace LyricsCollector.Services.ConcreteServices
             return _collections;
         }
 
-
-        //public void OnLyricsFound(object source, LyricsEventArgs args)
-        //{
-        //    _lyrics = args.Lyrics;
-        //}
-
         public async Task<CollectionLyrics> SaveLyricsAsync(int collectionId)
         {
             Collection collection;
             Lyrics lyrics;
 
-            IEnumerable<Collection> collections = await GetCollectionAsync(collectionId);
-
-            collection = collections.First();
+            collection = await GetCurrentCollectionAsync(collectionId);
 
             //ska man kolla här om collection är null?
 
@@ -132,6 +124,20 @@ namespace LyricsCollector.Services.ConcreteServices
 
             return collectionLyrics;
 
+        }
+
+        private async Task<Collection> GetCurrentCollectionAsync(int collectionId)
+        {
+            try
+            {
+                var currentCollection = await _context.Collections.Where(c => c.Id == collectionId).FirstOrDefaultAsync();
+                return currentCollection;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         private async Task<Lyrics> GetCurrentLyricsAsync()
