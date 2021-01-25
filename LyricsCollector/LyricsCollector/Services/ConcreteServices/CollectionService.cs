@@ -1,8 +1,7 @@
 ﻿using LyricsCollector.Context;
 using LyricsCollector.Entities;
 using LyricsCollector.Events;
-using LyricsCollector.Models.CollectionModels;
-using LyricsCollector.Models.UserModels;
+using LyricsCollector.Models.LyricsModels;
 using LyricsCollector.Services.Contracts;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -15,24 +14,12 @@ namespace LyricsCollector.Services.ConcreteServices
     public class CollectionService : ICollectionService
     {
         private readonly LyricsCollectorDbContext _context;
-        //private UserService _userService;
-        //private User _loggedInUser;
         private Collection[] _collections;
 
         public CollectionService(LyricsCollectorDbContext context)
         {
             _context = context;
         }
-
-        //public void OnUserLoggedIn(object source, UserEventArgs args)
-        //{
-        //    _loggedInUser = args.User;
-        //}
-
-        //public void OnRegisteredUser(object source, UserEventArgs args)
-        //{
-        //    CreateDefaultCollection(args.User);
-        //}
 
         private async Task<User> GetUserAsync(string userName)
         {
@@ -72,7 +59,7 @@ namespace LyricsCollector.Services.ConcreteServices
             }
         }
 
-        public async Task<IEnumerable<Collection>> GetCollectionAsync(int collectionId, string userName)
+        public async Task<IEnumerable<Collection>> GetCollectionAsync(int collectionId)
         {
             try
             {
@@ -80,7 +67,7 @@ namespace LyricsCollector.Services.ConcreteServices
                    .Include(c => c.Lyrics)
                    .ThenInclude(cl => cl.Lyrics)
                    .Where(c => c.Id == collectionId
-                   && c.User.Name == userName && c.Id == collectionId).ToArrayAsync();
+                    && c.Id == collectionId).ToArrayAsync();
 
                 return collection;
             }
@@ -105,6 +92,60 @@ namespace LyricsCollector.Services.ConcreteServices
             }
 
             return _collections;
+        }
+
+
+        //public void OnLyricsFound(object source, LyricsEventArgs args)
+        //{
+        //    _lyrics = args.Lyrics;
+        //}
+
+        public async Task<CollectionLyrics> SaveLyricsAsync(int collectionId)
+        {
+            Collection collection;
+            Lyrics lyrics;
+
+            IEnumerable<Collection> collections = await GetCollectionAsync(collectionId);
+
+            collection = collections.First();
+
+            //ska man kolla här om collection är null?
+
+            lyrics = await GetCurrentLyricsAsync();
+
+            var collectionLyrics = new CollectionLyrics
+            {
+                Collection = collection,
+                Lyrics = lyrics
+            };
+
+            _context.CollectionLyrics.Add(collectionLyrics);
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return collectionLyrics;
+
+        }
+
+        private async Task<Lyrics> GetCurrentLyricsAsync()
+        {
+            try
+            {
+                var currentLyrics = await _context.Lyrics.OrderByDescending(l => l.Id).FirstOrDefaultAsync();
+                return currentLyrics;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
     }
 }

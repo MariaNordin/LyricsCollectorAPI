@@ -30,12 +30,12 @@ namespace LyricsCollector.Services.ConcreteServices
             //_credentials = credentials.Value;
         }
 
-        public event EventHandler<TrackEventArgs> TrackFound;
+        //public event EventHandler<LyricsEventArgs> TrackFound;
 
-        protected virtual void OnTrackFound()
-        {
-            TrackFound?.Invoke(this, new TrackEventArgs() { Track = trackResponse });
-        }
+        //protected virtual void OnTrackFound()
+        //{
+        //    TrackFound?.Invoke(this, new LyricsEventArgs() { Track = trackResponse });
+        //}
 
         public async Task<TrackResponseModel> Search(string artist, string title)
         {

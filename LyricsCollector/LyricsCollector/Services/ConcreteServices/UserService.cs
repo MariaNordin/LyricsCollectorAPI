@@ -139,7 +139,7 @@ namespace LyricsCollector.Services.ConcreteServices
                 {
                     new Claim(ClaimTypes.Name, existingUser.Name)
                 }),
-                Expires = DateTime.Now.AddDays(7),
+                Expires = DateTime.Now.AddDays(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),
                 SecurityAlgorithms.HmacSha256Signature)
             };

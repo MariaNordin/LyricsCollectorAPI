@@ -51,24 +51,5 @@ namespace LyricsCollector.Controllers
             lyrics.CoverImage = track.Track.Items[0].Album.Images[1].Url;
             return Ok(lyrics);
         }
-
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        [HttpPost("Save")]
-        public async Task<IActionResult> SaveToCollectionAsync([FromBody] LyricsResponseModel lyricsRM, int userId, int collectionId)
-        {
-            var result = await _lyricsService.SaveCollectionLyricsAsync(lyricsRM, userId, collectionId);
-            // Save in collection:
-            // check if lyrics in db : lägg tll annars
-
-            if (result)
-            {
-                return Ok(new
-                {
-                    Status = "Saved lyrics to list"
-                });
-            }
-            return BadRequest(new { Status = "Saving lyrics to list failed." });
-
-        }
     }
 }

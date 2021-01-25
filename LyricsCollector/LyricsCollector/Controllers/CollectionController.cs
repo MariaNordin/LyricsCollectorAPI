@@ -1,4 +1,5 @@
 ﻿using LyricsCollector.Entities;
+using LyricsCollector.Models.CollectionModels;
 using LyricsCollector.Models.UserModels;
 using LyricsCollector.Services.Contracts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -30,14 +31,14 @@ namespace LyricsCollector.Controllers
             _collectionService = collectionService;
         }
   
-        [HttpPost("Collection")] //?? behöver jag denna? beror på hur jag hämtar listor och låtar - när user loggar in eller när de frågas efter
-        public async Task<IActionResult> GetCollectionAsync(int collectionId)
+        [HttpPost("Collection")] 
+        public async Task<IActionResult> GetCollectionAsync([FromBody] CollectionPostModel collection)
         {
-            var userName = HttpContext.User.Identity.Name;
+            //var userName = HttpContext.User.Identity.Name;
             try
             {
-                var collection = await _collectionService.GetCollectionAsync(collectionId, userName);
-                return Ok(collection);
+                var currentCollection = await _collectionService.GetCollectionAsync(collection.Id);
+                return Ok(currentCollection);
             }
             catch (System.Exception)
             {
@@ -62,12 +63,30 @@ namespace LyricsCollector.Controllers
         }
 
         [HttpPost("NewCollection")]
-        public async Task<IActionResult> CreateNewCollectionAsync([FromBody] UserPostModel userPM) // bara skicka namn på collection
+        public async Task<IActionResult> CreateNewCollectionAsync([FromBody] CollectionPostModel collection)
         {
+            var userName = HttpContext.User.Identity.Name;
+
             try
             {
-                var collection = await _collectionService.NewCollectionAsync(userPM.NewCollectionName, userPM.Email);
+                var newCollection = await _collectionService.NewCollectionAsync(collection.NewName, userName);
                 return Ok(collection);
+            }
+            catch (System.Exception)
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpPost("Save")]
+        public async Task<IActionResult> SaveToCollectionAsync([FromBody] CollectionPostModel collection)
+        {
+            //var userName = HttpContext.User.Identity.Name;
+
+            try
+            {
+                var result = await _collectionService.SaveLyricsAsync(collection.Id);
+                return Ok(result);
             }
             catch (System.Exception)
             {

@@ -1,5 +1,6 @@
 ﻿using LyricsCollector.Context;
 using LyricsCollector.Entities;
+using LyricsCollector.Events;
 using LyricsCollector.Models.LyricsModels;
 using LyricsCollector.Services.Contracts;
 using Microsoft.Extensions.Caching.Memory;
@@ -15,19 +16,26 @@ namespace LyricsCollector.Services.ConcreteServices
 {
     public class LyricsService : ILyricsService
     {
-        private readonly IHttpClientFactory _clientFactory;
-        private readonly IMemoryCache _memoryCache;
-        //private readonly IUserWithToken _userWithToken;
         private readonly LyricsCollectorDbContext _context;
+        private readonly IHttpClientFactory _clientFactory;
+        private readonly IMemoryCache _memoryCache;       
+        private LyricsResponseModel _lyrics;
+        
 
-        private User _user;
-        private LyricsResponseModel _lyrics = new LyricsResponseModel();
-
-        public LyricsService(IHttpClientFactory clientFactory, LyricsCollectorDbContext context, IMemoryCache memoryCache)
+        public LyricsService(IHttpClientFactory clientFactory, LyricsCollectorDbContext context, 
+            IMemoryCache memoryCache)
         {
             _clientFactory = clientFactory;
             _memoryCache = memoryCache;
-            _context = context;
+            _context = context;           
+            _lyrics = new LyricsResponseModel();
+        }
+
+        public event EventHandler<LyricsEventArgs> LyricsFound;
+
+        protected virtual void OnLyricsFound(LyricsResponseModel lyrics)
+        {
+            LyricsFound?.Invoke(this, new LyricsEventArgs() { Lyrics = lyrics });
         }
 
         public async Task<LyricsResponseModel> Search(string artist, string title)
@@ -35,6 +43,7 @@ namespace LyricsCollector.Services.ConcreteServices
             var dbLyrics = LyricsInDbMatch(artist, title);
             if (dbLyrics != null)
             {
+                OnLyricsFound(dbLyrics);
                 return dbLyrics;
             }
             else
@@ -55,9 +64,11 @@ namespace LyricsCollector.Services.ConcreteServices
 
                 if (_lyrics.Lyrics != "")
                 {
+                    OnLyricsFound(_lyrics);
+
                     await SaveLyricsToDb(_lyrics);
                     _memoryCache.Set("DbLyrics", _context.Lyrics.ToList());
-                }              
+                }                
                 return _lyrics;
             }
         }
@@ -132,43 +143,5 @@ namespace LyricsCollector.Services.ConcreteServices
                 throw;
             }
         }
-
-        public void Notify(User user)
-        {
-            _user = user;
-        }
-
-
-        //{
-        //    var existingCollection = _context.Collections.Where(c => c.CollectionOfUserId == userId).FirstOrDefault();
-
-        //    if (existingCollectionLyrics != null)
-        //    {
-
-        //    }
-        //    var existingCollectionLyrics = _context.CollectionLyrics.Where(cl => cl.CollectionId == userRM.CollectionId).FirstOrDefault();
-
-        //    //var existingLyrics = _context.Lyrics.Where(l => l.)
-        //    //var isInList = CheckLyricsInExistingList(lyricsRM, userRM.CollectionId);
-
-        //    var lyrics = new Lyrics
-        //    {
-        //        Artist = lyricsRM.Artist,
-        //        Title = lyricsRM.Title,
-        //        SongLyrics = lyricsRM.Lyrics
-        //    };
-
-        //    if (existingCollection != null)
-        //    {
-        //        existingCollection.Lyrics.Add(lyrics);
-        //    }
-        //    return "hej";
-
-        //}
-
-        //private bool CheckLyricsInExistingList(LyricsResponseModel lyricsRM, int collectionId)
-        //{
-        //    var existingLyrics = _context.Collections.Where(c => c.Id == collectionId)
-        //}
     }
 }

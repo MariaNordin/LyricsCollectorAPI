@@ -4,6 +4,7 @@ namespace LyricsCollector.Models.LyricsModels
 {
     public class LyricsResponseModel
     {
+
         [JsonPropertyName("lyrics")]
         public string Lyrics { get; set; }
 
