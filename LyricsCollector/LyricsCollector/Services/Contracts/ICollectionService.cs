@@ -18,6 +18,6 @@ namespace LyricsCollector.Services.Contracts
         Task<IEnumerable<Collection>> GetCollectionAsync(int collectionId);
 
         Task<IEnumerable<Collection>> GetAllCollectionsAsync(string userName);
-        Task<CollectionLyrics> SaveLyricsAsync(int id);
+        Task<bool> SaveLyricsAsync(int id);
     }
 }

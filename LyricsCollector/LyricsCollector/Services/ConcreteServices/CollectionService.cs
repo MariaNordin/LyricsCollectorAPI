@@ -1,6 +1,7 @@
-using LyricsCollector.Context;
+﻿using LyricsCollector.Context;
 using LyricsCollector.Entities;
 using LyricsCollector.Events;
+using LyricsCollector.Models.CollectionModels;
 using LyricsCollector.Models.LyricsModels;
 using LyricsCollector.Services.Contracts;
 using Microsoft.EntityFrameworkCore;
@@ -63,22 +64,25 @@ namespace LyricsCollector.Services.ConcreteServices
         {
             try
             {
-                var collection = await _context.Collections
+                _collections = await _context.Collections
                    .Include(c => c.Lyrics)
                    .ThenInclude(cl => cl.Lyrics)
                    .Where(c => c.Id == collectionId)
                    .ToArrayAsync();
 
-                return collection;
+                return _collections;
             }
             catch (Exception)
             {
                 throw;
             }
+
+            
         }
 
         public async Task<IEnumerable<Collection>> GetAllCollectionsAsync(string userName)
         {
+            
             try
             {
                 _collections = await _context.Collections
@@ -92,7 +96,7 @@ namespace LyricsCollector.Services.ConcreteServices
             return _collections;
         }
 
-        public async Task<CollectionLyrics> SaveLyricsAsync(int collectionId)
+        public async Task<bool> SaveLyricsAsync(int collectionId)
         {
             Collection collection;
             Lyrics lyrics;
@@ -114,14 +118,12 @@ namespace LyricsCollector.Services.ConcreteServices
             try
             {
                 await _context.SaveChangesAsync();
+                return true;
             }
             catch (Exception)
             {
                 throw;
             }
-
-            return collectionLyrics;
-
         }
 
         private async Task<Collection> GetCurrentCollectionAsync(int collectionId)

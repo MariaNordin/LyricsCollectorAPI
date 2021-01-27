@@ -81,17 +81,21 @@ namespace LyricsCollector.Controllers
         [HttpPost("Save")]
         public async Task<IActionResult> SaveToCollectionAsync([FromBody] CollectionPostModel collection)
         {
-            //var userName = HttpContext.User.Identity.Name;
+            bool response;
 
             try
             {
-                var result = await _collectionService.SaveLyricsAsync(collection.Id);
-                return Ok(result);
+                response = await _collectionService.SaveLyricsAsync(collection.Id);               
             }
             catch (System.Exception)
             {
                 return BadRequest();
             }
+
+            if(response) 
+                return Ok();
+
+            return BadRequest();
         }
     }
 }
