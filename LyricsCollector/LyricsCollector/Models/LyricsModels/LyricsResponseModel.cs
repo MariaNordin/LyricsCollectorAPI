@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace LyricsCollector.Models.CollectionModels
+namespace LyricsCollector.Models.LyricsModels
 {
     public class LyricsResponseModel
     {

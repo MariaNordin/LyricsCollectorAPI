@@ -89,33 +89,9 @@ namespace LyricsCollector
 
             services.AddHttpContextAccessor();
             
-            //services.AddSingleton(SpotifyClientConfig.CreateDefault());
-            //services.AddScoped<SpotifyClientBuilder>();
-
-            //services.AddAuthorization(options =>
-            //{
-            //    options.AddPolicy("Spotify", policy =>
-            //    {
-            //        policy.AuthenticationSchemes.Add("Spotify");
-            //        policy.RequireAuthenticatedUser();
-            //    });
-            //});
-            //services
-            //    .AddAuthentication(options =>
-            //    {
-            //        options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-            //    })
-            //    .AddCookie(options =>
-            //    {
-            //        options.ExpireTimeSpan = TimeSpan.FromMinutes(50);
-            //    })
-            //    .AddSpotify(options =>
-            //    {
             //        options.ClientId = Configuration.GetValue<string>("SpotifyClientId");
             //        options.ClientSecret = Configuration.GetValue<string>("SpotifyClientSecret");
-            //        options.CallbackPath = "/Auth/callback";
-            //        options.SaveTokens = true;
-            //    });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

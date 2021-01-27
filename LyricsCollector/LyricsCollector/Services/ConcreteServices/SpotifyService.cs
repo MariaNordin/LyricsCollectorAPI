@@ -18,9 +18,7 @@ namespace LyricsCollector.Services.ConcreteServices
         //private readonly SpotifyCredentials _credentials;
 
         SpotifyTokenModel token;
-        //Track track;
         TrackResponseModel trackResponse;
-        UserResponseModel user;
 
         private string currentToken;
 
@@ -29,13 +27,6 @@ namespace LyricsCollector.Services.ConcreteServices
             _clientFactory = clientFactory;
             //_credentials = credentials.Value;
         }
-
-        //public event EventHandler<LyricsEventArgs> TrackFound;
-
-        //protected virtual void OnTrackFound()
-        //{
-        //    TrackFound?.Invoke(this, new LyricsEventArgs() { Track = trackResponse });
-        //}
 
         public async Task<TrackResponseModel> Search(string artist, string title)
         {
@@ -62,15 +53,6 @@ namespace LyricsCollector.Services.ConcreteServices
 
                 throw;
             }
-            //if (response.IsSuccessStatusCode)
-            //{
-                
-            //    //OnTrackFound();
-
-            //    //imgUrl = trackResponse.Track.Items[0].Album.Images[1];
-            //    //return imgUrl;
-            //}
-            //else return null;
         }
 
         public async Task<SpotifyTokenModel> GetAccessToken()
@@ -106,31 +88,9 @@ namespace LyricsCollector.Services.ConcreteServices
             }
         }
 
-        //public async Task<TrackResponseModel> GetThisTrack()
-        //{
-        //    if (currentToken == null) await GetAccessToken();
-
-        //    var request = new HttpRequestMessage(HttpMethod.Get,
-        //        "tracks/2TpxZ7JUBn3uw46aR7qd6V");
-        //    request.Headers.Add("Authorization", $"Bearer {currentToken}");
-        //    request.Headers.Add("Accept", "application/json");
-
-        //    var client = _clientFactory.CreateClient("spotify");
-
-        //    HttpResponseMessage response = await client.SendAsync(request);
-
-        //    if (response.IsSuccessStatusCode)
-        //    {
-        //        track = await response.Content.ReadFromJsonAsync<TrackResponseModel>();
-        //        track.Track.Items[0].External_urls.Spotify = "https://open.spotify.com/track/" +
-        //            track.Track.Items[0].Id;
-        //        return track;
-        //    }
-        //    else return null;
-        //}
 
 
-
+        //-------------------------------------------------------
 
         //public async Task<string> GetAuthorization()
         //{
@@ -187,23 +147,5 @@ namespace LyricsCollector.Services.ConcreteServices
         //        return null;
         //    }
         //}
-
-        public async Task<UserResponseModel> GetUserIdAsync(string userName, string token)
-        {
-            var request = new HttpRequestMessage(HttpMethod.Get,
-                $"users/{userName}");
-            request.Headers.Add("Authorization", $"Bearer {token}");
-
-            var client = _clientFactory.CreateClient("spotify");
-
-            HttpResponseMessage response = await client.SendAsync(request);
-
-            if (response.IsSuccessStatusCode)
-            {
-                user = await response.Content.ReadFromJsonAsync<UserResponseModel>();
-                return user;
-            }
-            else return null;
-        }
     }
 }
