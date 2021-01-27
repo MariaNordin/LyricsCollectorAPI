@@ -1,4 +1,4 @@
-﻿using LyricsCollector.Context;
+using LyricsCollector.Context;
 using LyricsCollector.Entities;
 using LyricsCollector.Events;
 using LyricsCollector.Models.LyricsModels;
@@ -82,8 +82,6 @@ namespace LyricsCollector.Services.ConcreteServices
             try
             {
                 _collections = await _context.Collections
-                   .Include(c => c.Lyrics)
-                   .ThenInclude(cl => cl.Lyrics)
                    .Where(c => c.User.Name == userName).ToArrayAsync();
             }
             catch (Exception)

@@ -1,4 +1,4 @@
-﻿using LyricsCollector.Entities;
+using LyricsCollector.Entities;
 using LyricsCollector.Events;
 using LyricsCollector.Models.LyricsModels;
 using System.Collections.Generic;
