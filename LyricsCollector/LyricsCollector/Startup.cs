@@ -82,10 +82,12 @@ namespace LyricsCollector
             });
 
 
-            services.AddScoped<ILyricsService, LyricsService>();
-            services.AddScoped<IUserService, UserService>();
-            services.AddScoped<ISpotifyService, SpotifyService>();
-            services.AddScoped<ICollectionService, CollectionService>();
+            services.AddSingleton<ILyricsService, LyricsService>();
+            services.AddSingleton<IUserService, UserService>();
+            services.AddSingleton<ISpotifyService, SpotifyService>();
+            services.AddSingleton<ICollectionService, CollectionService>();
+
+            services.AddScoped<IDbLyrics, DbLyrics>();
 
             services.AddHttpContextAccessor();
             
