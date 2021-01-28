@@ -1,6 +1,5 @@
 ﻿using LyricsCollector.Entities;
 using LyricsCollector.Models.UserModels;
-using LyricsCollector.Services.ConcreteServices;
 using LyricsCollector.Services.Contracts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -16,80 +15,76 @@ namespace LyricsCollector.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        // GET: Hämta alla users
-        // GET: Hämta en specifik user
-        // POST: "Register" (ny user)
-        // PUT: Ändra uppgifter
-        // DELETE: Ta bort user
-
-        //--------------------------------------------
+        private readonly IDbUser _dbUser;
         private readonly IUserService _userService;
 
-        public UserController(IUserService userService)
+        public UserController(IUserService userService, IDbUser dbUser)
         {
             _userService = userService;
+            _dbUser = dbUser;
         }
 
         [HttpPost("Register")]
-        public async Task<IActionResult> RegisterAsync([FromBody] UserPostModel payload)
+        public async Task<IActionResult> RegisterAsync([FromBody] UserPostModel userPM)
         {
-            User user;
+            var existingUser = await _dbUser.GetUserAsync(userPM.Name);
 
-            try
+            if (existingUser != null)
             {
-                user = await _userService.RegisterUserAsync(payload);
-            }
-            catch (Exception ex)
-            {
-                // logg
-                return BadRequest(ex.Message);
+                return BadRequest();
             }
 
-            if (user == null)
-            {
-                return Ok(new { message = "Username or Email allready exists." });
-            }
+            var user = _userService.GeneratePassword(userPM);
 
-            return Ok();
+            var result = await _dbUser.SaveUserAsync(user);
+
+            if (result)
+            {
+                return Ok();
+            }
+            return BadRequest();
         }
 
         [HttpPost("Login")]
         public async Task<IActionResult> LoginAsync([FromBody] UserPostModel userPM)
         {
-            try
+            var foundUser = await _dbUser.GetUserAsync(userPM.Name);
+
+            if (foundUser != null)
             {
-                var userToken = await _userService.AuthenticateAsync(userPM);
+                var userToken = _userService.ValidatePassword(userPM, foundUser);
 
                 if (userToken != null)
                 {
                     return Ok(userToken);
                 }
-                return Unauthorized();
-
+                return BadRequest();
             }
-            catch (Exception ex)
-            {
-                // logg
-                return BadRequest(ex.Message);
-            }
+            return NotFound();
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("User")]
         public async Task<IActionResult> GetUserAsync()
         {
+            User user;
             var userName = HttpContext.User.Identity.Name;
 
             try
             {
-                var user = await _userService.GetUserAsync(userName);
-                return Ok(user);
+                user = await _dbUser.GetUserAsync(userName);               
             }
             catch (Exception)
             {
                 //logg
                 return BadRequest();
             }
+
+            if (user != null)
+            {
+                return Ok(user);
+            }
+            return NotFound();
         }
     }
 }

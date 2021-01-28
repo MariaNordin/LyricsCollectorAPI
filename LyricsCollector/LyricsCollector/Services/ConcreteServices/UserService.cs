@@ -1,32 +1,25 @@
 ﻿using LyricsCollector.Context;
 using LyricsCollector.Entities;
-using LyricsCollector.Events;
 using LyricsCollector.JWT;
 using LyricsCollector.Models.UserModels;
 using LyricsCollector.Services.Contracts;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace LyricsCollector.Services.ConcreteServices
 {
     public class UserService : IUserService
     {
-        private readonly LyricsCollectorDbContext _context;
         private readonly JWTSettings _jwtSettings;
-        //private UserWithToken _userWithToken;
 
-        public UserService(LyricsCollectorDbContext context, IOptions<JWTSettings> jwtSettings)
+        public UserService(IOptions<JWTSettings> jwtSettings)
         {
-            _context = context;
             _jwtSettings = jwtSettings.Value;
         }
 
@@ -43,48 +36,7 @@ namespace LyricsCollector.Services.ConcreteServices
         //    RegisteredUser?.Invoke(this, new UserEventArgs() { User = user });
         //}
 
-        public async Task<User> RegisterUserAsync(UserPostModel userPM)
-        {
-            var existingUser = await _context.Users
-                .Where(u => u.Email == userPM.Email || u.Name == userPM.Name)
-                .FirstOrDefaultAsync();
-
-            if (existingUser != null)
-            {
-                return null;
-            }
-            else
-            {
-                var user = GeneratePassword(userPM);            
-                _context.Users.Add(user);
-
-                var collection = new Collection { Name = "MyLyrics", User = user };
-                _context.Collections.Add(collection);
-
-                try
-                {
-                    await _context.SaveChangesAsync();
-                }
-                catch (Exception)
-                {
-                    throw;
-                }
-                return user; // bool ist?
-            }
-        }
-
-        public async Task<UserToken> AuthenticateAsync(UserPostModel userPM)
-        {
-            var existingUser = await ValidatePasswordAsync(userPM);
-
-            if (existingUser == null) return null;
-
-            var token = GenerateJwtToken(existingUser);
-
-            return new UserToken { Token = token };
-        }
-
-        private static User GeneratePassword(UserPostModel userPM)
+        public User GeneratePassword(UserPostModel userPM)
         {
             var saltByteArray = new byte[128 / 8];
 
@@ -111,25 +63,26 @@ namespace LyricsCollector.Services.ConcreteServices
             return user;
         }
 
-        private async Task<User> ValidatePasswordAsync(UserPostModel userPM)
+        public UserToken ValidatePassword(UserPostModel userPM, User user)
         {
-            var foundUser = await _context.Users.Where
-                (u => u.Name == userPM.Name).Include(u => u.Collections).FirstOrDefaultAsync();
-
-
             var hashedPw = Convert.ToBase64String(KeyDerivation.Pbkdf2(
                 password: userPM.Password,
-                salt: foundUser.Salt,
+                salt: user.Salt,
                 prf: KeyDerivationPrf.HMACSHA1,
                 iterationCount: 100000,
                 numBytesRequested: 256 / 8
                 ));
 
-            if (hashedPw == foundUser.Hash) return foundUser;
-            else return null;
+            if (hashedPw == user.Hash)
+            {
+                var token = GenerateJwtToken(user);
+
+               return new UserToken { Token = token };
+            }
+            return null;
         }
 
-        private string GenerateJwtToken(User existingUser)
+        private string GenerateJwtToken(User user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_jwtSettings.SecretKey);
@@ -137,7 +90,7 @@ namespace LyricsCollector.Services.ConcreteServices
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.Name, existingUser.Name)
+                    new Claim(ClaimTypes.Name, user.Name)
                 }),
                 Expires = DateTime.Now.AddDays(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),
@@ -147,37 +100,6 @@ namespace LyricsCollector.Services.ConcreteServices
             var result = tokenHandler.WriteToken(token);
 
             return result;
-        }
-
-        public async Task<UserResponseModel> GetUserAsync(string name)
-        {
-            User user;
-
-            try
-            {
-                user = await _context.Users
-                    .Include(u => u.Collections)
-                    .ThenInclude(c => c.Lyrics)
-                    .ThenInclude(cl => cl.Lyrics)
-                    .Where(u => u.Name == name).FirstOrDefaultAsync();
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-
-            if (user != null)
-            {
-                var response = new UserResponseModel
-                {
-                    Name = user.Name,
-                    Collections = user.Collections
-                };
-
-                return response;
-            }
-            else return null;
         }
     }
 }

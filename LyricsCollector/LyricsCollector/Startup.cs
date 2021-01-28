@@ -88,6 +88,7 @@ namespace LyricsCollector
             services.AddSingleton<ICollectionService, CollectionService>();
 
             services.AddScoped<IDbLyrics, DbLyrics>();
+            services.AddScoped<IDbUser, DbUser>();
 
             services.AddHttpContextAccessor();
             
