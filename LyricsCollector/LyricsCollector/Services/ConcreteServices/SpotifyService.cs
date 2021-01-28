@@ -2,6 +2,7 @@
 using LyricsCollector.Models.SpotifyModels;
 using LyricsCollector.Models.UserModels;
 using LyricsCollector.Services.Contracts;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -14,6 +15,7 @@ namespace LyricsCollector.Services.ConcreteServices
 {
     public class SpotifyService : ISpotifyService
     {
+        private readonly IConfiguration _config;
         private readonly IHttpClientFactory _clientFactory;
         //private readonly SpotifyCredentials _credentials;
 
@@ -22,10 +24,10 @@ namespace LyricsCollector.Services.ConcreteServices
 
         private string currentToken;
 
-        public SpotifyService(IHttpClientFactory clientFactory)
+        public SpotifyService(IConfiguration config, IHttpClientFactory clientFactory)
         {
+            _config = config;
             _clientFactory = clientFactory;
-            //_credentials = credentials.Value;
         }
 
         public async Task<TrackResponseModel> Search(string artist, string title)
@@ -57,8 +59,8 @@ namespace LyricsCollector.Services.ConcreteServices
 
         public async Task<SpotifyTokenModel> GetAccessToken()
         {
-            var clientId = "7e335aa2c7ed476abf4de347ae1c1ddc";
-            var clientSecret = "1e32bdd892ad40acac7966727e3a101e";
+            var clientId = _config.GetValue<string>("SpotifyCredentials:SpotifyClientId");  //"7e335aa2c7ed476abf4de347ae1c1ddc";
+            var clientSecret = _config.GetValue<string>("SpotifyCredentials:SpotifyClientSecret");  //"1e32bdd892ad40acac7966727e3a101e";
             var credentials = Convert.ToBase64String(Encoding.UTF8.GetBytes(
                 string.Format($"{clientId}:{clientSecret}")));
 
