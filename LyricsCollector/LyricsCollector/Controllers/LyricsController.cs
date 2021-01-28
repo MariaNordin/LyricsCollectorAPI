@@ -1,5 +1,4 @@
-﻿using LyricsCollector.Entities;
-using LyricsCollector.Models.LyricsModels;
+﻿using LyricsCollector.Models.LyricsModels;
 using LyricsCollector.Models.SpotifyModels;
 using LyricsCollector.Services.Contracts;
 using Microsoft.AspNetCore.Cors;
@@ -62,11 +61,5 @@ namespace LyricsCollector.Controllers
             }
             return BadRequest();
         }
-
-
-
-
-
-
     }
 }

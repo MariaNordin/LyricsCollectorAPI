@@ -4,10 +4,9 @@ using System.Threading.Tasks;
 
 namespace LyricsCollector.Services.Contracts
 {
-    public interface IUserService
+    public interface IDbUserService
     {
-        User GeneratePassword(UserPostModel userPM);
-
-        UserWithToken ValidatePassword(UserPostModel userPM, User user);
+        Task<User> GetUser(UserPostModel userPM);
+        Task<bool> SaveUserAsync(User user);
     }
 }

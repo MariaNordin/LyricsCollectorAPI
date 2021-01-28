@@ -19,64 +19,14 @@ namespace LyricsCollector.Services.ConcreteServices
 {
     public class UserService : IUserService
     {
-        private readonly LyricsCollectorDbContext _context;
         private readonly JWTSettings _jwtSettings;
-        private CollectionService _collection;
-        private UserWithToken _userWithToken;
 
-        public UserService(LyricsCollectorDbContext context, IOptions<JWTSettings> jwtSettings, ICollectionService collection)
+        public UserService(IOptions<JWTSettings> jwtSettings)
         {
-            _context = context;
             _jwtSettings = jwtSettings.Value;
-            _userWithToken = new UserWithToken();
-            _collection = (CollectionService)collection;
-            _userWithToken.AttachObserver(_collection);
         }
 
-        public async Task<User> RegisterUser(UserPostModel userPM)
-        {
-            var existingUser = await _context.Users.Where(u => u.Email == userPM.Email).FirstOrDefaultAsync();
-
-
-            if (existingUser != null)
-            {
-                return existingUser;
-            }
-            else
-            {
-                var user = GeneratePassword(userPM);
-                _context.Users.Add(user);
-
-                try
-                {
-                    await _context.SaveChangesAsync();
-                    return user; 
-                }
-                catch (Exception)
-                {
-                    throw;
-                }               
-            }
-        }
-
-        public async Task<UserWithToken> Authenticate(UserPostModel userPM)
-        {
-            var existingUser = await ValidatePassword(userPM);
-
-            if (existingUser == null) return null;
-
-            var token = GenerateJwtToken(existingUser);
-
-            var userWithToken = new UserWithToken
-            {
-                Token = token,
-                User = existingUser
-            };
-
-            return userWithToken as UserWithToken;
-        }
-
-        private static User GeneratePassword(UserPostModel userPM)
+        public User GeneratePassword(UserPostModel userPM)
         {
             var saltByteArray = new byte[128 / 8];
 
@@ -100,27 +50,34 @@ namespace LyricsCollector.Services.ConcreteServices
                 Email = userPM.Email,
                 Name = userPM.Name
             };
-            return user;            
+            return user;
         }
 
-        private async Task<User> ValidatePassword(UserPostModel userPM)
+        public UserWithToken ValidatePassword(UserPostModel userPM, User user)
         {
-            var foundUser = await _context.Users.Where
-                (u => u.Email == userPM.Email).FirstOrDefaultAsync();
-
             var hashedPw = Convert.ToBase64String(KeyDerivation.Pbkdf2(
                 password: userPM.Password,
-                salt: foundUser.Salt,
+                salt: user.Salt,
                 prf: KeyDerivationPrf.HMACSHA1,
                 iterationCount: 100000,
                 numBytesRequested: 256 / 8
                 ));
 
-            if (hashedPw == foundUser.Hash) return foundUser;
-            else return null;
+            if (hashedPw == user.Hash)
+            {
+                var token = GenerateJwtToken(user);
+
+                var userWithToken = new UserWithToken
+                {
+                    User = user,
+                    Token = token
+                };
+                return userWithToken;
+            }
+            return null;
         }
 
-        private string GenerateJwtToken(User existingUser)
+        private string GenerateJwtToken(User user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_jwtSettings.SecretKey);
@@ -128,7 +85,7 @@ namespace LyricsCollector.Services.ConcreteServices
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.Name, existingUser.Email)
+                    new Claim(ClaimTypes.Name, user.Email)
                 }),
                 Expires = DateTime.Now.AddDays(7),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),

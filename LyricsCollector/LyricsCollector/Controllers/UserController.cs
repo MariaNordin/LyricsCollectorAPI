@@ -18,48 +18,54 @@ namespace LyricsCollector.Controllers
         // DELETE: Ta bort user
 
         //--------------------------------------------
+        private readonly IDbUserService _dbUser;
         private readonly IUserService _userService;
-        UserWithToken userWithToken;
 
-        public UserController(IUserService userService)
+        public UserController(IUserService userService, IDbUserService dbUser)
         {
+            _dbUser = dbUser;
             _userService = userService;
         }
 
         [HttpPost("Register")]
-        public async Task<IActionResult> Register(UserPostModel payload)
+        public async Task<IActionResult> Register(UserPostModel userPM)
         {
-            try
+
+            var existingUser = await _dbUser.GetUser(userPM);
+
+            if (existingUser != null)
             {
-                var result = await _userService.RegisterUser(payload);
+                return BadRequest();
             }
-            catch (Exception ex)
+
+            var user = _userService.GeneratePassword(userPM);
+
+            var result = await _dbUser.SaveUserAsync(user);
+            
+            if(result)
             {
-                // logg
-                return BadRequest(ex.Message);
+                return Ok();
             }
-            return Ok();
+            return BadRequest();
+
         }
 
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] UserPostModel userPM)
         {
-            try
+            var foundUser = await _dbUser.GetUser(userPM);
+           
+            if (foundUser != null)
             {
-                userWithToken = await _userService.Authenticate(userPM);
+                var userWithToken = _userService.ValidatePassword(userPM, foundUser);
 
                 if (userWithToken != null)
                 {
                     return Ok(userWithToken);
                 }
-                return NotFound();
-
+                return BadRequest();
             }
-            catch (Exception ex)
-            {
-                // logg
-                return BadRequest(ex.Message);
-            }
+            else return NotFound();
         }
     }
 }

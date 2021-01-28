@@ -1,6 +1,7 @@
 ﻿using LyricsCollector.Context;
 using LyricsCollector.Entities;
 using LyricsCollector.Models.LyricsModels;
+using LyricsCollector.Services.Contracts;
 using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace LyricsCollector.Services.ConcreteServices
 {
-    public class DbHelperService
+    public class DbHelperService : IDbHelperService
     {
         private readonly LyricsCollectorDbContext _context;
         private readonly IMemoryCache _memoryCache;
