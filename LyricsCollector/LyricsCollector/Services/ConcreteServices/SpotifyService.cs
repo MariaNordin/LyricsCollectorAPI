@@ -17,7 +17,6 @@ namespace LyricsCollector.Services.ConcreteServices
     {
         private readonly IConfiguration _config;
         private readonly IHttpClientFactory _clientFactory;
-        //private readonly SpotifyCredentials _credentials;
 
         SpotifyTokenModel token;
         TrackResponseModel trackResponse;

@@ -20,12 +20,11 @@ namespace LyricsCollector.Controllers
     public class CollectionController : ControllerBase
     {
         private readonly IDbCollections _dbHelper;
-        //private readonly ICollectionService _collectionService;
-        //private Collection _collection;
+        private readonly ICollectionService _collectionService;
 
-        public CollectionController(IDbCollections dbHelper)
+        public CollectionController(IDbCollections dbHelper, ICollectionService collectionService)
         {
-            //_collectionService = collectionService;
+            _collectionService = collectionService;
             _dbHelper = dbHelper;
         }
   
@@ -88,9 +87,11 @@ namespace LyricsCollector.Controllers
         {
             bool response;
 
+            var lyrics = _collectionService.GetCurrentLyrics();
+
             try
             {
-                response = await _dbHelper.SaveLyricsAsync(collection.Id);               
+                response = await _dbHelper.SaveLyricsAsync(collection.Id, lyrics);               
             }
             catch (System.Exception)
             {

@@ -11,5 +11,9 @@ namespace LyricsCollector.Services.Contracts
         Task<LyricsResponseModel> Search(string artist, string title);
         string ToTitleCase(string text);
 
+        void Attach(IObserver observer);
+
+        void Notify(LyricsResponseModel lyrics);
+
     }
 }

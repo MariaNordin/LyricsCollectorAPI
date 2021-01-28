@@ -14,17 +14,20 @@ namespace LyricsCollector.Controllers
     [ApiController]
     public class LyricsController : ControllerBase
     {
-        IDbLyrics _dbLyricsHelper;
+        private readonly IDbLyrics _dbLyricsHelper;
         private readonly ILyricsService _lyricsService;
         private readonly ISpotifyService _spotifyService;
         private LyricsResponseModel lyrics;
         private TrackResponseModel track;
 
-        public LyricsController(ILyricsService lyricsService, ISpotifyService spotifyService, IDbLyrics dbLyrics)
+        public LyricsController(ILyricsService lyricsService, ISpotifyService spotifyService, 
+            IDbLyrics dbLyrics, ICollectionService collectionService)
         {
             _lyricsService = lyricsService;
             _spotifyService = spotifyService;
             _dbLyricsHelper = dbLyrics;
+
+            _lyricsService.Attach(collectionService);
         }
 
         //POST:
@@ -40,6 +43,7 @@ namespace LyricsCollector.Controllers
 
             if (dbLyrics != null)
             {
+                _lyricsService.Notify(dbLyrics);
                 return Ok(dbLyrics);
             }
 
@@ -65,6 +69,8 @@ namespace LyricsCollector.Controllers
                 }
 
                 await _dbLyricsHelper.SaveLyricsToDbAsync(lyrics);
+                _lyricsService.Notify(lyrics);
+
                 return Ok(lyrics);
             }
             return NotFound();

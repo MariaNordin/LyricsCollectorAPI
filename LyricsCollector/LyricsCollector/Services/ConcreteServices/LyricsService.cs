@@ -2,6 +2,7 @@
 using LyricsCollector.Models.LyricsModels;
 using LyricsCollector.Services.Contracts;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -12,14 +13,15 @@ namespace LyricsCollector.Services.ConcreteServices
     public class LyricsService : ILyricsService
     {
         private readonly IHttpClientFactory _clientFactory;
-        private LyricsResponseModel _lyrics;
-
+        private List<IObserver> _observers;
 
         public LyricsService(IHttpClientFactory clientFactory )
         {
             _clientFactory = clientFactory;
-            _lyrics = new LyricsResponseModel();
+            _observers = new List<IObserver>();
         }
+
+        private LyricsResponseModel _lyrics;
 
         public event EventHandler<LyricsEventArgs> LyricsFound;
 
@@ -46,6 +48,7 @@ namespace LyricsCollector.Services.ConcreteServices
             {
                 _lyrics.Artist = artist;
                 _lyrics.Title = title;
+
                 return _lyrics;
             }
             return null;
@@ -55,6 +58,19 @@ namespace LyricsCollector.Services.ConcreteServices
         {
             TextInfo ti = CultureInfo.CurrentCulture.TextInfo;
             return ti.ToTitleCase(text);
+        }
+
+        public void Attach(IObserver observer)
+        {
+            _observers.Add(observer);
+        }
+
+        public void Notify(LyricsResponseModel lyrics)
+        {
+            foreach (var observer in _observers)
+            {
+                observer.Update(lyrics);
+            }
         }
     }
 }

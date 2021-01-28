@@ -1,10 +1,10 @@
 ﻿using LyricsCollector.Context;
 using LyricsCollector.Entities;
+using LyricsCollector.Models.LyricsModels;
 using LyricsCollector.Services.Contracts.IDbHelpers;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -22,6 +22,7 @@ namespace LyricsCollector.Services.ConcreteServices.DbHelpers
         public async Task<IEnumerable<Collection>> GetCollectionAsync(int collectionId)
         {
             Collection[] collections;
+
             try
             {
                 collections = await _context.Collections
@@ -91,14 +92,13 @@ namespace LyricsCollector.Services.ConcreteServices.DbHelpers
             }
         }
 
-        public async Task<bool> SaveLyricsAsync(int collectionId)
+        public async Task<bool> SaveLyricsAsync(int collectionId, LyricsResponseModel currentLyrics)
         {
-            Collection collection;
-            Lyrics lyrics;
-            var collectionLyrics = new CollectionLyrics();
+            var lyrics = await GetDbLyricsAsync(currentLyrics);
 
-            collection = await GetCurrentCollectionAsync(collectionId);
-            lyrics = await GetCurrentLyricsAsync();
+            var collection = await GetCurrentCollectionAsync(collectionId);
+
+            var collectionLyrics = new CollectionLyrics();
 
             if (collection != null && lyrics != null)
             {
@@ -134,12 +134,16 @@ namespace LyricsCollector.Services.ConcreteServices.DbHelpers
             }
         }
 
-        private async Task<Lyrics> GetCurrentLyricsAsync() //måste ändras
+        private async Task<Lyrics> GetDbLyricsAsync(LyricsResponseModel currentLyrics) 
         {
             try
             {
-                var currentLyrics = await _context.Lyrics.OrderByDescending(l => l.Id).FirstOrDefaultAsync();
-                return currentLyrics;
+                var lyrics = await _context.Lyrics
+                    .Where(l => l.Artist == currentLyrics.Artist 
+                    && l.Title == currentLyrics.Title)
+                    .FirstOrDefaultAsync();
+
+                return lyrics;
             }
             catch (Exception)
             {
