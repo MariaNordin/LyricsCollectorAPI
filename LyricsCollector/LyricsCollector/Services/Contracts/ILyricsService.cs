@@ -9,7 +9,6 @@ namespace LyricsCollector.Services.Contracts
     public interface ILyricsService
     {
         public Task<LyricsResponseModel> Search(string artist, string title);
-
-        public IEnumerable<Lyrics> GetDbLyrics(); // Private? 
+ 
     }
 }
