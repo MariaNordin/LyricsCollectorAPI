@@ -22,6 +22,7 @@ namespace LyricsCollector.Controllers
             _spotifyService = spotifyService;
         }
 
+
         //GET: api/Spotify
         [HttpGet("ClientCredentials")]
         public async Task<IActionResult> GetTokenAsync()

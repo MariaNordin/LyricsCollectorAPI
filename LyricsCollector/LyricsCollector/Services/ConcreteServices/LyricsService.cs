@@ -90,8 +90,11 @@ namespace LyricsCollector.Services.ConcreteServices
             {
                 Artist = lyricsRM.Artist,
                 Title = lyricsRM.Title,
-                SongLyrics = lyricsRM.Lyrics
+                SongLyrics = lyricsRM.Lyrics,
+                SpotifyLink = lyricsRM.SpotifyLink,
+                CoverImage = lyricsRM.CoverImage
             };
+
             _context.Lyrics.Add(lyrics);
 
             try

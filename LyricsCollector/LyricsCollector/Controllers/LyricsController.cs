@@ -41,9 +41,9 @@ namespace LyricsCollector.Controllers
                 lyrics.CoverImage = track.Track.Items[0].Album.Images[1].Url;
                 return Ok(lyrics);
             }
-            catch (IndexOutOfRangeException ex)
+            catch (IndexOutOfRangeException)
             {
-
+                return NotFound();
             }
             catch (Exception)
             {
