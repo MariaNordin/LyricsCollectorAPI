@@ -1,7 +1,9 @@
 using LyricsCollector.Context;
 using LyricsCollector.JWT;
 using LyricsCollector.Services.ConcreteServices;
+using LyricsCollector.Services.ConcreteServices.DbHelpers;
 using LyricsCollector.Services.Contracts;
+using LyricsCollector.Services.Contracts.IDbHelpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -88,7 +90,8 @@ namespace LyricsCollector
             services.AddSingleton<ICollectionService, CollectionService>();
 
             services.AddScoped<IDbLyrics, DbLyrics>();
-            services.AddScoped<IDbUser, DbUser>();
+            services.AddScoped<IDbUsers, DbUsers>();
+            services.AddScoped<IDbCollections, DbCollections>();
 
             services.AddHttpContextAccessor();
             

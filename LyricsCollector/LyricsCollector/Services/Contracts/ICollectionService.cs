@@ -13,11 +13,5 @@ namespace LyricsCollector.Services.Contracts
 
         //void OnLyricsFound(object source, LyricsEventArgs args);
 
-        Task<Collection> NewCollectionAsync(string name, string email);
-        
-        Task<IEnumerable<Collection>> GetCollectionAsync(int collectionId);
-
-        Task<IEnumerable<Collection>> GetAllCollectionsAsync(string userName);
-        Task<bool> SaveLyricsAsync(int id);
     }
 }

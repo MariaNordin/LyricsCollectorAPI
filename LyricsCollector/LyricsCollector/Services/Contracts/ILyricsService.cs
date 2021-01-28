@@ -9,6 +9,7 @@ namespace LyricsCollector.Services.Contracts
     {
         event EventHandler<LyricsEventArgs> LyricsFound;
         Task<LyricsResponseModel> Search(string artist, string title);
+        string ToTitleCase(string text);
 
     }
 }

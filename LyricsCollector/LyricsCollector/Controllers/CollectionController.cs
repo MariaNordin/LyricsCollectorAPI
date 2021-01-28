@@ -2,10 +2,12 @@
 using LyricsCollector.Models.CollectionModels;
 using LyricsCollector.Models.UserModels;
 using LyricsCollector.Services.Contracts;
+using LyricsCollector.Services.Contracts.IDbHelpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -17,33 +19,35 @@ namespace LyricsCollector.Controllers
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class CollectionController : ControllerBase
     {
-        // GET: Hämta alla listor
-        // GET: Hämta en lista
-        // POST: Skapa ny lista
-        // POST: Lägg till låt i lista
-        // DELETE: Ta bort lista 
-
-        private readonly ICollectionService _collectionService;
+        private readonly IDbCollections _dbHelper;
+        //private readonly ICollectionService _collectionService;
         //private Collection _collection;
 
-        public CollectionController(ICollectionService collectionService)
+        public CollectionController(IDbCollections dbHelper)
         {
-            _collectionService = collectionService;
+            //_collectionService = collectionService;
+            _dbHelper = dbHelper;
         }
   
         [HttpPost("Collection")] 
         public async Task<IActionResult> GetCollectionAsync([FromBody] CollectionPostModel collection)
         {
-            //var userName = HttpContext.User.Identity.Name;
+            IEnumerable<Collection> currentCollection;
+
             try
             {
-                var currentCollection = await _collectionService.GetCollectionAsync(collection.Id);
-                return Ok(currentCollection);
+                currentCollection = await _dbHelper.GetCollectionAsync(collection.Id);              
             }
             catch (System.Exception)
             {
                 return BadRequest(); 
             }
+
+            if (currentCollection != null)
+            {
+                return Ok(currentCollection);
+            }
+            return NotFound();
         }
 
         [HttpPost("AllCollections")]
@@ -53,7 +57,7 @@ namespace LyricsCollector.Controllers
 
             try
             {
-                var collections = await _collectionService.GetAllCollectionsAsync(userName);
+                var collections = await _dbHelper.GetAllCollectionsAsync(userName);
                 return Ok(collections);
             }
             catch (System.Exception)
@@ -69,13 +73,14 @@ namespace LyricsCollector.Controllers
 
             try
             {
-                var newCollection = await _collectionService.NewCollectionAsync(collection.NewName, userName);
-                return Ok(collection);
+                await _dbHelper.NewCollectionAsync(collection.NewName, userName);
+                
             }
             catch (System.Exception)
             {
                 return BadRequest();
             }
+            return Ok();
         }
 
         [HttpPost("Save")]
@@ -85,7 +90,7 @@ namespace LyricsCollector.Controllers
 
             try
             {
-                response = await _collectionService.SaveLyricsAsync(collection.Id);               
+                response = await _dbHelper.SaveLyricsAsync(collection.Id);               
             }
             catch (System.Exception)
             {

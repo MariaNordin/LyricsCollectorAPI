@@ -1,18 +1,19 @@
 ﻿using LyricsCollector.Context;
 using LyricsCollector.Entities;
-using LyricsCollector.Services.Contracts;
+using LyricsCollector.Models.UserModels;
+using LyricsCollector.Services.Contracts.IDbHelpers;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace LyricsCollector.Services.ConcreteServices
+namespace LyricsCollector.Services.ConcreteServices.DbHelpers
 {
-    public class DbUser : IDbUser
+    public class DbUsers : IDbUsers
     {
         private readonly LyricsCollectorDbContext _context;
 
-        public DbUser(LyricsCollectorDbContext context)
+        public DbUsers(LyricsCollectorDbContext context)
         {
             _context = context;
         }
@@ -23,7 +24,12 @@ namespace LyricsCollector.Services.ConcreteServices
 
             try
             {
-                user = await _context.Users.Where(u => u.Name == userName).FirstOrDefaultAsync();
+                user = await _context.Users
+                    .Include(u => u.Collections)
+                    .ThenInclude(c => c.Lyrics)
+                    .ThenInclude(cl => cl.Lyrics)
+                    .Where(u => u.Name == userName).FirstOrDefaultAsync();
+
                 return user;
             }
             catch (Exception)

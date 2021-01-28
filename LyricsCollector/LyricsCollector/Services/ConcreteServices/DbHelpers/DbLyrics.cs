@@ -1,7 +1,7 @@
 ﻿using LyricsCollector.Context;
 using LyricsCollector.Entities;
 using LyricsCollector.Models.LyricsModels;
-using LyricsCollector.Services.Contracts;
+using LyricsCollector.Services.Contracts.IDbHelpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using System;
@@ -10,13 +10,12 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace LyricsCollector.Services.ConcreteServices
+namespace LyricsCollector.Services.ConcreteServices.DbHelpers
 {
     public class DbLyrics : IDbLyrics
     {
         private readonly LyricsCollectorDbContext _context;
-        private readonly IMemoryCache _memoryCache;
-        private LyricsResponseModel _lyrics;
+        private readonly IMemoryCache _memoryCache;       
 
         public DbLyrics(LyricsCollectorDbContext context, IMemoryCache memoryCache)
         {
@@ -37,8 +36,7 @@ namespace LyricsCollector.Services.ConcreteServices
 
         public LyricsResponseModel LyricsInDbMatch(string artist, string title)
         {
-            artist = ToTitleCase(artist);
-            title = ToTitleCase(title);
+             var lyrics = new LyricsResponseModel();
 
             var lyricsInDb = GetDbLyricsAsync().Result;
 
@@ -46,13 +44,13 @@ namespace LyricsCollector.Services.ConcreteServices
 
             if (existingLyrics != null)
             {
-                _lyrics.Artist = existingLyrics.Artist;
-                _lyrics.Title = existingLyrics.Title;
-                _lyrics.Lyrics = existingLyrics.SongLyrics;
-                _lyrics.CoverImage = existingLyrics.CoverImage;
-                _lyrics.SpotifyLink = existingLyrics.SpotifyLink;
+                lyrics.Artist = existingLyrics.Artist;
+                lyrics.Title = existingLyrics.Title;
+                lyrics.Lyrics = existingLyrics.SongLyrics;
+                lyrics.CoverImage = existingLyrics.CoverImage;
+                lyrics.SpotifyLink = existingLyrics.SpotifyLink;
 
-                return _lyrics;
+                return lyrics;
             }
 
             return null;
@@ -79,12 +77,6 @@ namespace LyricsCollector.Services.ConcreteServices
             {
                 throw;
             }
-        }
-
-        private static string ToTitleCase(string text)
-        {
-            TextInfo ti = CultureInfo.CurrentCulture.TextInfo;
-            return ti.ToTitleCase(text);
         }
     }
 }

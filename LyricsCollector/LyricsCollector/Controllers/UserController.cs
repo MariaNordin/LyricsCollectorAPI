@@ -1,6 +1,7 @@
 ﻿using LyricsCollector.Entities;
 using LyricsCollector.Models.UserModels;
 using LyricsCollector.Services.Contracts;
+using LyricsCollector.Services.Contracts.IDbHelpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
@@ -15,10 +16,10 @@ namespace LyricsCollector.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly IDbUser _dbUser;
+        private readonly IDbUsers _dbUser;
         private readonly IUserService _userService;
 
-        public UserController(IUserService userService, IDbUser dbUser)
+        public UserController(IUserService userService, IDbUsers dbUser)
         {
             _userService = userService;
             _dbUser = dbUser;
@@ -80,11 +81,18 @@ namespace LyricsCollector.Controllers
                 return BadRequest();
             }
 
+
             if (user != null)
             {
-                return Ok(user);
+                var authenticatedUser = new UserResponseModel
+                {
+                    Name = user.Name,
+                    Collections = user.Collections
+                };
+                return Ok(authenticatedUser);
             }
             return NotFound();
+
         }
     }
 }

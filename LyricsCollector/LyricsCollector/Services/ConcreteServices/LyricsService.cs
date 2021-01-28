@@ -2,6 +2,7 @@
 using LyricsCollector.Models.LyricsModels;
 using LyricsCollector.Services.Contracts;
 using System;
+using System.Globalization;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
@@ -43,9 +44,17 @@ namespace LyricsCollector.Services.ConcreteServices
 
             if (_lyrics.Lyrics != "")
             {
+                _lyrics.Artist = artist;
+                _lyrics.Title = title;
                 return _lyrics;
             }
             return null;
+        }
+
+        public string ToTitleCase(string text)
+        {
+            TextInfo ti = CultureInfo.CurrentCulture.TextInfo;
+            return ti.ToTitleCase(text);
         }
     }
 }

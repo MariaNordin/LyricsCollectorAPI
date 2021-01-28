@@ -1,6 +1,7 @@
 ﻿using LyricsCollector.Models.LyricsModels;
 using LyricsCollector.Models.SpotifyModels;
 using LyricsCollector.Services.Contracts;
+using LyricsCollector.Services.Contracts.IDbHelpers;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -32,20 +33,24 @@ namespace LyricsCollector.Controllers
         {
             //var cacheKey = $"Get_Lyrics_From_Search-{lyricsRM}";
 
-            var dbLyrics = _dbLyricsHelper.LyricsInDbMatch(lyricsPM.Artist, lyricsPM.Title);
+            var artist = _lyricsService.ToTitleCase(lyricsPM.Artist);
+            var title = _lyricsService.ToTitleCase(lyricsPM.Title);
+
+            var dbLyrics = _dbLyricsHelper.LyricsInDbMatch(artist, title);
 
             if (dbLyrics != null)
             {
                 return Ok(dbLyrics);
             }
 
-            lyrics = await _lyricsService.Search(lyricsPM.Artist, lyricsPM.Title);
+            lyrics = await _lyricsService.Search(artist, title);
 
             if (lyrics != null)
             {
+                
                 try
                 {
-                    track = await _spotifyService.Search(lyricsPM.Artist, lyricsPM.Title);
+                    track = await _spotifyService.Search(artist, title);
 
                     lyrics.SpotifyLink = track.Track.Items[0].External_urls.Spotify;
                     lyrics.CoverImage = track.Track.Items[0].Album.Images[1].Url;

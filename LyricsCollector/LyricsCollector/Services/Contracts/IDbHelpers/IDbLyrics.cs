@@ -3,7 +3,7 @@ using LyricsCollector.Models.LyricsModels;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace LyricsCollector.Services.Contracts
+namespace LyricsCollector.Services.Contracts.IDbHelpers
 {
     public interface IDbLyrics
     {
