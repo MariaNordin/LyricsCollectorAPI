@@ -5,20 +5,15 @@ namespace LyricsCollector.Controllers
 {
     public class CollectionController : ControllerBase
     {
-        // GET: Hämta alla listor
-        // GET: Hämta en lista
-        // POST: Skapa ny lista
-        // DELETE: Ta bort lista
-        // POST: Lägg till låt i lista
-        // DELETE: Ta bort låt i lista
-
-
+        
         private readonly ICollectionService _collectionService;
+        private readonly IDbCollectionHelper _dbCollection;
         //private Collection _collection;
 
-        public CollectionController(ICollectionService collectionService)
+        public CollectionController(ICollectionService collectionService, IDbCollectionHelper dbCollection)
         {
             _collectionService = collectionService;
+            _dbCollection = dbCollection;
         }
 
         //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]

@@ -6,17 +6,12 @@ using LyricsCollector.Services.Contracts;
 
 namespace LyricsCollector.Services.ConcreteServices
 {
-    public class CollectionService : ICollectionService, ILoggedInUserObserver
+    public class CollectionService : ICollectionService
     {
-        private readonly LyricsCollectorDbContext _context;
-        private IUserWithToken _userWithToken;
         private User _user;
 
-        public CollectionService(LyricsCollectorDbContext context, IUserWithToken userWithToken)
+        public CollectionService()
         {
-            _context = context;
-            _userWithToken = userWithToken;
-            _userWithToken.AttachObserver(this);
         }
 
 
@@ -32,10 +27,6 @@ namespace LyricsCollector.Services.ConcreteServices
                 Name = "MyLyrics",
                 User = _user
             };
-
-            _context.Collections.Add(collection);
-
-            _context.SaveChanges();
         }
     }
 }
