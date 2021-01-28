@@ -59,8 +59,8 @@ namespace LyricsCollector.Services.ConcreteServices
 
         public async Task<SpotifyTokenModel> GetAccessToken()
         {
-            var clientId = _config.GetValue<string>("SpotifyCredentials:SpotifyClientId");  //"7e335aa2c7ed476abf4de347ae1c1ddc";
-            var clientSecret = _config.GetValue<string>("SpotifyCredentials:SpotifyClientSecret");  //"1e32bdd892ad40acac7966727e3a101e";
+            var clientId = _config.GetValue<string>("SpotifyCredentials:SpotifyClientId");
+            var clientSecret = _config.GetValue<string>("SpotifyCredentials:SpotifyClientSecret");
             var credentials = Convert.ToBase64String(Encoding.UTF8.GetBytes(
                 string.Format($"{clientId}:{clientSecret}")));
 
