@@ -4,6 +4,7 @@ using LyricsCollector.Services.ConcreteServices;
 using LyricsCollector.Services.ConcreteServices.DbHelpers;
 using LyricsCollector.Services.Contracts;
 using LyricsCollector.Services.Contracts.IDbHelpers;
+using LyricsCollector.SpotifyCredentials;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -51,6 +52,8 @@ namespace LyricsCollector
             var appSettings = jwtSection.Get<JWTSettings>();
             var key = Encoding.ASCII.GetBytes(appSettings.SecretKey);
 
+            services.Configure<SpotifyCred>(Configuration.GetSection(SpotifyCred.SpotifyCredentials));
+
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -94,9 +97,6 @@ namespace LyricsCollector
             services.AddScoped<IDbCollections, DbCollections>();
 
             services.AddHttpContextAccessor();
-            
-            //        options.ClientId = Configuration.GetValue<string>("SpotifyClientId");
-            //        options.ClientSecret = Configuration.GetValue<string>("SpotifyClientSecret");
 
         }
 

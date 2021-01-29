@@ -82,7 +82,7 @@ namespace LyricsCollector.Controllers
             return Ok();
         }
 
-        [HttpPost("Save")]
+        [HttpPost("SaveLyrics")]
         public async Task<IActionResult> SaveToCollectionAsync([FromBody] CollectionPostModel collection)
         {
             bool response;

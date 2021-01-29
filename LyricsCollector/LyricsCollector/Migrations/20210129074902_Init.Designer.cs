@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LyricsCollector.Migrations
 {
     [DbContext(typeof(LyricsCollectorDbContext))]
-    [Migration("20210128092140_Update-Lyrics")]
-    partial class UpdateLyrics
+    [Migration("20210129074902_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

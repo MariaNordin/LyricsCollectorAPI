@@ -1,5 +1,4 @@
-﻿using LyricsCollector.Context;
-using LyricsCollector.Entities;
+﻿using LyricsCollector.Entities;
 using LyricsCollector.JWT;
 using LyricsCollector.Models.UserModels;
 using LyricsCollector.Services.Contracts;
@@ -22,19 +21,6 @@ namespace LyricsCollector.Services.ConcreteServices
         {
             _jwtSettings = jwtSettings.Value;
         }
-
-        //public event EventHandler<UserEventArgs> UserLoggedIn;
-        //public event EventHandler<UserEventArgs> RegisteredUser;
-
-        //protected virtual void OnUserLoggedIn()
-        //{
-        //    UserLoggedIn?.Invoke(this, new UserEventArgs() { User = _userWithToken.User });
-        //}
-
-        //protected virtual void OnRegisteredUser(User user)
-        //{
-        //    RegisteredUser?.Invoke(this, new UserEventArgs() { User = user });
-        //}
 
         public User GeneratePassword(UserPostModel userPM)
         {

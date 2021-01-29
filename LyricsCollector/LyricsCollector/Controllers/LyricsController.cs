@@ -17,8 +17,6 @@ namespace LyricsCollector.Controllers
         private readonly IDbLyrics _dbLyricsHelper;
         private readonly ILyricsService _lyricsService;
         private readonly ISpotifyService _spotifyService;
-        private LyricsResponseModel lyrics;
-        private TrackResponseModel track;
 
         public LyricsController(ILyricsService lyricsService, ISpotifyService spotifyService, 
             IDbLyrics dbLyrics, ICollectionService collectionService)
@@ -47,14 +45,14 @@ namespace LyricsCollector.Controllers
                 return Ok(dbLyrics);
             }
 
-            lyrics = await _lyricsService.Search(artist, title);
+            var lyrics = await _lyricsService.Search(artist, title);
 
             if (lyrics != null)
             {
                 
                 try
                 {
-                    track = await _spotifyService.Search(artist, title);
+                    var track = await _spotifyService.Search(artist, title);
 
                     lyrics.SpotifyLink = track.Track.Items[0].External_urls.Spotify;
                     lyrics.CoverImage = track.Track.Items[0].Album.Images[1].Url;

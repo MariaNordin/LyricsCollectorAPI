@@ -28,6 +28,10 @@ namespace LyricsCollector.Controllers
         [HttpPost("Register")]
         public async Task<IActionResult> RegisterAsync([FromBody] UserPostModel userPM)
         {
+            if(String.IsNullOrWhiteSpace(userPM.Name) || String.IsNullOrWhiteSpace(userPM.Password) || String.IsNullOrWhiteSpace(userPM.Email) ) {
+                return BadRequest();
+            }
+
             var existingUser = await _dbUser.GetUserAsync(userPM.Name);
 
             if (existingUser != null)

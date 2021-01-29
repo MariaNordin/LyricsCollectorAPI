@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace LyricsCollector.Migrations
 {
-    public partial class InitDb : Migration
+    public partial class Init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -15,7 +15,9 @@ namespace LyricsCollector.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Artist = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SongLyrics = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    SongLyrics = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SpotifyLink = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CoverImage = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {

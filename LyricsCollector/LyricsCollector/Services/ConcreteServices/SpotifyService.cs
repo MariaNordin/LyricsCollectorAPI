@@ -1,8 +1,8 @@
-﻿using LyricsCollector.Events;
-using LyricsCollector.Models.SpotifyModels;
-using LyricsCollector.Models.UserModels;
+﻿using LyricsCollector.Models.SpotifyModels;
 using LyricsCollector.Services.Contracts;
+using LyricsCollector.SpotifyCredentials;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -15,18 +15,18 @@ namespace LyricsCollector.Services.ConcreteServices
 {
     public class SpotifyService : ISpotifyService
     {
-        private readonly IConfiguration _config;
         private readonly IHttpClientFactory _clientFactory;
+        private readonly SpotifyCred _credentials;
 
         SpotifyTokenModel token;
         TrackResponseModel trackResponse;
 
         private string currentToken;
 
-        public SpotifyService(IConfiguration config, IHttpClientFactory clientFactory)
+        public SpotifyService(IHttpClientFactory clientFactory, IOptions<SpotifyCred> credentials)
         {
-            _config = config;
             _clientFactory = clientFactory;
+            _credentials = credentials.Value;
         }
 
         public async Task<TrackResponseModel> Search(string artist, string title)
@@ -58,8 +58,8 @@ namespace LyricsCollector.Services.ConcreteServices
 
         public async Task<SpotifyTokenModel> GetAccessToken()
         {
-            var clientId = _config.GetValue<string>("SpotifyCredentials:SpotifyClientId");
-            var clientSecret = _config.GetValue<string>("SpotifyCredentials:SpotifyClientSecret");
+            var clientId = _credentials.SpotifyClientId;
+            var clientSecret = _credentials.SpotifyClientSecret;
             var credentials = Convert.ToBase64String(Encoding.UTF8.GetBytes(
                 string.Format($"{clientId}:{clientSecret}")));
 
@@ -88,65 +88,5 @@ namespace LyricsCollector.Services.ConcreteServices
                 return null;
             }
         }
-
-
-
-        //-------------------------------------------------------
-
-        //public async Task<string> GetAuthorization()
-        //{
-        //var url = "" +
-        //    "client_id=7e335aa2c7ed476abf4de347ae1c1ddc&" +
-        //    "response_type=code&" +
-        //    "redirect_uri=https%3A%2F%2Flocalhost%3A44307%2Fswagger%2Findex.html&" +
-        //    "scope=user-read-private";
-
-        //-------------------------------------------------------
-        //request.Content = new FormUrlEncodedContent(new Dictionary<string, string>
-        //{
-        //    { "client_id", "7e335aa2c7ed476abf4de347ae1c1ddc" },
-        //    { "response_type", "code"},
-        //    { "redirect_uri", "https%3A%2F%2Flocalhost%3A44307%2Fswagger%2Findex.html" },
-        //    { "scope", "user-read-private" }
-        //});
-
-        //HttpResponseMessage response = await client.GetAsync(request);
-        //if (response.IsSuccessStatusCode)
-        //{
-        //    authorization = await response.Content.ReadFromJsonAsync<AuthorizationResponseModel>
-        //    return authorization;
-        //}
-        //else return null;
-        //-------------------------------------------------------
-
-        //using (var client = _clientFactory.CreateClient())
-        //{
-        //    HttpResponseMessage response = await client.GetAsync(url);
-        //    var responseContent = response.Content;
-        //    var authorizationResponse = await responseContent.ReadAsStringAsync();
-        //}
-        //}
-
-        //public async Task<PlaylistsResponseModel> GetPlaylistsAsync(string token, string userId)
-        //{
-        //    var request = new HttpRequestMessage(HttpMethod.Get,
-        //        $"users/{userId}/playlists");
-        //    request.Headers.Add("Authorization", $"Bearer {token}");
-        //    request.Headers.Add("Accept", "application/json");
-
-        //    var client = _clientFactory.CreateClient("spotify");
-
-        //    HttpResponseMessage response = await client.SendAsync(request);
-
-        //    if (response.IsSuccessStatusCode)
-        //    {
-        //        _playlists = await response.Content.ReadFromJsonAsync<PlaylistsResponseModel>();
-        //        return _playlists;
-        //    }
-        //    else
-        //    {
-        //        return null;
-        //    }
-        //}
     }
 }

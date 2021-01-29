@@ -2,6 +2,7 @@
 using LyricsCollector.Entities;
 using LyricsCollector.Models.UserModels;
 using LyricsCollector.Services.Contracts.IDbHelpers;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
@@ -50,7 +51,7 @@ namespace LyricsCollector.Services.ConcreteServices.DbHelpers
             }
             catch (Exception)
             {
-                throw; //inte throw
+                throw;
             }
 
         }
