@@ -1,5 +1,5 @@
 ﻿using LyricsCollector.Entities;
-using LyricsCollector.Models.LyricsModels;
+using LyricsCollector.Models.Contracts;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -8,7 +8,7 @@ namespace LyricsCollector.Services.Contracts.IDbHelpers
     public interface IDbLyrics
     {
         Task<List<Lyrics>> GetDbLyricsAsync();
-        LyricsResponseModel LyricsInDbMatch(string artist, string title);
-        Task SaveLyricsToDbAsync(LyricsResponseModel lyricsRM);
+        ILyricsResponseModel LyricsInDbMatch(string artist, string title);
+        Task SaveLyricsToDbAsync(ILyricsResponseModel lyricsRM);
     }
 }

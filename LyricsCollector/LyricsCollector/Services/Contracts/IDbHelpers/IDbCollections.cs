@@ -1,5 +1,5 @@
 ﻿using LyricsCollector.Entities;
-using LyricsCollector.Models.LyricsModels;
+using LyricsCollector.Models.Contracts;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -10,6 +10,6 @@ namespace LyricsCollector.Services.Contracts.IDbHelpers
         Task<IEnumerable<Collection>> GetCollectionAsync(int collectionId);
         Task<IEnumerable<Collection>> GetAllCollectionsAsync(string userName);
         Task NewCollectionAsync(string CollectionName, string userName);
-        Task<bool> SaveLyricsAsync(int collectionId, LyricsResponseModel lyrics);
+        Task<bool> SaveLyricsAsync(int collectionId, ILyricsResponseModel lyrics);
     }
 }

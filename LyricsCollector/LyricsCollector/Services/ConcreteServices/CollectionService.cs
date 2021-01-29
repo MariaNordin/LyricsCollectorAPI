@@ -1,18 +1,18 @@
-﻿using LyricsCollector.Models.LyricsModels;
+﻿using LyricsCollector.Models.Contracts;
 using LyricsCollector.Services.Contracts;
 
 namespace LyricsCollector.Services.ConcreteServices
 {
     public class CollectionService : ICollectionService
     {
-        private LyricsResponseModel _lyrics;
-        
-        public LyricsResponseModel GetCurrentLyrics()
+        private ILyricsResponseModel _lyrics;
+    
+        public ILyricsResponseModel GetCurrentLyrics()
         {
             return _lyrics;
         }
 
-        public void Update(LyricsResponseModel lyrics)
+        public void Update(ILyricsResponseModel lyrics)
         {
             _lyrics = lyrics;
         }

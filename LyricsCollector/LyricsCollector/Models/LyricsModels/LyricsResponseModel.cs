@@ -1,8 +1,9 @@
+using LyricsCollector.Models.Contracts;
 using System.Text.Json.Serialization;
 
 namespace LyricsCollector.Models.LyricsModels
 {
-    public class LyricsResponseModel
+    public class LyricsResponseModel : ILyricsResponseModel
     {
 
         [JsonPropertyName("lyrics")]

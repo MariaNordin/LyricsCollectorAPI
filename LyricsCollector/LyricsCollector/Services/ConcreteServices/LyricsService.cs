@@ -1,4 +1,4 @@
-﻿using LyricsCollector.Events;
+﻿using LyricsCollector.Models.Contracts;
 using LyricsCollector.Models.LyricsModels;
 using LyricsCollector.Services.Contracts;
 using System;
@@ -14,23 +14,15 @@ namespace LyricsCollector.Services.ConcreteServices
     {
         private readonly IHttpClientFactory _clientFactory;
         private List<IObserver> _observers;
+        private LyricsResponseModel _lyrics;
 
         public LyricsService(IHttpClientFactory clientFactory )
         {
             _clientFactory = clientFactory;
             _observers = new List<IObserver>();
-        }
+        }      
 
-        private LyricsResponseModel _lyrics;
-
-        public event EventHandler<LyricsEventArgs> LyricsFound;
-
-        protected virtual void OnLyricsFound(LyricsResponseModel lyrics)
-        {
-            LyricsFound?.Invoke(this, new LyricsEventArgs() { Lyrics = lyrics });
-        }
-
-        public async Task<LyricsResponseModel> Search(string artist, string title)
+        public async Task<ILyricsResponseModel> Search(string artist, string title)
         {
 
             var client = _clientFactory.CreateClient("lyrics");
@@ -65,7 +57,7 @@ namespace LyricsCollector.Services.ConcreteServices
             _observers.Add(observer);
         }
 
-        public void Notify(LyricsResponseModel lyrics)
+        public void Notify(ILyricsResponseModel lyrics)
         {
             foreach (var observer in _observers)
             {

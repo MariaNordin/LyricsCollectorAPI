@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.30711.63
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LyricsCollector", "LyricsCollector\LyricsCollector.csproj", "{DA6B1B26-EC98-4FC5-961A-160F4EFC6D55}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LyricsCollectorAPI.Tests", "LyricsCollectorAPI.Tests\LyricsCollectorAPI.Tests.csproj", "{5F57B95E-B305-448F-91A8-7746E4F476BD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LyricsC.API.Tests", "LyricsC.API.Tests\LyricsC.API.Tests.csproj", "{1942DB9F-B43B-4D6D-9E4D-7410EA2E2CA2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,10 @@ Global
 		{DA6B1B26-EC98-4FC5-961A-160F4EFC6D55}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DA6B1B26-EC98-4FC5-961A-160F4EFC6D55}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DA6B1B26-EC98-4FC5-961A-160F4EFC6D55}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5F57B95E-B305-448F-91A8-7746E4F476BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5F57B95E-B305-448F-91A8-7746E4F476BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5F57B95E-B305-448F-91A8-7746E4F476BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5F57B95E-B305-448F-91A8-7746E4F476BD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1942DB9F-B43B-4D6D-9E4D-7410EA2E2CA2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1942DB9F-B43B-4D6D-9E4D-7410EA2E2CA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1942DB9F-B43B-4D6D-9E4D-7410EA2E2CA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1942DB9F-B43B-4D6D-9E4D-7410EA2E2CA2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

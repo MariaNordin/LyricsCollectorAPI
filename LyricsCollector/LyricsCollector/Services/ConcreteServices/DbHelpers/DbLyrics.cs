@@ -1,5 +1,6 @@
 ﻿using LyricsCollector.Context;
 using LyricsCollector.Entities;
+using LyricsCollector.Models.Contracts;
 using LyricsCollector.Models.LyricsModels;
 using LyricsCollector.Services.Contracts.IDbHelpers;
 using Microsoft.EntityFrameworkCore;
@@ -34,7 +35,7 @@ namespace LyricsCollector.Services.ConcreteServices.DbHelpers
             return listOfLyrics;
         }
 
-        public LyricsResponseModel LyricsInDbMatch(string artist, string title)
+        public ILyricsResponseModel LyricsInDbMatch(string artist, string title)
         {
              var lyrics = new LyricsResponseModel();
 
@@ -56,7 +57,7 @@ namespace LyricsCollector.Services.ConcreteServices.DbHelpers
             return null;
         }
 
-        public async Task SaveLyricsToDbAsync(LyricsResponseModel lyricsRM)
+        public async Task SaveLyricsToDbAsync(ILyricsResponseModel lyricsRM)
         {
             var lyrics = new Lyrics
             {

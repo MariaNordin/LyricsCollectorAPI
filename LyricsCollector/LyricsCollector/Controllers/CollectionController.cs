@@ -1,6 +1,5 @@
 ﻿using LyricsCollector.Entities;
 using LyricsCollector.Models.CollectionModels;
-using LyricsCollector.Models.UserModels;
 using LyricsCollector.Services.Contracts;
 using LyricsCollector.Services.Contracts.IDbHelpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -8,7 +7,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using System.Net;
 using System.Threading.Tasks;
 
 namespace LyricsCollector.Controllers

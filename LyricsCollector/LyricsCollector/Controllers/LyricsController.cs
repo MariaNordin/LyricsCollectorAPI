@@ -1,5 +1,5 @@
-﻿using LyricsCollector.Models.LyricsModels;
-using LyricsCollector.Models.SpotifyModels;
+﻿using LyricsCollector.Models.Contracts;
+using LyricsCollector.Models.LyricsModels;
 using LyricsCollector.Services.Contracts;
 using LyricsCollector.Services.Contracts.IDbHelpers;
 using Microsoft.AspNetCore.Cors;

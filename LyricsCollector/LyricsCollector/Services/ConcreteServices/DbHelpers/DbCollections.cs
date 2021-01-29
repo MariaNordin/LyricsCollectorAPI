@@ -1,6 +1,6 @@
 ﻿using LyricsCollector.Context;
 using LyricsCollector.Entities;
-using LyricsCollector.Models.LyricsModels;
+using LyricsCollector.Models.Contracts;
 using LyricsCollector.Services.Contracts.IDbHelpers;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -92,7 +92,7 @@ namespace LyricsCollector.Services.ConcreteServices.DbHelpers
             }
         }
 
-        public async Task<bool> SaveLyricsAsync(int collectionId, LyricsResponseModel currentLyrics)
+        public async Task<bool> SaveLyricsAsync(int collectionId, ILyricsResponseModel currentLyrics)
         {
             var lyrics = await GetDbLyricsAsync(currentLyrics);
 
@@ -134,7 +134,7 @@ namespace LyricsCollector.Services.ConcreteServices.DbHelpers
             }
         }
 
-        private async Task<Lyrics> GetDbLyricsAsync(LyricsResponseModel currentLyrics) 
+        private async Task<Lyrics> GetDbLyricsAsync(ILyricsResponseModel currentLyrics) 
         {
             try
             {

@@ -1,8 +1,9 @@
-﻿using System.Text.Json.Serialization;
+﻿using LyricsCollector.Models.Contracts;
+using System.Text.Json.Serialization;
 
 namespace LyricsCollector.Models.LyricsModels
 {
-    public class LyricsPostModel
+    public class LyricsPostModel : ILyricsPostModel
     {
         [JsonPropertyName("artist")]
         public string Artist { get; set; }
