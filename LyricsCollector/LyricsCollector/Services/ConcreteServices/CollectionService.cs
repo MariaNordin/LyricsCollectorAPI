@@ -1,4 +1,4 @@
-﻿using LyricsCollector.Models.Contracts;
+﻿using LyricsCollector.Models.LyricsModels.Contracts;
 using LyricsCollector.Services.Contracts;
 
 namespace LyricsCollector.Services.ConcreteServices

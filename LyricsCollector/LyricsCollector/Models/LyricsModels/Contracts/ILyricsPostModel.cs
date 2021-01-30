@@ -1,5 +1,5 @@
 ﻿
-namespace LyricsCollector.Models.Contracts
+namespace LyricsCollector.Models.LyricsModels.Contracts
 {
     public interface ILyricsPostModel
     {

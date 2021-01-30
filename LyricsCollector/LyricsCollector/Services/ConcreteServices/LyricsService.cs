@@ -1,5 +1,5 @@
-﻿using LyricsCollector.Models.Contracts;
-using LyricsCollector.Models.LyricsModels;
+﻿using LyricsCollector.Models.LyricsModels;
+using LyricsCollector.Models.LyricsModels.Contracts;
 using LyricsCollector.Services.Contracts;
 using System;
 using System.Collections.Generic;

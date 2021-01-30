@@ -1,7 +1,7 @@
 ﻿using LyricsCollector.Context;
 using LyricsCollector.Entities;
-using LyricsCollector.Models.Contracts;
 using LyricsCollector.Models.LyricsModels;
+using LyricsCollector.Models.LyricsModels.Contracts;
 using LyricsCollector.Services.Contracts.IDbHelpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;

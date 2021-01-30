@@ -1,4 +1,4 @@
-﻿using LyricsCollector.Models.Contracts;
+﻿using LyricsCollector.Models.LyricsModels.Contracts;
 using System.Text.Json.Serialization;
 
 namespace LyricsCollector.Models.LyricsModels
