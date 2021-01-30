@@ -1,5 +1,4 @@
-﻿using LyricsCollector.Entities;
-using LyricsCollector.Entities.Contracts;
+﻿using LyricsCollector.Entities.Contracts;
 using LyricsCollector.Models.UserModels;
 using LyricsCollector.Services.Contracts;
 using LyricsCollector.Services.Contracts.IDbHelpers;
@@ -88,7 +87,6 @@ namespace LyricsCollector.Controllers
                 return BadRequest();
             }
 
-
             if (_user != null)
             {
                 var authenticatedUser = new UserResponseModel
@@ -99,7 +97,6 @@ namespace LyricsCollector.Controllers
                 return Ok(authenticatedUser);
             }
             return NotFound();
-
         }
     }
 }
