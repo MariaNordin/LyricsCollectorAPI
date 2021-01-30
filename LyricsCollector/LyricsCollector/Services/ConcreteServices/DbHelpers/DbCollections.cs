@@ -19,7 +19,7 @@ namespace LyricsCollector.Services.ConcreteServices.DbHelpers
             _context = context;
         }
 
-        public async Task<IEnumerable<Collection>> GetCollectionAsync(int collectionId)
+        public async Task<Collection> GetCollectionAsync(int collectionId)
         {
             Collection[] collections;
 
@@ -30,13 +30,17 @@ namespace LyricsCollector.Services.ConcreteServices.DbHelpers
                    .ThenInclude(cl => cl.Lyrics)
                    .Where(c => c.Id == collectionId)
                    .ToArrayAsync();
-
-                return collections;
             }
             catch (Exception)
             {
                 throw;
             }
+
+            if (collections.Length < 1)
+            {
+                return null;
+            }
+            return collections[0];
         }
 
         public async Task<IEnumerable<Collection>> GetAllCollectionsAsync(string userName)

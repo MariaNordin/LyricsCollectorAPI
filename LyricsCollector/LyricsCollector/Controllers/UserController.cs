@@ -47,9 +47,9 @@ namespace LyricsCollector.Controllers
 
             if (result)
             {
-                return Ok();
+                return Ok(new { message = "Registered!" } );
             }
-            return BadRequest();
+            return BadRequest(new { message = "Register failed. Try again" } );
         }
 
         [HttpPost("Login")]

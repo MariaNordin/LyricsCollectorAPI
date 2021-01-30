@@ -29,7 +29,7 @@ namespace LyricsCollector.Controllers
         [HttpPost("Collection")] 
         public async Task<IActionResult> GetCollectionAsync([FromBody] CollectionPostModel collection)
         {
-            IEnumerable<Collection> currentCollection;
+            Collection currentCollection;
 
             try
             {
@@ -97,9 +97,9 @@ namespace LyricsCollector.Controllers
             }
 
             if(response) 
-                return Ok();
+                return Ok(new { message = "Lyrics saved!" });
 
-            return BadRequest();
+            return BadRequest(new { message = "Something went wrong. Please try again" });
         }
     }
 }

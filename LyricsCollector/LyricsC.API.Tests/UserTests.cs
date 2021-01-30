@@ -3,6 +3,7 @@ using LyricsCollector.Entities.Contracts;
 using LyricsCollector.Models.UserModels;
 using LyricsCollector.Services.Contracts;
 using LyricsCollector.Services.Contracts.IDbHelpers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
@@ -99,26 +100,15 @@ namespace LyricsC.API.Tests
             Assert.AreEqual(404, notFoundResult.StatusCode);
         }
 
-        //[Test]
-        //public async Task RegisterAsync_ValidModel_ReturnsOkResult()
-        //{
-        //    //Arrange
-        //    var userPM = new UserPostModel()
-        //    {
-        //        Name = "test",
-        //        Email = "test",
-        //        Password = "test"
-        //    };
+        [Test]
+        public void GetUserAsync_HasAuthorizeAttribute()
+        {
+            //Arrange
+            //Act
+            var attribute = controller.GetType().GetMethod("GetUserAsync").GetCustomAttributes(typeof(AuthorizeAttribute), true);
 
-        //    dbUsersMock.Setup(db => db.SaveUserAsync(It.IsAny<IUser>())).Returns(new Task<bool>(() => true));
-
-        //    //Act
-        //    var result = await controller.RegisterAsync(userPM);
-        //    var okResult = result as OkResult;
-
-        //    //Assert
-        //    Assert.IsNotNull(result);
-        //    Assert.AreEqual(200, okResult.StatusCode);
-        //}
+            //Assert
+            Assert.AreEqual(typeof(AuthorizeAttribute), attribute[0].GetType());
+        }
     }
 }
