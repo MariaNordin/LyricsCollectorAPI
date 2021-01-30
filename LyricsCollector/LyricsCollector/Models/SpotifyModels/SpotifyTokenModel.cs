@@ -1,8 +1,9 @@
-﻿using System.Text.Json.Serialization;
+﻿using LyricsCollector.Models.SpotifyModels.Contracts;
+using System.Text.Json.Serialization;
 
 namespace LyricsCollector.Models.SpotifyModels
 {
-    public class SpotifyTokenModel
+    public class SpotifyTokenModel : ISpotifyTokenModel
     {
         [JsonPropertyName("access_token")]
         public string Access_token { get; set; }

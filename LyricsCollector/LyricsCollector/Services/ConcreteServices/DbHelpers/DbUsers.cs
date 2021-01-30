@@ -20,11 +20,9 @@ namespace LyricsCollector.Services.ConcreteServices.DbHelpers
 
         public async Task<IUser> GetUserAsync(string userName)
         {
-            User user;
-
             try
             {
-                user = await _context.Users
+                var user = await _context.Users
                     .Include(u => u.Collections)
                     .ThenInclude(c => c.Lyrics)
                     .ThenInclude(cl => cl.Lyrics)

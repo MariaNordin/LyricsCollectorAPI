@@ -1,6 +1,7 @@
 using LyricsCollector.Controllers;
 using LyricsCollector.Entities.Contracts;
 using LyricsCollector.Models.UserModels;
+using LyricsCollector.Models.UserModels.Contracts;
 using LyricsCollector.Services.Contracts;
 using LyricsCollector.Services.Contracts.IDbHelpers;
 using Microsoft.AspNetCore.Authorization;
@@ -15,10 +16,12 @@ namespace LyricsC.API.Tests
     public class Tests
     {
         private UserController controller;
-        
+
         private Mock<IUserService> userServiceMock;
         private Mock<IDbUsers> dbUsersMock;
+        private Mock<IUserPostModel> userPmMock;
         private Mock<IUser> userMock;
+        private Mock<IUserToken> tokenMock;
 
 
         [SetUp]
@@ -26,11 +29,18 @@ namespace LyricsC.API.Tests
         {
             userServiceMock = new Mock<IUserService>();
             dbUsersMock = new Mock<IDbUsers>();
-            userMock = new Mock<IUser>();
 
-            userMock.SetupAllProperties();
-            userMock.Setup(user => user.Name).Returns("name");
-            userMock.Setup(user => user.Email).Returns("email");
+            var testUser = "testUser";
+            var fakeToken = "gsjak3745gh";
+
+            userPmMock = new Mock<IUserPostModel>();
+            userPmMock.Setup(user => user.Name).Returns(testUser);
+            
+            userMock = new Mock<IUser>();
+            userMock.Setup(user => user.Name).Returns(testUser);
+
+            tokenMock = new Mock<IUserToken>();
+            tokenMock.Setup(token => token.Token).Returns(fakeToken);
 
             controller = new UserController(userServiceMock.Object, dbUsersMock.Object, userMock.Object);
         }
@@ -52,7 +62,7 @@ namespace LyricsC.API.Tests
 
             //Assert
             dbUsersMock.Verify(db => db.GetUserAsync(userPM.Name), Times.Never);
-            userServiceMock.Verify(u => u.GeneratePassword(userPM), Times.Never);
+            userServiceMock.Verify(u => u.GeneratePassword(userPmMock.Object), Times.Never);
             dbUsersMock.Verify(db => db.SaveUserAsync(It.IsAny<IUser>()), Times.Never);
             Assert.IsNotNull(result);
             Assert.AreEqual(400, badRequestResult.StatusCode);
@@ -72,10 +82,9 @@ namespace LyricsC.API.Tests
             //Act
             var result = await controller.RegisterAsync(userPM);
 
-
             //Assert
             dbUsersMock.Verify(db => db.GetUserAsync(userPM.Name), Times.Once);
-            userServiceMock.Verify(u => u.GeneratePassword(userPM), Times.Once);
+            userServiceMock.Verify(u => u.GeneratePassword(It.IsAny<IUserPostModel>()), Times.Once);
             dbUsersMock.Verify(db => db.SaveUserAsync(It.IsAny<IUser>()), Times.Once);
         }
 
@@ -95,9 +104,31 @@ namespace LyricsC.API.Tests
             var notFoundResult = result as NotFoundResult;
 
             //Assert
-            userServiceMock.Verify(u => u.ValidatePassword(userPM, userMock.Object), Times.Never);
+            userServiceMock.Verify(u => u.ValidatePassword(userPmMock.Object, userMock.Object), Times.Never);
             Assert.IsNotNull(result);
             Assert.AreEqual(404, notFoundResult.StatusCode);
+        }
+
+        [Test]
+        public async Task LoginAsync_ValidUser_ReturnsOk()
+        {
+            //Arrange
+            var userPM = new UserPostModel()
+            {
+                Name = "name",
+                Email = "email",
+                Password = "password"
+            };
+
+            dbUsersMock.Setup(d => d.GetUserAsync(It.IsAny<string>())).Returns(Task.FromResult(userMock.Object));
+            userServiceMock.Setup(u => u.ValidatePassword(It.IsAny<IUserPostModel>(), It.IsAny<IUser>())).Returns(tokenMock.Object);
+
+            //Act
+            var result = await controller.LoginAsync(userPM);
+
+            //Assert
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOf<OkObjectResult>(result);
         }
 
         [Test]

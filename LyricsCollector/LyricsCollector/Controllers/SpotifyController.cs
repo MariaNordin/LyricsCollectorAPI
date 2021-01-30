@@ -1,5 +1,6 @@
 ﻿using LyricsCollector.Models.LyricsModels;
 using LyricsCollector.Models.SpotifyModels;
+using LyricsCollector.Models.SpotifyModels.Contracts;
 using LyricsCollector.Models.UserModels;
 using LyricsCollector.Services.Contracts;
 using Microsoft.AspNetCore.Cors;
@@ -14,7 +15,7 @@ namespace LyricsCollector.Controllers
     public class SpotifyController : ControllerBase
     {
         private readonly ISpotifyService _spotifyService;
-        public SpotifyTokenModel _token; 
+        private ISpotifyTokenModel _token; 
         public UserResponseModel _user; 
 
         public SpotifyController(ISpotifyService spotifyService)
@@ -27,7 +28,7 @@ namespace LyricsCollector.Controllers
         [HttpGet("ClientCredentials")]
         public async Task<IActionResult> GetTokenAsync()
         {
-            _token = await _spotifyService.GetAccessToken();
+            _token = await _spotifyService.GetAccessTokenAsync();
 
             if (_token == null)
             {

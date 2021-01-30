@@ -1,4 +1,5 @@
 ﻿using LyricsCollector.Models.SpotifyModels;
+using LyricsCollector.Models.SpotifyModels.Contracts;
 using LyricsCollector.Services.Contracts;
 using LyricsCollector.SpotifyCredentials;
 using Microsoft.Extensions.Configuration;
@@ -18,7 +19,7 @@ namespace LyricsCollector.Services.ConcreteServices
         private readonly IHttpClientFactory _clientFactory;
         private readonly SpotifyCred _credentials;
 
-        SpotifyTokenModel token;
+        ISpotifyTokenModel token;
         TrackResponseModel trackResponse;
 
         private string currentToken;
@@ -29,11 +30,11 @@ namespace LyricsCollector.Services.ConcreteServices
             _credentials = credentials.Value;
         }
 
-        public async Task<TrackResponseModel> Search(string artist, string title)
+        public async Task<TrackResponseModel> SearchAsync(string artist, string title)
         {
             var queryString = HttpUtility.UrlEncode($"{artist} {title}");
 
-            if (currentToken == null) await GetAccessToken();
+            if (currentToken == null) await GetAccessTokenAsync();
 
             var request = new HttpRequestMessage(HttpMethod.Get,
                 $"search?q={queryString}&type=track&limit=1");
@@ -56,7 +57,7 @@ namespace LyricsCollector.Services.ConcreteServices
             }
         }
 
-        public async Task<SpotifyTokenModel> GetAccessToken()
+        public async Task<ISpotifyTokenModel> GetAccessTokenAsync()
         {
             var clientId = _credentials.SpotifyClientId;
             var clientSecret = _credentials.SpotifyClientSecret;

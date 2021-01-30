@@ -1,5 +1,5 @@
 ﻿
-namespace LyricsCollector.Models.Contracts
+namespace LyricsCollector.Models.UserModels.Contracts
 {
     public interface IUserPostModel
     {

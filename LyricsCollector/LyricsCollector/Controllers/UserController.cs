@@ -1,5 +1,6 @@
 ﻿using LyricsCollector.Entities.Contracts;
 using LyricsCollector.Models.UserModels;
+using LyricsCollector.Models.UserModels.Contracts;
 using LyricsCollector.Services.Contracts;
 using LyricsCollector.Services.Contracts.IDbHelpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -41,7 +42,7 @@ namespace LyricsCollector.Controllers
                 return BadRequest();
             }
 
-            _user = _userService.GeneratePassword(userPM);
+            _user = _userService.GeneratePassword((IUserPostModel)userPM);
 
             var result = await _dbUser.SaveUserAsync(_user);
 
@@ -59,7 +60,7 @@ namespace LyricsCollector.Controllers
 
             if (_user != null)
             {
-                var userToken = _userService.ValidatePassword(userPM, _user);
+                var userToken = _userService.ValidatePassword((IUserPostModel)userPM, _user);
 
                 if (userToken != null)
                 {
@@ -74,7 +75,7 @@ namespace LyricsCollector.Controllers
         [HttpPost("User")]
         public async Task<IActionResult> GetUserAsync()
         {
-            
+
             var userName = HttpContext.User.Identity.Name;
 
             try

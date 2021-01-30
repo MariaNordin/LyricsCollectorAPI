@@ -2,6 +2,7 @@
 using LyricsCollector.Entities.Contracts;
 using LyricsCollector.JWT;
 using LyricsCollector.Models.UserModels;
+using LyricsCollector.Models.UserModels.Contracts;
 using LyricsCollector.Services.Contracts;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.Extensions.Options;
@@ -23,7 +24,7 @@ namespace LyricsCollector.Services.ConcreteServices
             _jwtSettings = jwtSettings.Value;
         }
 
-        public IUser GeneratePassword(UserPostModel userPM)
+        public IUser GeneratePassword(IUserPostModel userPM)
         {
             var saltByteArray = new byte[128 / 8];
 
@@ -50,7 +51,7 @@ namespace LyricsCollector.Services.ConcreteServices
             return user;
         }
 
-        public UserToken ValidatePassword(UserPostModel userPM, IUser user)
+        public IUserToken ValidatePassword(IUserPostModel userPM, IUser user)
         {
             var hashedPw = Convert.ToBase64String(KeyDerivation.Pbkdf2(
                 password: userPM.Password,
