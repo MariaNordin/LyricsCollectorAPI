@@ -1,4 +1,6 @@
 using LyricsCollector.Context;
+using LyricsCollector.Entities;
+using LyricsCollector.Entities.Contracts;
 using LyricsCollector.JWT;
 using LyricsCollector.Services.ConcreteServices;
 using LyricsCollector.Services.ConcreteServices.DbHelpers;
@@ -95,6 +97,8 @@ namespace LyricsCollector
             services.AddScoped<IDbLyrics, DbLyrics>();
             services.AddScoped<IDbUsers, DbUsers>();
             services.AddScoped<IDbCollections, DbCollections>();
+
+            services.AddTransient<IUser, User>();
 
             services.AddHttpContextAccessor();
 

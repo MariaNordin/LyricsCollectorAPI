@@ -1,12 +1,12 @@
 ﻿using LyricsCollector.Entities;
-using LyricsCollector.Models.UserModels;
+using LyricsCollector.Entities.Contracts;
 using System.Threading.Tasks;
 
 namespace LyricsCollector.Services.Contracts.IDbHelpers
 {
     public interface IDbUsers
     {
-        Task<User> GetUserAsync(string userName);
-        Task<bool> SaveUserAsync(User user);
+        Task<IUser> GetUserAsync(string userName);
+        Task<bool> SaveUserAsync(IUser user);
     }
 }

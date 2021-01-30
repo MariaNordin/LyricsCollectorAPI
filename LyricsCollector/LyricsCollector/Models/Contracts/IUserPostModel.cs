@@ -1,8 +1,7 @@
-﻿using LyricsCollector.Models.Contracts;
-
-namespace LyricsCollector.Models.UserModels
+﻿
+namespace LyricsCollector.Models.Contracts
 {
-    public class UserPostModel : IUserPostModel
+    public interface IUserPostModel
     {
         public string Password { get; set; }
         public string Email { get; set; }

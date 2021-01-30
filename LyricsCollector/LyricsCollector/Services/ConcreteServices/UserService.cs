@@ -1,4 +1,5 @@
 ﻿using LyricsCollector.Entities;
+using LyricsCollector.Entities.Contracts;
 using LyricsCollector.JWT;
 using LyricsCollector.Models.UserModels;
 using LyricsCollector.Services.Contracts;
@@ -22,7 +23,7 @@ namespace LyricsCollector.Services.ConcreteServices
             _jwtSettings = jwtSettings.Value;
         }
 
-        public User GeneratePassword(UserPostModel userPM)
+        public IUser GeneratePassword(UserPostModel userPM)
         {
             var saltByteArray = new byte[128 / 8];
 
@@ -49,7 +50,7 @@ namespace LyricsCollector.Services.ConcreteServices
             return user;
         }
 
-        public UserToken ValidatePassword(UserPostModel userPM, User user)
+        public UserToken ValidatePassword(UserPostModel userPM, IUser user)
         {
             var hashedPw = Convert.ToBase64String(KeyDerivation.Pbkdf2(
                 password: userPM.Password,
@@ -68,7 +69,7 @@ namespace LyricsCollector.Services.ConcreteServices
             return null;
         }
 
-        private string GenerateJwtToken(User user)
+        private string GenerateJwtToken(IUser user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_jwtSettings.SecretKey);

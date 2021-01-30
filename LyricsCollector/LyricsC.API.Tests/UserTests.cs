@@ -1,5 +1,7 @@
 using LyricsCollector.Controllers;
 using LyricsCollector.Entities;
+using LyricsCollector.Entities.Contracts;
+using LyricsCollector.Models.Contracts;
 using LyricsCollector.Models.UserModels;
 using LyricsCollector.Services.Contracts;
 using LyricsCollector.Services.Contracts.IDbHelpers;
@@ -15,6 +17,7 @@ namespace LyricsC.API.Tests
         private UserController controller;
         private Mock<IUserService> userServiceMock;
         private Mock<IDbUsers> dbUsersMock;
+        private Mock<IUser> userMock;
 
 
         [SetUp]
@@ -22,16 +25,11 @@ namespace LyricsC.API.Tests
         {
             userServiceMock = new Mock<IUserService>();
             dbUsersMock = new Mock<IDbUsers>();
+            userMock = new Mock<IUser>();
 
-            //var userPM = new UserPostModel()
-            //{
-            //    Name = "name",
-            //    Email = "email",
-            //    Password = "password"
-            //};
+            userMock.SetupAllProperties();
 
-            controller = new UserController(userServiceMock.Object, dbUsersMock.Object);
-
+            controller = new UserController(userServiceMock.Object, dbUsersMock.Object, userMock.Object);
         }
 
         [Test]
@@ -53,5 +51,29 @@ namespace LyricsC.API.Tests
             Assert.IsNotNull(result);
             Assert.AreEqual(400, badRequestResult.StatusCode);
         }
+
+
+
+        //[Test]
+        //public async Task RegisterAsync_NotUniqueValuesReturnsBadRequest()
+        //{
+        //    //Arrange
+        //    var userPM = new UserPostModel()
+        //    {
+        //        Name = "test",
+        //        Email = "test",
+        //        Password = "test"
+        //    };
+
+        //    userMock.Setup(user => user.Name).Returns("User");
+
+        //    //Act
+        //    var result = await controller.RegisterAsync(userPM);
+        //    var badRequestResult = result as BadRequestResult;
+
+        //    //Assert
+        //    Assert.IsNotNull(result);
+        //    Assert.AreEqual(400, badRequestResult.StatusCode);
+        //}
     }
 }

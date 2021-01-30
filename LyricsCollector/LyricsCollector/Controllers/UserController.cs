@@ -1,4 +1,5 @@
 ﻿using LyricsCollector.Entities;
+using LyricsCollector.Entities.Contracts;
 using LyricsCollector.Models.UserModels;
 using LyricsCollector.Services.Contracts;
 using LyricsCollector.Services.Contracts.IDbHelpers;
@@ -18,11 +19,13 @@ namespace LyricsCollector.Controllers
     {
         private readonly IDbUsers _dbUser;
         private readonly IUserService _userService;
+        private IUser _user;
 
-        public UserController(IUserService userService, IDbUsers dbUser)
+        public UserController(IUserService userService, IDbUsers dbUser, IUser user)
         {
             _userService = userService;
             _dbUser = dbUser;
+            _user = user;
         }
 
         [HttpPost("Register")]
@@ -32,16 +35,16 @@ namespace LyricsCollector.Controllers
                 return BadRequest();
             }
 
-            var existingUser = await _dbUser.GetUserAsync(userPM.Name);
+            _user = await _dbUser.GetUserAsync(userPM.Name);
 
-            if (existingUser != null)
+            if (_user != null)
             {
                 return BadRequest();
             }
 
-            var user = _userService.GeneratePassword(userPM);
+            _user = _userService.GeneratePassword(userPM);
 
-            var result = await _dbUser.SaveUserAsync(user);
+            var result = await _dbUser.SaveUserAsync(_user);
 
             if (result)
             {
@@ -53,11 +56,11 @@ namespace LyricsCollector.Controllers
         [HttpPost("Login")]
         public async Task<IActionResult> LoginAsync([FromBody] UserPostModel userPM)
         {
-            var foundUser = await _dbUser.GetUserAsync(userPM.Name);
+            _user = await _dbUser.GetUserAsync(userPM.Name);
 
-            if (foundUser != null)
+            if (_user != null)
             {
-                var userToken = _userService.ValidatePassword(userPM, foundUser);
+                var userToken = _userService.ValidatePassword(userPM, _user);
 
                 if (userToken != null)
                 {
@@ -72,12 +75,12 @@ namespace LyricsCollector.Controllers
         [HttpPost("User")]
         public async Task<IActionResult> GetUserAsync()
         {
-            User user;
+            
             var userName = HttpContext.User.Identity.Name;
 
             try
             {
-                user = await _dbUser.GetUserAsync(userName);               
+               _user = await _dbUser.GetUserAsync(userName);               
             }
             catch (Exception)
             {
@@ -86,12 +89,12 @@ namespace LyricsCollector.Controllers
             }
 
 
-            if (user != null)
+            if (_user != null)
             {
                 var authenticatedUser = new UserResponseModel
                 {
-                    Name = user.Name,
-                    Collections = user.Collections
+                    Name = _user.Name,
+                    Collections = _user.Collections
                 };
                 return Ok(authenticatedUser);
             }

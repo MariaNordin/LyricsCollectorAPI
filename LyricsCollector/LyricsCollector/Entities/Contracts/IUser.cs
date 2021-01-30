@@ -1,16 +1,15 @@
-﻿using LyricsCollector.Entities.Contracts;
+﻿
 using System.Collections.Generic;
 
-namespace LyricsCollector.Entities
+namespace LyricsCollector.Entities.Contracts
 {
-    public class User : IUser
+    public interface IUser
     {
         public int Id { get; set; }
-        public byte[] Salt { get; set; } 
+        public byte[] Salt { get; set; }
         public string Hash { get; set; }
         public string Email { get; set; }
         public string Name { get; set; }
         public IList<Collection> Collections { get; set; }
-
     }
 }

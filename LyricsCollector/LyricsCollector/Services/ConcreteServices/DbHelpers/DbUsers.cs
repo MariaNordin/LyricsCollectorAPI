@@ -1,8 +1,7 @@
 ﻿using LyricsCollector.Context;
 using LyricsCollector.Entities;
-using LyricsCollector.Models.UserModels;
+using LyricsCollector.Entities.Contracts;
 using LyricsCollector.Services.Contracts.IDbHelpers;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
@@ -19,7 +18,7 @@ namespace LyricsCollector.Services.ConcreteServices.DbHelpers
             _context = context;
         }
 
-        public async Task<User> GetUserAsync(string userName)
+        public async Task<IUser> GetUserAsync(string userName)
         {
             User user;
 
@@ -40,8 +39,16 @@ namespace LyricsCollector.Services.ConcreteServices.DbHelpers
             }
         }
 
-        public async Task<bool> SaveUserAsync(User user)
+        public async Task<bool> SaveUserAsync(IUser newUser)
         {
+            var user = new User()
+            {
+                Name = newUser.Name,
+                Email = newUser.Email,
+                Salt = newUser.Salt,
+                Hash = newUser.Hash
+            };
+
             _context.Users.Add(user);
 
             try
