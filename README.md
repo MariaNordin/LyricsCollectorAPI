@@ -2,7 +2,7 @@
 
 <br/>
 
-Detta projekt är ett .NET Core Web API, skrivet som backend till [LyricsCollectorSPA](https://github.com/MariaNordin/NewLyricsCollectorSPA/blob/main/README.md)  
+Detta projekt är ett .NET Core Web API, skrivet som backend till [LyricsCollectorSPA](https://github.com/MariaNordin/NewLyricsCollectorSPA)  
 API:et innehåller endpoints för att söka efter en låttext, registrera användare, logga in, skapa en ny lista, lägga till låttext i en lista mm.
 
 <br/>
@@ -62,3 +62,5 @@ Jag har använt mig av *Observer pattern* för att min CollectionController ska 
 :heavy_check_mark: Cache-hantering i backend - cachear låt-modellerna från databasen  
 :heavy_check_mark: Unit tests - valda test av Controllers funktionalitet, att de skickar tillbaka rätt statuskoder beroende på utfall, att rätt metoder     anropas och att rätt endpoints är märkta med [Authorize] attribut
 
+## Project Link
+[LyricsCollectorAPI](https://github.com/MariaNordin/LyricsCollectorAPI)
