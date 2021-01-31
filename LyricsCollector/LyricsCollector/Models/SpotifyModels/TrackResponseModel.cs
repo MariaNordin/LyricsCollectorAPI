@@ -1,24 +1,25 @@
+using LyricsCollector.Models.SpotifyModels.Contracts;
 using System.Text.Json.Serialization;
 
 namespace LyricsCollector.Models.SpotifyModels
 {
-    public class TrackResponseModel
+    public class TrackResponseModel : ITrackResponseModel
     {
 
         [JsonPropertyName("tracks")]
-        public Track Track { get; set; }
+        public ITrack Track { get; set; }
     }
 
-    public class Track
+    public class Track : ITrack
     {
         [JsonPropertyName("items")]
-        public Item[] Items { get; set; }
+        public IItem[] Items { get; set; }
     }
 
-    public class Item
+    public class Item : IItem
     {
         public Album Album { get; set; }
-        public External_Urls External_urls { get; set; } //this
+        public External_Urls External_urls { get; set; } 
         public string Href { get; set; }
         public string Id { get; set; }
     }
@@ -27,7 +28,7 @@ namespace LyricsCollector.Models.SpotifyModels
     {
         public string Album_type { get; set; }
         public string Id { get; set; }
-        public Image[] Images { get; set; } //this
+        public Image[] Images { get; set; } 
         public string Name { get; set; }
         public string Release_date { get; set; }
     }

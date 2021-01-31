@@ -23,7 +23,6 @@ namespace LyricsC.API.Tests
         private Mock<IUser> userMock;
         private Mock<IUserToken> tokenMock;
 
-
         [SetUp]
         public void Setup()
         {

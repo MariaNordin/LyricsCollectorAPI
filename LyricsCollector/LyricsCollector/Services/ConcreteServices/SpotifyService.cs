@@ -2,7 +2,6 @@
 using LyricsCollector.Models.SpotifyModels.Contracts;
 using LyricsCollector.Services.Contracts;
 using LyricsCollector.SpotifyCredentials;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -30,7 +29,7 @@ namespace LyricsCollector.Services.ConcreteServices
             _credentials = credentials.Value;
         }
 
-        public async Task<TrackResponseModel> SearchAsync(string artist, string title)
+        public async Task<ITrackResponseModel> SearchAsync(string artist, string title)
         {
             var queryString = HttpUtility.UrlEncode($"{artist} {title}");
 

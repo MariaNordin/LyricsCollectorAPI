@@ -1,6 +1,4 @@
-﻿using LyricsCollector.Models.LyricsModels;
-using LyricsCollector.Models.SpotifyModels;
-using LyricsCollector.Models.SpotifyModels.Contracts;
+﻿using LyricsCollector.Models.SpotifyModels.Contracts;
 using LyricsCollector.Models.UserModels;
 using LyricsCollector.Services.Contracts;
 using Microsoft.AspNetCore.Cors;

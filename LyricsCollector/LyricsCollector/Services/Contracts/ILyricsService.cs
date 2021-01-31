@@ -6,7 +6,7 @@ namespace LyricsCollector.Services.Contracts
 {
     public interface ILyricsService
     {
-        Task<ILyricsResponseModel> Search(string artist, string title);
+        Task<ILyricsResponseModel> SearchAsync(string artist, string title);
         string ToTitleCase(string text);
 
         void Attach(IObserver observer);

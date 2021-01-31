@@ -1,5 +1,4 @@
-﻿using LyricsCollector.Models.SpotifyModels;
-using LyricsCollector.Models.SpotifyModels.Contracts;
+﻿using LyricsCollector.Models.SpotifyModels.Contracts;
 using System.Threading.Tasks;
 
 namespace LyricsCollector.Services.Contracts
@@ -7,6 +6,6 @@ namespace LyricsCollector.Services.Contracts
     public interface ISpotifyService
     {
         public Task<ISpotifyTokenModel> GetAccessTokenAsync();
-        public Task<TrackResponseModel> SearchAsync(string artist, string title);
+        public Task<ITrackResponseModel> SearchAsync(string artist, string title);
     }
 }

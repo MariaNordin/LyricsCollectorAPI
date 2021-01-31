@@ -17,7 +17,7 @@ namespace LyricsCollector.Controllers
         private readonly ILyricsService _lyricsService;
         private readonly ISpotifyService _spotifyService;
 
-        public LyricsController(ILyricsService lyricsService, ISpotifyService spotifyService, 
+        public LyricsController (ILyricsService lyricsService, ISpotifyService spotifyService, 
             IDbLyrics dbLyrics, ICollectionService collectionService)
         {
             _lyricsService = lyricsService;
@@ -31,8 +31,6 @@ namespace LyricsCollector.Controllers
         [HttpPost("Search")]
         public async Task<IActionResult> GetLyricsAsync([FromBody] LyricsPostModel lyricsPM)
         {
-            //var cacheKey = $"Get_Lyrics_From_Search-{lyricsRM}";
-
             var artist = _lyricsService.ToTitleCase(lyricsPM.Artist);
             var title = _lyricsService.ToTitleCase(lyricsPM.Title);
 
@@ -44,11 +42,10 @@ namespace LyricsCollector.Controllers
                 return Ok(dbLyrics);
             }
 
-            var lyrics = await _lyricsService.Search(artist, title);
+            var lyrics = await _lyricsService.SearchAsync(artist, title);
 
             if (lyrics != null)
             {
-                
                 try
                 {
                     var track = await _spotifyService.SearchAsync(artist, title);
