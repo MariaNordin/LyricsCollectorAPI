@@ -1,4 +1,4 @@
-﻿using LyricsCollector.Entities;
+using LyricsCollector.Entities;
 using LyricsCollector.Models.CollectionModels;
 using LyricsCollector.Services.Contracts;
 using LyricsCollector.Services.Contracts.IDbHelpers;
