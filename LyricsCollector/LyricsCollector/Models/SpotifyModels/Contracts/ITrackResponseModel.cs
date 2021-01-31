@@ -3,12 +3,12 @@ namespace LyricsCollector.Models.SpotifyModels.Contracts
 {
     public interface ITrackResponseModel
     {
-        public ITrack Track { get; set; }
+        public Track Track { get; set; }
     }
 
     public interface ITrack
     {
-        public IItem[] Items { get; set; }
+        public Item[] Items { get; set; }
     }
 
     public interface IItem
@@ -19,7 +19,7 @@ namespace LyricsCollector.Models.SpotifyModels.Contracts
         public string Id { get; set; }
     }
 
-    //public class Album
+    //public interface Album
     //{
     //    public string Album_type { get; set; }
     //    public string Id { get; set; }
@@ -28,12 +28,12 @@ namespace LyricsCollector.Models.SpotifyModels.Contracts
     //    public string Release_date { get; set; }
     //}
 
-    //public class Image
+    //public interface Image
     //{
     //    public string Url { get; set; }
     //}
 
-    //public class External_Urls
+    //public interface External_Urls
     //{
     //    public string Spotify { get; set; }
     //}

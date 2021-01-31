@@ -51,7 +51,7 @@ namespace LyricsCollector.Controllers
                     var track = await _spotifyService.SearchAsync(artist, title);
 
                     lyrics.SpotifyLink = track.Track.Items[0].External_urls.Spotify;
-                    lyrics.CoverImage = track.Track.Items[0].Album.Images[1].Url;
+                    lyrics.CoverImage = track.Track.Items[0].Album.Images[0].Url;
                 }
                 catch (IndexOutOfRangeException)
                 {

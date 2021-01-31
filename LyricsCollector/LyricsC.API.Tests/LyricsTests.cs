@@ -1,6 +1,7 @@
 ﻿using LyricsCollector.Controllers;
 using LyricsCollector.Models.LyricsModels;
 using LyricsCollector.Models.LyricsModels.Contracts;
+using LyricsCollector.Models.SpotifyModels;
 using LyricsCollector.Models.SpotifyModels.Contracts;
 using LyricsCollector.Services.Contracts;
 using LyricsCollector.Services.Contracts.IDbHelpers;
@@ -22,8 +23,11 @@ namespace LyricsC.API.Tests
         private Mock<ICollectionService> collectionServiceMock;
         private Mock<ILyricsResponseModel> lyricsRmMock;
         private Mock<ITrackResponseModel> trackRmMock;
-        private Mock<ITrack> trackMock;
-        private IItem[] items;
+        //private Mock<ITrack> trackMock;
+        //private IItem[] items;
+        //private Mock<IAlbum> albumMock;
+        //private IImage[] images;
+        //private Mock<IExternal_Urls> extUrlsMock;
 
         [SetUp]
         public void Setup()
@@ -37,20 +41,39 @@ namespace LyricsC.API.Tests
             lyricsRmMock = new Mock<ILyricsResponseModel>();
             lyricsRmMock.Setup(l => l.Artist).Returns(testArtist);
 
-            var itemMock = new Mock<IItem>();
-            itemMock.Setup(item => item.Id).Returns("id");
+            //var imageMock = new Mock<IImage>();
+            //imageMock.Setup(i => i.Url).Returns("coverImgUrl");
 
-            items = new IItem[]
+            //images = new IImage[]
+            //{
+            //    imageMock.Object
+            //};
+
+            //albumMock = new Mock<IAlbum>();
+            //albumMock.Setup(a => a.Images).Returns(images);
+
+            //extUrlsMock = new Mock<IExternal_Urls>();
+            //extUrlsMock.Setup(e => e.Spotify).Returns("spotifyLink");
+
+            //var itemMock = new Mock<IItem>();
+            //itemMock.Setup(item => item.External_urls).Returns(extUrlsMock.Object);
+
+            var img = "testCoverUrl";
+            var testUrl = "testSpotifyLink";
+            var extUrl = new External_Urls() { Spotify = testUrl };
+
+            var images = new Image[]
             {
-                itemMock.Object
+                new Image() { Url = img }
             };
-            
-            trackMock = new Mock<ITrack>();
-            trackMock.Setup(track => track.Items).Returns(items);
+
+            var album = new Album() { Images = images };
+            var item = new Item() { Album = album, External_urls = extUrl };
+            var items = new Item[] { item };
+            var track = new Track { Items = items };
 
             trackRmMock = new Mock<ITrackResponseModel>();
-            trackRmMock.Setup(track => track.Track).Returns(trackMock.Object);
-
+            trackRmMock.Setup(track => track.Track).Returns(track);
 
             controller = new LyricsController (lyricsServiceMock.Object, spotifyServiceMock.Object, 
                 dbLyricsMock.Object, collectionServiceMock.Object);

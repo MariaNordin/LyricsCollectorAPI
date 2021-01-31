@@ -7,13 +7,13 @@ namespace LyricsCollector.Models.SpotifyModels
     {
 
         [JsonPropertyName("tracks")]
-        public ITrack Track { get; set; }
+        public Track Track { get; set; }
     }
 
     public class Track : ITrack
     {
         [JsonPropertyName("items")]
-        public IItem[] Items { get; set; }
+        public Item[] Items { get; set; }
     }
 
     public class Item : IItem
