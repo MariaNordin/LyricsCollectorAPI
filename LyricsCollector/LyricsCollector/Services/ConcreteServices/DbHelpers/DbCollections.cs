@@ -33,6 +33,7 @@ namespace LyricsCollector.Services.ConcreteServices.DbHelpers
             }
             catch (Exception)
             {
+                //logg
                 throw;
             }
 
@@ -43,16 +44,17 @@ namespace LyricsCollector.Services.ConcreteServices.DbHelpers
             return collections[0];
         }
 
-        public async Task<IEnumerable<Collection>> GetAllCollectionsAsync(string userName)
+        public async Task<List<Collection>> GetAllCollectionsAsync(string userName)
         {
-            Collection[] collections;
+            List<Collection> collections;
             try
             {
                 collections = await _context.Collections
-                   .Where(c => c.User.Name == userName).ToArrayAsync();
+                   .Where(c => c.User.Name == userName).ToListAsync();
             }
             catch (Exception)
             {
+                //logg
                 throw;
             }
 
@@ -77,26 +79,12 @@ namespace LyricsCollector.Services.ConcreteServices.DbHelpers
             }
             catch (Exception)
             {
+                //logg
                 throw;
             }
         }
 
-        private async Task<User> GetUserAsync(string userName)
-        {
-            User user;
-
-            try
-            {
-                user = await _context.Users.Where(u => u.Name == userName).FirstOrDefaultAsync();
-                return user;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        public async Task<bool> SaveLyricsAsync(int collectionId, ILyricsResponseModel currentLyrics)
+        public async Task SaveLyricsAsync(int collectionId, ILyricsResponseModel currentLyrics)
         {
             var lyrics = await GetDbLyricsAsync(currentLyrics);
 
@@ -104,7 +92,7 @@ namespace LyricsCollector.Services.ConcreteServices.DbHelpers
 
             var collectionLyrics = new CollectionLyrics();
 
-            if (collection != null && lyrics != null)
+            if (collection != null && lyrics != null) //borde kanske inte göra denna kontroll här?
             {
                 collectionLyrics.Collection = collection;
                 collectionLyrics.Lyrics = lyrics;
@@ -114,14 +102,27 @@ namespace LyricsCollector.Services.ConcreteServices.DbHelpers
                 try
                 {
                     await _context.SaveChangesAsync();
-                    return true;
                 }
                 catch (Exception)
                 {
+                    //logg
                     throw;
                 }
             }
-            return false;
+        }
+
+        private async Task<User> GetUserAsync(string userName)
+        {
+            try
+            {
+                var user = await _context.Users.Where(u => u.Name == userName).FirstOrDefaultAsync();
+                return user;
+            }
+            catch (Exception)
+            {
+                //logg
+                throw;
+            }
         }
 
         private async Task<Collection> GetCurrentCollectionAsync(int collectionId)
@@ -133,7 +134,7 @@ namespace LyricsCollector.Services.ConcreteServices.DbHelpers
             }
             catch (Exception)
             {
-
+                //logg
                 throw;
             }
         }
@@ -151,7 +152,7 @@ namespace LyricsCollector.Services.ConcreteServices.DbHelpers
             }
             catch (Exception)
             {
-
+                //logg
                 throw;
             }
         }

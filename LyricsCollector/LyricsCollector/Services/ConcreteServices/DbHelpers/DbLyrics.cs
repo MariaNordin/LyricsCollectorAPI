@@ -15,7 +15,7 @@ namespace LyricsCollector.Services.ConcreteServices.DbHelpers
     public class DbLyrics : IDbLyrics
     {
         private readonly LyricsCollectorDbContext _context;
-        private readonly IMemoryCache _memoryCache;       
+        private readonly IMemoryCache _memoryCache;
 
         public DbLyrics(LyricsCollectorDbContext context, IMemoryCache memoryCache)
         {
@@ -23,24 +23,26 @@ namespace LyricsCollector.Services.ConcreteServices.DbHelpers
             _memoryCache = memoryCache;
         }
 
-        public async Task<List<Lyrics>> GetDbLyricsAsync()
+        public async Task SetDbLyricsAsync()
         {
             if (!_memoryCache.TryGetValue("DbLyrics", out List<Lyrics> _))
             {
                 _memoryCache.Set("DbLyrics", await _context.Lyrics.ToListAsync());
             }
 
-            List<Lyrics> listOfLyrics = _memoryCache.Get("DbLyrics") as List<Lyrics>;
-            return listOfLyrics;
+            //List<Lyrics> listOfLyrics = _memoryCache.Get("DbLyrics") as List<Lyrics>;
+            //return listOfLyrics;
         }
 
-        public ILyricsResponseModel LyricsInDbMatch(string artist, string title)
+        public async Task<ILyricsResponseModel> LyricsInDbMatch(string artist, string title)
         {
-             var lyrics = new LyricsResponseModel();
+            await SetDbLyricsAsync();
 
-            var lyricsInDb = GetDbLyricsAsync().Result;
+            List<Lyrics> lyricsInDb = _memoryCache.Get("DbLyrics") as List<Lyrics>;
 
             var existingLyrics = lyricsInDb.Where(l => l.Artist == artist && l.Title == title).FirstOrDefault();
+
+            var lyrics = new LyricsResponseModel();
 
             if (existingLyrics != null)
             {
@@ -77,6 +79,8 @@ namespace LyricsCollector.Services.ConcreteServices.DbHelpers
             {
                 throw;
             }
+
+            _memoryCache.Set("DbLyrics", await _context.Lyrics.ToListAsync());
         }
     }
 }

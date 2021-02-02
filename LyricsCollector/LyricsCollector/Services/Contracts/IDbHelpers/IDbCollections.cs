@@ -8,8 +8,8 @@ namespace LyricsCollector.Services.Contracts.IDbHelpers
     public interface IDbCollections
     {
         Task<Collection> GetCollectionAsync(int collectionId);
-        Task<IEnumerable<Collection>> GetAllCollectionsAsync(string userName);
+        Task<List<Collection>> GetAllCollectionsAsync(string userName);
         Task NewCollectionAsync(string CollectionName, string userName);
-        Task<bool> SaveLyricsAsync(int collectionId, ILyricsResponseModel lyrics);
+        Task SaveLyricsAsync(int collectionId, ILyricsResponseModel lyrics);
     }
 }

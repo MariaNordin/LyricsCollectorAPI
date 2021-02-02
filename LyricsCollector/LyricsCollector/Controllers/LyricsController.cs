@@ -1,4 +1,5 @@
 ﻿using LyricsCollector.Models.LyricsModels;
+using LyricsCollector.Models.LyricsModels.Contracts;
 using LyricsCollector.Services.Contracts;
 using LyricsCollector.Services.Contracts.IDbHelpers;
 using Microsoft.AspNetCore.Cors;
@@ -34,11 +35,11 @@ namespace LyricsCollector.Controllers
             var artist = _lyricsService.ToTitleCase(lyricsPM.Artist);
             var title = _lyricsService.ToTitleCase(lyricsPM.Title);
 
-            var dbLyrics = _dbLyricsHelper.LyricsInDbMatch(artist, title);
+            var dbLyrics = await _dbLyricsHelper.LyricsInDbMatch(artist, title);
 
             if (dbLyrics != null)
             {
-                _lyricsService.Notify(dbLyrics);
+                _lyricsService.Notify((ILyricsResponseModel)dbLyrics);
                 return Ok(dbLyrics);
             }
 
@@ -52,6 +53,10 @@ namespace LyricsCollector.Controllers
 
                     lyrics.SpotifyLink = track.Track.Items[0].External_urls.Spotify;
                     lyrics.CoverImage = track.Track.Items[0].Album.Images[0].Url;
+                }
+                catch (NullReferenceException)
+                {
+                    return NotFound();
                 }
                 catch (IndexOutOfRangeException)
                 {

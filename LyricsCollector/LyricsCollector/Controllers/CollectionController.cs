@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace LyricsCollector.Controllers
@@ -34,9 +36,10 @@ namespace LyricsCollector.Controllers
             {
                 currentCollection = await _dbHelper.GetCollectionAsync(collection.Id);              
             }
-            catch (System.Exception)
+            catch (Exception) //lägg till fler specifika ex?
             {
-                return BadRequest(); 
+                //logg?
+                return BadRequest(); //meddelande
             }
 
             if (currentCollection != null)
@@ -51,15 +54,22 @@ namespace LyricsCollector.Controllers
         {
             var userName = HttpContext.User.Identity.Name;
 
+            List<Collection> collections;
             try
             {
-                var collections = await _dbHelper.GetAllCollectionsAsync(userName);
+                collections = await _dbHelper.GetAllCollectionsAsync(userName);
+            }
+            catch (Exception) //lägg till fler specifika ex?
+            {
+                return BadRequest(); //meddelande
+            }
+
+            if (collections != null)
+            {
                 return Ok(collections);
             }
-            catch (System.Exception)
-            {
-                return BadRequest();
-            }
+            return NotFound(new { message = "No collections found." }); //meddelande
+
         }
 
         [HttpPost("NewCollection")]
@@ -70,35 +80,28 @@ namespace LyricsCollector.Controllers
             try
             {
                 await _dbHelper.NewCollectionAsync(collection.NewName, userName);
-                
+                return Ok(new { message = "Collection successfully created!" }); //Meddelande
             }
-            catch (System.Exception)
+            catch (Exception) //lägg till fler specifika ex?
             {
-                return BadRequest();
-            }
-            return Ok();
+                return BadRequest(); //meddelande
+            }       
         }
 
         [HttpPost("SaveLyrics")]
         public async Task<IActionResult> SaveToCollectionAsync([FromBody] CollectionPostModel collection)
         {
-            bool response;
-
             var lyrics = _collectionService.GetCurrentLyrics();
 
             try
             {
-                response = await _dbHelper.SaveLyricsAsync(collection.Id, lyrics);               
-            }
-            catch (System.Exception)
-            {
-                return BadRequest();
-            }
-
-            if(response) 
+                await _dbHelper.SaveLyricsAsync(collection.Id, lyrics);
                 return Ok(new { message = "Lyrics saved!" });
-
-            return BadRequest(new { message = "Something went wrong. Please try again" });
+            }
+            catch (Exception) //lägg till fler specifika ex? + spec meddelanden
+            {
+                return BadRequest(new { message = "Something went wrong. Please try again" });
+            }           
         }
     }
 }
