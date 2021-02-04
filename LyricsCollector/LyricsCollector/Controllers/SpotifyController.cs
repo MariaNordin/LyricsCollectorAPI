@@ -13,7 +13,6 @@ namespace LyricsCollector.Controllers
     public class SpotifyController : ControllerBase
     {
         private readonly ISpotifyService _spotifyService;
-        private ISpotifyTokenModel _token; 
         public UserResponseModel _user; 
 
         public SpotifyController(ISpotifyService spotifyService)
@@ -23,19 +22,19 @@ namespace LyricsCollector.Controllers
 
 
         //GET: api/Spotify
-        [HttpGet("ClientCredentials")]
-        public async Task<IActionResult> GetTokenAsync()
-        {
-            _token = await _spotifyService.GetAccessTokenAsync();
+        //[HttpGet("ClientCredentials")]
+        //public async Task<IActionResult> GetTokenAsync()
+        //{
+        //    _token = await _spotifyService.GetAccessTokenAsync();
 
-            if (_token == null)
-            {
-                return BadRequest(new { response = "Getting access from Spotify failed" });
-            }
-            else
-            {
-                return Ok(_token);
-            }
-        }
+        //    if (_token == null)
+        //    {
+        //        return BadRequest(new { response = "Getting access from Spotify failed" });
+        //    }
+        //    else
+        //    {
+        //        return Ok(_token);
+        //    }
+        //}
     }
 }

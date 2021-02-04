@@ -5,7 +5,7 @@ namespace LyricsCollector.Services.Contracts
 {
     public interface ISpotifyService
     {
-        public Task<ISpotifyTokenModel> GetAccessTokenAsync();
+        public Task GetAccessTokenAsync();
         public Task<ITrackResponseModel> SearchAsync(string artist, string title);
     }
 }

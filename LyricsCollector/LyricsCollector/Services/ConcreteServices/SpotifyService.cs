@@ -18,10 +18,10 @@ namespace LyricsCollector.Services.ConcreteServices
         private readonly IHttpClientFactory _clientFactory;
         private readonly SpotifyCred _credentials;
 
-        ISpotifyTokenModel token;
+        private ISpotifyTokenModel token;
         TrackResponseModel trackResponse;
 
-        private string currentToken;
+        //private string currentToken;
 
         public SpotifyService(IHttpClientFactory clientFactory, IOptions<SpotifyCred> credentials)
         {
@@ -31,32 +31,34 @@ namespace LyricsCollector.Services.ConcreteServices
 
         public async Task<ITrackResponseModel> SearchAsync(string artist, string title)
         {
-            var queryString = HttpUtility.UrlEncode($"{artist} {title}");
+            if (token == null || token.IsExpired)
+            {
+                await GetAccessTokenAsync();
+            }
 
-            if (currentToken == null) await GetAccessTokenAsync();
+            var queryString = HttpUtility.UrlEncode($"{artist} {title}");
 
             var request = new HttpRequestMessage(HttpMethod.Get,
                 $"search?q={queryString}&type=track&limit=1");
-            request.Headers.Add("Authorization", $"Bearer {currentToken}");
+            request.Headers.Add("Authorization", $"Bearer {token.Access_token}");
             request.Headers.Add("Accept", "application/json");
 
             var client = _clientFactory.CreateClient("spotify");
 
             HttpResponseMessage response = await client.SendAsync(request);
 
-            try
+            if (response.IsSuccessStatusCode)
             {
                 trackResponse = await response.Content.ReadFromJsonAsync<TrackResponseModel>();
                 return trackResponse;
             }
-            catch (Exception)
+            else
             {
-
-                throw;
+                return null;
             }
         }
 
-        public async Task<ISpotifyTokenModel> GetAccessTokenAsync()
+        public async Task GetAccessTokenAsync()
         {
             var clientId = _credentials.SpotifyClientId;
             var clientSecret = _credentials.SpotifyClientSecret;
@@ -80,12 +82,6 @@ namespace LyricsCollector.Services.ConcreteServices
             if (response.IsSuccessStatusCode)
             {
                 token = await response.Content.ReadFromJsonAsync<SpotifyTokenModel>();
-                currentToken = token.Access_token;
-                return token;
-            }
-            else
-            {
-                return null;
             }
         }
     }

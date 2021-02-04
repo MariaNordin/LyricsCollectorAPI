@@ -27,29 +27,29 @@ namespace LyricsC.API.Tests
             controller = new SpotifyController(spotifyServiceMock.Object);
         }
 
-        [Test]
-        public async Task GetTokenAsync_Calls_GetAccessToken()
-        {
-            //Arrange
-            //Act
-            var token = await controller.GetTokenAsync();
+        //[Test]
+        //public async Task GetTokenAsync_Calls_GetAccessToken()
+        //{
+        //    //Arrange
+        //    //Act
+        //    var token = await controller.GetTokenAsync();
 
-            //Assert
-            spotifyServiceMock.Verify(s => s.GetAccessTokenAsync(), Times.Once);
-        }
+        //    //Assert
+        //    spotifyServiceMock.Verify(s => s.GetAccessTokenAsync(), Times.Once);
+        //}
 
-        [Test]
-        public async Task GetTokenAsync_ReturnsOkResult()
-        {
-            //Arrange           
-            spotifyServiceMock.Setup(s => s.GetAccessTokenAsync()).Returns(Task.FromResult(tokenMock.Object));
+        //[Test]
+        //public async Task GetTokenAsync_ReturnsOkResult()
+        //{
+        //    //Arrange           
+        //    spotifyServiceMock.Setup(s => s.GetAccessTokenAsync()).Returns(Task.FromResult(tokenMock.Object));
 
-            //Act
-            var token = await controller.GetTokenAsync();
+        //    //Act
+        //    var token = await controller.GetTokenAsync();
 
-            //Assert
-            Assert.IsNotNull(token);
-            Assert.IsInstanceOf<OkObjectResult>(token);
-        }
+        //    //Assert
+        //    Assert.IsNotNull(token);
+        //    Assert.IsInstanceOf<OkObjectResult>(token);
+        //}
     }
 }

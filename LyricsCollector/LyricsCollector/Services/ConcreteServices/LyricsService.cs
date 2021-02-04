@@ -24,7 +24,6 @@ namespace LyricsCollector.Services.ConcreteServices
 
         public async Task<ILyricsResponseModel> SearchAsync(string artist, string title)
         {
-
             var client = _clientFactory.CreateClient("lyrics");
 
             try
@@ -33,7 +32,7 @@ namespace LyricsCollector.Services.ConcreteServices
             }
             catch (Exception)
             {
-                throw; //inte throw
+                throw; 
             }
 
             if (_lyrics.Lyrics != "")

@@ -1,4 +1,6 @@
 ﻿
+using System;
+
 namespace LyricsCollector.Models.SpotifyModels.Contracts
 {
     public interface ISpotifyTokenModel
@@ -8,5 +10,9 @@ namespace LyricsCollector.Models.SpotifyModels.Contracts
         public string Token_type { get; set; }
 
         public int Expires_in { get; set; }
+
+        public DateTime CreatedAt { get; set; }
+
+        public bool IsExpired { get; }
     }
 }

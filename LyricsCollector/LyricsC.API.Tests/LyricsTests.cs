@@ -89,7 +89,7 @@ namespace LyricsC.API.Tests
                 Title = "title"
             };
 
-            dbLyricsMock.Setup(d => d.LyricsInDbMatch(It.IsAny<string>(), It.IsAny<string>())).Returns(null as ILyricsResponseModel);
+            dbLyricsMock.Setup(d => d.LyricsInDbMatch(It.IsAny<string>(), It.IsAny<string>())).Returns(Task.FromResult(null as ILyricsResponseModel));
             lyricsServiceMock.Setup(l => l.SearchAsync(It.IsAny<string>(), It.IsAny<string>())).Returns(Task.FromResult(null as ILyricsResponseModel));
             
             //Act
@@ -112,7 +112,7 @@ namespace LyricsC.API.Tests
                 Title = "title"
             };
 
-            dbLyricsMock.Setup(d => d.LyricsInDbMatch(It.IsAny<string>(), It.IsAny<string>())).Returns(null as ILyricsResponseModel);
+            dbLyricsMock.Setup(d => d.LyricsInDbMatch(It.IsAny<string>(), It.IsAny<string>())).Returns(Task.FromResult(null as ILyricsResponseModel));
             lyricsServiceMock.Setup(l => l.SearchAsync(It.IsAny<string>(), It.IsAny<string>())).Returns(Task.FromResult(lyricsRmMock.Object));
             spotifyServiceMock.Setup(s => s.SearchAsync(It.IsAny<string>(), It.IsAny<string>())).Returns(Task.FromResult(trackRmMock.Object));
 

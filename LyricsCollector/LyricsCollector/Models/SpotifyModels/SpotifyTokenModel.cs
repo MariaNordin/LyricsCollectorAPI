@@ -1,4 +1,5 @@
 ﻿using LyricsCollector.Models.SpotifyModels.Contracts;
+using System;
 using System.Text.Json.Serialization;
 
 namespace LyricsCollector.Models.SpotifyModels
@@ -13,5 +14,9 @@ namespace LyricsCollector.Models.SpotifyModels
 
         [JsonPropertyName("expires_in")]
         public int Expires_in { get; set; }
+
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+
+        public bool IsExpired { get => CreatedAt.AddSeconds(Expires_in) <= DateTime.Now; }
     }
 }

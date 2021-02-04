@@ -56,15 +56,18 @@ namespace LyricsCollector.Controllers
                 }
                 catch (NullReferenceException)
                 {
-                    return NotFound();
+                    //logg
+                    return NotFound(); //Meddelande
                 }
                 catch (IndexOutOfRangeException)
                 {
-                    return NotFound();
+                    //logg
+                    return NotFound(); //Meddelande
                 }
                 catch (Exception)
                 {
-                    return BadRequest();
+                    //logg
+                    return BadRequest(); //Meddelande
                 }
 
                 await _dbLyricsHelper.SaveLyricsToDbAsync(lyrics);
