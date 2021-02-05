@@ -27,11 +27,15 @@ namespace LyricsCollector.Services.ConcreteServices.DbHelpers
         {
             if (!_memoryCache.TryGetValue("DbLyrics", out List<Lyrics> _))
             {
-                _memoryCache.Set("DbLyrics", await _context.Lyrics.ToListAsync());
+                try
+                {
+                    _memoryCache.Set("DbLyrics", await _context.Lyrics.ToListAsync());
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
             }
-
-            //List<Lyrics> listOfLyrics = _memoryCache.Get("DbLyrics") as List<Lyrics>;
-            //return listOfLyrics;
         }
 
         public async Task<ILyricsResponseModel> LyricsInDbMatch(string artist, string title)
@@ -54,7 +58,6 @@ namespace LyricsCollector.Services.ConcreteServices.DbHelpers
 
                 return lyrics;
             }
-
             return null;
         }
 

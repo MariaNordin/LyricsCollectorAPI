@@ -4,6 +4,7 @@ using LyricsCollector.Services.Contracts;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
@@ -14,35 +15,30 @@ namespace LyricsCollector.Services.ConcreteServices
     {
         private readonly IHttpClientFactory _clientFactory;
         private List<IObserver> _observers;
-        private LyricsResponseModel _lyrics;
+        private LyricsResponseModel _lyricsResponse;
 
-        public LyricsService(IHttpClientFactory clientFactory )
+        public LyricsService(IHttpClientFactory clientFactory)
         {
             _clientFactory = clientFactory;
             _observers = new List<IObserver>();
-        }      
+        }
 
         public async Task<ILyricsResponseModel> SearchAsync(string artist, string title)
         {
+
             var client = _clientFactory.CreateClient("lyrics");
 
-            try
-            {
-                _lyrics = await client.GetFromJsonAsync<LyricsResponseModel>($"{artist}/{title}");
-            }
-            catch (Exception)
-            {
-                throw; 
-            }
+            _lyricsResponse = await client.GetFromJsonAsync<LyricsResponseModel>($"{artist}/{title}");
 
-            if (_lyrics.Lyrics != "")
+            if (_lyricsResponse.Lyrics != "")
             {
-                _lyrics.Artist = artist;
-                _lyrics.Title = title;
+                _lyricsResponse.Artist = artist;
+                _lyricsResponse.Title = title;
 
-                return _lyrics;
+                return _lyricsResponse;
             }
             return null;
+
         }
 
         public string ToTitleCase(string text)

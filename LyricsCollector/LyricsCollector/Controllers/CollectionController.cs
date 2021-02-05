@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -97,6 +98,15 @@ namespace LyricsCollector.Controllers
             {
                 await _dbHelper.SaveLyricsAsync(collection.Id, lyrics);
                 return Ok(new { message = "Lyrics saved!" });
+            }
+            catch (DbUpdateException e)
+            {
+                if (e.InnerException.Message.Contains("PRIMARY KEY constraint"))
+                {
+                    return BadRequest(new { message = "This song is already in your collection." });
+                }
+                else return BadRequest();
+                //else: log e.InnerException.Message
             }
             catch (Exception) //lägg till fler specifika ex? + spec meddelanden
             {

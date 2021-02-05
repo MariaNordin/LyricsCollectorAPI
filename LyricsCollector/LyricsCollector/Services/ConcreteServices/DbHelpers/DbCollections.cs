@@ -99,15 +99,16 @@ namespace LyricsCollector.Services.ConcreteServices.DbHelpers
 
                 _context.CollectionLyrics.Add(collectionLyrics);
 
-                try
-                {
-                    await _context.SaveChangesAsync();
-                }
-                catch (Exception)
-                {
-                    //logg
-                    throw;
-                }
+                await _context.SaveChangesAsync();
+                //try
+                //{
+                    
+                //}
+                
+                //catch (Exception)
+                //{
+                //    throw;
+                //}
             }
         }
 

@@ -17,6 +17,7 @@ namespace LyricsCollector.Controllers
         private readonly IDbLyrics _dbLyricsHelper;
         private readonly ILyricsService _lyricsService;
         private readonly ISpotifyService _spotifyService;
+        private ILyricsResponseModel _lyrics;
 
         public LyricsController (ILyricsService lyricsService, ISpotifyService spotifyService, 
             IDbLyrics dbLyrics, ICollectionService collectionService)
@@ -35,47 +36,62 @@ namespace LyricsCollector.Controllers
             var artist = _lyricsService.ToTitleCase(lyricsPM.Artist);
             var title = _lyricsService.ToTitleCase(lyricsPM.Title);
 
-            var dbLyrics = await _dbLyricsHelper.LyricsInDbMatch(artist, title);
-
-            if (dbLyrics != null)
+            try
             {
-                _lyricsService.Notify((ILyricsResponseModel)dbLyrics);
-                return Ok(dbLyrics);
+                _lyrics = await _dbLyricsHelper.LyricsInDbMatch(artist, title);
+            }
+            catch (Exception)
+            {
+                //logg
+                return BadRequest(new { message = "Something went wrong" });
+            }
+            
+
+            if (_lyrics != null)
+            {
+                _lyricsService.Notify((ILyricsResponseModel)_lyrics);
+                return Ok(_lyrics);
             }
 
-            var lyrics = await _lyricsService.SearchAsync(artist, title);
+            try
+            {
+                _lyrics = await _lyricsService.SearchAsync(artist, title);
+            }
+            catch (Exception)
+            {
+                //logg
+                return BadRequest(new { message = "Something went wrong" }); //beroende på fel borde appl. stoppas?
+            }
 
-            if (lyrics != null)
+            if (_lyrics != null)
             {
                 try
                 {
                     var track = await _spotifyService.SearchAsync(artist, title);
 
-                    lyrics.SpotifyLink = track.Track.Items[0].External_urls.Spotify;
-                    lyrics.CoverImage = track.Track.Items[0].Album.Images[0].Url;
-                }
-                catch (NullReferenceException)
-                {
-                    //logg
-                    return NotFound(); //Meddelande
+                    _lyrics.SpotifyLink = track.Track.Items[0].External_urls.Spotify;
+                    _lyrics.CoverImage = track.Track.Items[0].Album.Images[0].Url;
                 }
                 catch (IndexOutOfRangeException)
                 {
-                    //logg
-                    return NotFound(); //Meddelande
+                    return NotFound(new { message = "No lyrics found" }); //Meddelande, användaren har skickat in konstiga värden
                 }
                 catch (Exception)
                 {
                     //logg
-                    return BadRequest(); //Meddelande
+                    return BadRequest(new { message = "Something went wrong" } ); //Meddelande
                 }
 
-                await _dbLyricsHelper.SaveLyricsToDbAsync(lyrics);
-                _lyricsService.Notify(lyrics);
 
-                return Ok(lyrics);
+                //try
+                await _dbLyricsHelper.SaveLyricsToDbAsync(_lyrics);
+                //catch
+
+                _lyricsService.Notify(_lyrics);
+
+                return Ok(_lyrics);
             }
-            return NotFound();
+            return NotFound(); //meddelande - user har skickat in konstiga värden/lyrics finns inte till låten
         }
     }
 }
