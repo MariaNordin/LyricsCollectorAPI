@@ -11,5 +11,6 @@ namespace LyricsCollector.Services.Contracts.IDbHelpers
         Task<List<Collection>> GetAllCollectionsAsync(string userName);
         Task NewCollectionAsync(string CollectionName, string userName);
         Task SaveLyricsAsync(int collectionId, ILyricsResponseModel lyrics);
+        Task DeleteCollectionAsync(int id, string userName);
     }
 }

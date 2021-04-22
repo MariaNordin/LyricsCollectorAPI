@@ -89,6 +89,22 @@ namespace LyricsCollector.Controllers
             }       
         }
 
+        [HttpDelete("DeleteCollection")]
+        public async Task<IActionResult> DeleteCollectionAsync([FromBody] CollectionPostModel collection)
+        {
+            var userName = HttpContext.User.Identity.Name;
+
+            try
+            {
+                await _dbHelper.DeleteCollectionAsync(collection.Id, userName);
+                return Ok(new { message = "Collection deleted" });
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
+        }
+
         [HttpPost("SaveLyrics")]
         public async Task<IActionResult> SaveToCollectionAsync([FromBody] CollectionPostModel collection)
         {

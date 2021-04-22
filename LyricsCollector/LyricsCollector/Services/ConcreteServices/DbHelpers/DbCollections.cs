@@ -157,5 +157,10 @@ namespace LyricsCollector.Services.ConcreteServices.DbHelpers
                 throw;
             }
         }
+
+        public Task DeleteCollectionAsync(int id, string userName)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
