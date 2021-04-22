@@ -19,7 +19,7 @@ namespace LyricsCollector.Services.ConcreteServices.DbHelpers
             _context = context;
         }
 
-        public async Task<Collection> GetCollectionAsync(int collectionId)
+        public async Task<Collection> GetCollectionWithLyricsAsync(int collectionId)
         {
             Collection[] collections;
 
@@ -44,7 +44,7 @@ namespace LyricsCollector.Services.ConcreteServices.DbHelpers
             return collections[0];
         }
 
-        public async Task<List<Collection>> GetAllCollectionsAsync(string userName)
+        public async Task<List<Collection>> GetUsersAllCollectionsAsync(string userName)
         {
             List<Collection> collections;
             try
@@ -88,7 +88,7 @@ namespace LyricsCollector.Services.ConcreteServices.DbHelpers
         {
             var lyrics = await GetDbLyricsAsync(currentLyrics);
 
-            var collection = await GetCurrentCollectionAsync(collectionId);
+            var collection = await GetCollectionAsync(collectionId);
 
             var collectionLyrics = new CollectionLyrics();
 
@@ -126,12 +126,12 @@ namespace LyricsCollector.Services.ConcreteServices.DbHelpers
             }
         }
 
-        private async Task<Collection> GetCurrentCollectionAsync(int collectionId)
+        private async Task<Collection> GetCollectionAsync(int collectionId)
         {
             try
             {
-                var currentCollection = await _context.Collections.Where(c => c.Id == collectionId).FirstOrDefaultAsync();
-                return currentCollection;
+                var collection = await _context.Collections.Where(c => c.Id == collectionId).FirstOrDefaultAsync();
+                return collection;
             }
             catch (Exception)
             {
@@ -158,9 +158,23 @@ namespace LyricsCollector.Services.ConcreteServices.DbHelpers
             }
         }
 
-        public Task DeleteCollectionAsync(int id, string userName)
+        public async Task DeleteCollectionAsync(int collectionId)
         {
-            throw new NotImplementedException();
+            var collection = await GetCollectionAsync(collectionId);
+
+            _context.Collections.Attach(collection);
+            _context.Collections.Remove(collection);
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                //logg
+                throw;
+            }
+
         }
     }
 }
