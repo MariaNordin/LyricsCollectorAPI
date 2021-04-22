@@ -7,10 +7,10 @@ namespace LyricsCollector.Services.Contracts.IDbHelpers
 {
     public interface IDbCollections
     {
-        Task<Collection> GetCollectionAsync(int collectionId);
-        Task<List<Collection>> GetAllCollectionsAsync(string userName);
+        Task<Collection> GetCollectionWithLyricsAsync(int collectionId);
+        Task<List<Collection>> GetUsersAllCollectionsAsync(string userName);
         Task NewCollectionAsync(string CollectionName, string userName);
         Task SaveLyricsAsync(int collectionId, ILyricsResponseModel lyrics);
-        Task DeleteCollectionAsync(int id, string userName);
+        Task DeleteCollectionAsync(int id);
     }
 }

@@ -35,7 +35,7 @@ namespace LyricsCollector.Controllers
 
             try
             {
-                currentCollection = await _dbHelper.GetCollectionAsync(collection.Id);              
+                currentCollection = await _dbHelper.GetCollectionWithLyricsAsync(collection.Id);              
             }
             catch (Exception) //lägg till fler specifika ex?
             {
@@ -58,7 +58,7 @@ namespace LyricsCollector.Controllers
             List<Collection> collections;
             try
             {
-                collections = await _dbHelper.GetAllCollectionsAsync(userName);
+                collections = await _dbHelper.GetUsersAllCollectionsAsync(userName);
             }
             catch (Exception) //lägg till fler specifika ex?
             {
@@ -92,11 +92,11 @@ namespace LyricsCollector.Controllers
         [HttpDelete("DeleteCollection")]
         public async Task<IActionResult> DeleteCollectionAsync([FromBody] CollectionPostModel collection)
         {
-            var userName = HttpContext.User.Identity.Name;
+            //var userName = HttpContext.User.Identity.Name;
 
             try
             {
-                await _dbHelper.DeleteCollectionAsync(collection.Id, userName);
+                await _dbHelper.DeleteCollectionAsync(collection.Id);
                 return Ok(new { message = "Collection deleted" });
             }
             catch (Exception)

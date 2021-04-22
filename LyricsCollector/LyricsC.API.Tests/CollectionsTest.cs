@@ -48,13 +48,13 @@ namespace LyricsC.API.Tests
             var notFoundResult = result as NotFoundResult;
 
             //Assert
-            dbCollectionsMock.Verify(db => db.GetCollectionAsync(collectionPM.Id), Times.Once);
+            dbCollectionsMock.Verify(db => db.GetCollectionWithLyricsAsync(collectionPM.Id), Times.Once);
             Assert.IsNotNull(result);
             Assert.AreEqual(404, notFoundResult.StatusCode);
         }
 
         [Test]
-        public async Task SaveToCollectionAsync_SaveFails_ReturnsBadRequest()
+        public async Task SaveToCollectionAsync_SaveOk_ReturnsOkObject()
         {
             //Arrange
             var collectionPM = new CollectionPostModel();
@@ -65,7 +65,7 @@ namespace LyricsC.API.Tests
             //Assert
             collectionServiceMock.Verify(c => c.GetCurrentLyrics(), Times.Once);
             Assert.IsNotNull(result);
-            Assert.IsInstanceOf<BadRequestObjectResult>(result);
+            Assert.IsInstanceOf<OkObjectResult>(result);
         }
     }
 }
