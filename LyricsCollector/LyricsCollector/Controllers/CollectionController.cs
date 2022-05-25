@@ -39,7 +39,6 @@ namespace LyricsCollector.Controllers
             }
             catch (Exception) //lägg till fler specifika ex?
             {
-                //logg?
                 return BadRequest(); //meddelande
             }
 
@@ -69,7 +68,7 @@ namespace LyricsCollector.Controllers
             {
                 return Ok(collections);
             }
-            return NotFound(new { message = "No collections found." }); //meddelande
+            return NotFound(new { message = "No collections found." });
 
         }
 
@@ -81,7 +80,7 @@ namespace LyricsCollector.Controllers
             try
             {
                 await _dbHelper.NewCollectionAsync(collection.NewName, userName);
-                return Ok(new { message = "Collection successfully created!" }); //Meddelande
+                return Ok(new { message = "Collection successfully created!" });
             }
             catch (Exception) //lägg till fler specifika ex?
             {
